@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import Category from "../utils/types/Category";
+import Category from "@/utils/types/Category";
 
 type MenuItem = {
     title: string, 
@@ -35,7 +35,7 @@ const props = defineProps({
             margin-right: 10px;
             &:hover{
 
-                background-color: $teste;
+                background-color: $qrmenu-gray;
             }
 
         }
