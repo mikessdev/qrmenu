@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import HorizontalMenu from "../components/HorizontalMenu.vue";
-import Category from "../utils/types/Category";
+import HorizontalMenu from "@/components/HorizontalMenu.vue";
+import Category from "@/utils/types/Category";
+import Header from "@/components/Header.vue";
 
 const menu = 
 [
@@ -51,6 +52,7 @@ const items = {
 </script>
 
 <template>
+    <Header />
   <main>
     <HorizontalMenu :menu="menu" items="items"/>
     <p>adadsa</p>
