@@ -1,28 +1,33 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import Category from "../utils/types/Category";
-
-type MenuItem = {
-    title: string, 
-    description: string, 
-    valor: string
-}
+import Category from '@/utils/types/MenuItem';
+import MenuItem from '@/utils/types/MenuItem';
 
 const props = defineProps({
-    categorys: {
+    menu: {
         type: Array<Category>,
+        default: []
+    },
+    items: {
+        type: Array<MenuItem>,
         default: []
     }
 })
+
+const menuHandler = ref(false);
+console.log(props.menu)
 
 </script>
 
 <template>
         <ul>
-            <li v-for="item in props.categorys" :key="item">
-                {{ item.title }}
+            <li v-for="(item, index) in props.menu" :key="index">
+                <h2>{{ item.title }}</h2>
+                <span v-show="item.show">{{ item.title }}</span>
             </li>
         </ul>
+
+
 </template>
 
 <style lang="scss" scoped>
@@ -30,15 +35,25 @@ const props = defineProps({
         font-family: 'Noto Sans';
         list-style: none;
         display: flex;
-    }
-        li {
-            margin-right: 10px;
-            &:hover{
+        font-size: 10px;
 
-                background-color: $teste;
+        li{
+            padding: 0px 10px;
+
+            &:hover{
+                background-color: $qrmenu-gray;
+                color: $qrmenu-white;
+                border-radius: 15px;
             }
 
+            span{
+                background-color: $qrmenu-gray;
+                color: $qrmenu-white;
+                padding: 10px 10px;
+                font-size: 16px;
+            }
         }
+    }
                 
             
         

@@ -1,0 +1,25 @@
+{
+  "items":
+    {
+      "id": "1",
+      "items": [
+        {
+          "title": "Iscas de Frango",
+          "description": "300g de filézinho empanado",
+          "valor": "R$ 15.00"
+        },
+        {
+          "title": "Iscas de Frango",
+          "description": "300g de filézinho empanado",
+          "valor": "R$ 15.00"
+        },
+        {
+          "title": "Iscas de Frango",
+          "description": "300g de filézinho empanado",
+          "valor": "R$ 15.00"
+        }
+      ]
+    }
+}
+
+
