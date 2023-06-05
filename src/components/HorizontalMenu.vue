@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import Category from '@/utils/types/Menumenu';
 import MenuItem from '@/utils/types/MenuItem';
 import { userCategoryStore } from '@/store/categoryStore';
+import cardProducts from "./cardProducts.vue";
 
 const categoryStore = userCategoryStore();
 
@@ -11,15 +12,18 @@ const loadData = async () => {
      await categoryStore.getItems();
 }
 
-const menu = ref();
+const menu = ref({
+      id: "0",
+      items: []
+    });
 const subtitleItem = ref('');
 
 const getMenu = (id: string, subtitle: string) => { 
     subtitleItem.value = subtitle;
     categoryStore.items.forEach(element => {
         if(id == element.id){
-            menu.value = element;
-            return
+            menu.value = element; 
+            return  
         }
     });
 }
@@ -41,7 +45,11 @@ onMounted(async () => {
         </ul>
         <h3> {{ subtitleItem }} </h3>
         <div>
-            {{ menu }}
+            <ul>
+                <li v-for="(element, index) in menu.items" :key="index">
+                    <card-products :title="element.title" :description="element.description" :value="element.value" />
+                </li>
+            </ul>
         </div>
 
 
