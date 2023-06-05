@@ -5,7 +5,7 @@
         </div>
         <h1>Cardápio de Hoje</h1>
         <div class="banner">
-            <img src="" alt="Banner">
+            <img src="@/assets/img/banneRestaurante.png" alt="Banner">
         </div>
     </div>
 </template>

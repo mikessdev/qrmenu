@@ -36,7 +36,7 @@ onMounted(async () => {
 <template>
         <ul>
             <li v-for="(menu, index) in categoryStore.menu" :key="index">
-                <h2 @click="getMenu(menu.id, menu.title)" >{{ menu.title }}</h2>
+                <button @click="getMenu(menu.id, menu.title)">{{ menu.title }}</button>
             </li>
         </ul>
         <h3> {{ subtitleItem }} </h3>
@@ -52,28 +52,31 @@ onMounted(async () => {
         font-family: 'Noto Sans';
         list-style: none;
         display: flex;
-        font-size: 10px;
+        justify-content: center;
+        font-size: 16px;
 
-        li{
-            padding: 0px 10px;
+        button{
+            font-weight: bold;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            padding: 5px 10px;
 
-            &:hover{
+            &:hover, &:focus{
                 background-color: $qrmenu-gray;
                 color: $qrmenu-white;
                 border-radius: 15px;
-            }
-
-            span{
-                background-color: $qrmenu-gray;
-                color: $qrmenu-white;
-                padding: 10px 10px;
-                font-size: 16px;
+                cursor: pointer;
             }
         }
     }
-                
-            
-        
-    
-    
+
+    h3 {
+        font-family: 'Noto Sans';
+        font-size: 16px;
+        color: $qrmenu-white;
+        background: $qrmenu-gray;
+        margin: 10px 0;
+        padding: 7px 10px;
+    }          
 </style>
