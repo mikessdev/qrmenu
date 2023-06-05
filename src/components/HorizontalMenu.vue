@@ -1,31 +1,48 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import Category from '@/utils/types/MenuItem';
+import { ref, onMounted } from "vue";
+import Category from '@/utils/types/Menumenu';
 import MenuItem from '@/utils/types/MenuItem';
+import { userCategoryStore } from '@/store/categoryStore';
 
-const props = defineProps({
-    menu: {
-        type: Array<Category>,
-        default: []
-    },
-    items: {
-        type: Array<MenuItem>,
-        default: []
-    }
-})
+const categoryStore = userCategoryStore();
 
-const menuHandler = ref(false);
-console.log(props.menu)
+const loadData = async () => {
+     await categoryStore.getMenu();
+     await categoryStore.getItems();
+}
 
+const menu = ref();
+const subtitleItem = ref('');
+
+const getMenu = (id: string, subtitle: string) => { 
+    subtitleItem.value = subtitle;
+    categoryStore.items.forEach(element => {
+        if(id == element.id){
+            menu.value = element;
+            return
+        }
+    });
+}
+
+onMounted(async () => {
+    await loadData();
+    const firstMenu = categoryStore.menu[0];
+    const Id =  firstMenu.id;
+    const title = firstMenu.title;
+    getMenu(Id, title);
+});
 </script>
 
 <template>
         <ul>
-            <li v-for="(item, index) in props.menu" :key="index">
-                <h2>{{ item.title }}</h2>
-                <span v-show="item.show">{{ item.title }}</span>
+            <li v-for="(menu, index) in categoryStore.menu" :key="index">
+                <h2 @click="getMenu(menu.id, menu.title)" >{{ menu.title }}</h2>
             </li>
         </ul>
+        <h3> {{ subtitleItem }} </h3>
+        <div>
+            {{ menu }}
+        </div>
 
 
 </template>
