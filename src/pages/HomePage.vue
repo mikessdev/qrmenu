@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import Header from "@/components/Header.vue"
+import Header from "@/components/Header.vue";
+import Hero from "@/components/Hero.vue";
 import HorizontalMenu from "@/components/HorizontalMenu.vue";
 import Category from "@/utils/types/Category";
 const data = [
@@ -72,6 +73,7 @@ const data = [
 <template>
     <Header />
   <main>
+    <Hero/>
     <HorizontalMenu :categorys="data"/>
     <p>adadsa</p>
   </main>
