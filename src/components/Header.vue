@@ -1,3 +1,5 @@
+<script setup lang="ts">
+</script>
 <template>
     <header>
         <p>Buteco Piece</p>
@@ -13,3 +15,4 @@
         padding: 1rem 1rem;
     }
 </style>
+

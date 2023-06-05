@@ -1,0 +1,27 @@
+{
+  "menu": [
+    {
+      "id": 1,
+      "title": "Entradas e Porções"
+    },
+    {
+      "id": 2,
+      "title": "Prato Principal"
+    },
+    {
+      "id": 3,
+      "title": "Lanches"
+    },
+    {
+      "id": 4,
+      "title": "Bebidas"
+    },
+    {
+      "id": 5,
+      "title": "pastel"
+    }
+    
+  ]
+}
+
+

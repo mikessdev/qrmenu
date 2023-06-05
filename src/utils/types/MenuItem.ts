@@ -1,4 +1,5 @@
-type Category = {
+type MenuItem = {
     title: string, 
-    menuItem: MenuItem,  
+    description: string,  
+    price: string
 }
