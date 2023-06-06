@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import Category from '@/utils/types/Menumenu';
 import MenuItem from '@/utils/types/MenuItem';
 import { userCategoryStore } from '@/store/categoryStore';
-import cardProducts from "./cardProducts.vue";
+import CardProducts from "@/components/CardProducts.vue";
 
 const categoryStore = userCategoryStore();
 
@@ -16,6 +16,7 @@ const menu = ref({
       id: "0",
       items: []
     });
+    
 const subtitleItem = ref('');
 
 const getMenu = (id: string, subtitle: string) => { 
