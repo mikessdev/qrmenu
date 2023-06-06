@@ -13,3 +13,10 @@ import Category from "@/utils/types/Category";
     <HorizontalMenu />
   </main>
 </template>
+
+<style lang="scss">
+  //teste de background irei arrumar ainda
+  main {
+    background: #F7F7F7;
+  }
+</style>

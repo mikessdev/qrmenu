@@ -38,47 +38,46 @@ onMounted(async () => {
 </script>
 
 <template>
-        <ul>
-            <li v-for="(menu, index) in categoryStore.menu" :key="index">
-                <button @click="getMenu(menu.id, menu.title)">{{ menu.title }}</button>
+    <div class="menu-horizontal">
+        <div v-for="(menu, index) in categoryStore.menu" :key="index">
+            <button @click="getMenu(menu.id, menu.title)">{{ menu.title }}</button>
+        </div>
+    </div>
+    <h3> {{ subtitleItem }} </h3>
+    <div>
+        <ul class="card-product">
+            <li v-for="(element, index) in menu.items" :key="index">
+                <card-products :title="element.title" :description="element.description" :value="element.value" />
             </li>
         </ul>
-        <h3> {{ subtitleItem }} </h3>
-        <div>
-            <ul>
-                <li v-for="(element, index) in menu.items" :key="index">
-                    <card-products :title="element.title" :description="element.description" :value="element.value" />
-                </li>
-            </ul>
-        </div>
-
-
+    </div>
 </template>
 
 <style lang="scss" scoped>
-    ul{
-        font-family: 'Noto Sans';
-        list-style: none;
+    .menu-horizontal{
+        width: 100vw;
+        margin: 0 auto;
         display: flex;
-        justify-content: center;
-        font-size: 16px;
-
-        button{
-            font-weight: bold;
-            border: none;
-            background: none;
-            font-size: 1rem;
-            padding: 5px 10px;
-
-            &:hover, &:focus{
-                background-color: $qrmenu-gray;
-                color: $qrmenu-white;
-                border-radius: 15px;
-                cursor: pointer;
+        overflow-x: auto;
+        div {
+            min-height: 2.2rem;
+            padding: 0 3px;
+            button{
+                white-space: nowrap;
+                border: none;
+                background: none;
+                font-size: 1rem;
+                font-weight: bold;
+                padding: 5px 10px;
+                &:hover, &:focus{
+                    background-color: $qrmenu-gray;
+                    color: $qrmenu-white;
+                    border-radius: 15px;
+                    cursor: pointer;
+                }
             }
         }
     }
-
     h3 {
         font-family: 'Noto Sans';
         font-size: 16px;
@@ -86,5 +85,17 @@ onMounted(async () => {
         background: $qrmenu-gray;
         margin: 10px 0;
         padding: 7px 10px;
-    }          
+    }       
+    .card-product {
+        font-family: 'Noto Sans';
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    @media (min-width: 585px) {
+        .menu-horizontal {
+            justify-content: center;
+        }
+    }
 </style>
