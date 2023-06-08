@@ -2,16 +2,26 @@
 online menu for restaurants
 
 
-# steps to run the project
+# Etapas para rodar o projeto localmente
 
-for dependences
- - npm i 
+``` bash
+# install dependencies
+npm install
 
-for mock api 1 
- - npx json-server --watch ./json_server/menu.json ---port 3000
+# serve with hot reload at localhost:5173
+npm run dev
 
-for mock api 2
- - npx json-server --watch ./json_server/items.json --port 3004
+# run api mock
+npx json-server --watch ./json_server/db.json ---port 3000
+```
 
-for run the project
- - npm run dev
+# Etapas para gera um link que não seja local (para você testar em outras máquinas)
+Obs: provavelmente você vai aparecer uma mensagem no terminal ou no site avisando que você precisa gerar um token e cadastrar esse token pelo terminal.
+
+``` bash
+# generating global link for API mock
+./ngrok http 3000
+
+# generating global link for Frontend project
+./ngrok http 5173
+```

@@ -5,7 +5,7 @@
         </div>
         <h1>Cardápio de Hoje</h1>
         <div class="banner">
-            <img src="@/assets/img/banneRestaurante.png" alt="Banner">
+            <img src="@/assets/img/heroRestaurant.png" alt="Banner">
         </div>
     </div>
 </template>
@@ -14,22 +14,20 @@
     .hero {
         font-family: 'Noto Sans';
         font-weight: bolder;
-
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
-
-        padding: 20px 0;
-
+        padding: 20px 0 15px;
         .logo img{
             max-width: 130px;
-
         }
-
         h1 {
-            font-size: 1rem;
+            font-size: 1.2rem;
             margin: 20px 0;
+        }
+        .banner img {
+            width: 100vw;
         }
     }
 </style>

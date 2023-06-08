@@ -1,0 +1,127 @@
+{
+  "items":[
+    {
+      "id": "1",
+      "items": [
+        {
+          "title": "Iscas de Frango",
+          "description": "y dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+          "value": "R$ 15.00"
+        },
+        {
+          "title": "Iscas de Frango",
+          "description": "300g de filézinho empanado",
+          "value": "R$ 15.00"
+        },
+        {
+          "title": "Iscas de Frango",
+          "description": "y dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+          "value": "R$ 15.00"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "items": [
+        {
+          "title": "Cuscuz com calabresa",
+          "description": "y dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+          "value": "R$ 15.00"
+        },
+        {
+          "title": "Cuscuz com calabresa",
+          "description": "300g de filézinho empanado",
+          "value": "R$ 15.00"
+        },
+        {
+          "title": "Cuscuz com calabresa",
+          "description": "y dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+          "value": "R$ 15.00"
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "items": [
+        {
+          "title": "hamburguer",
+          "description": "y dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+          "value": "R$ 15.00"
+        },
+        {
+          "title": "hamburguer",
+          "description": "300g de filézinho empanado",
+          "value": "R$ 15.00"
+        },
+        {
+          "title": "hamburguer",
+          "description": "y dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+          "value": "R$ 15.00"
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "items": [
+        {
+          "title": "coca cola",
+          "description": "300g de filézinho empanado",
+          "value": "R$ 15.00"
+        },
+        {
+          "title": "guarana",
+          "description": "300g de filézinho empanado",
+          "value": "R$ 15.00"
+        },
+        {
+          "title": "redbull",
+          "description": "300g de filézinho empanado",
+          "value": "R$ 15.00"
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "items": [
+        {
+          "title": "pastel de carne",
+          "description": "y dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+          "value": "R$ 15.00"
+        },
+        {
+          "title": "pastel de carne",
+          "description": "300g de filézinho empanado",
+          "value": "R$ 15.00"
+        },
+        {
+          "title": "pastel de carne",
+          "description": "y dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
+          "value": "R$ 15.00"
+        }
+      ]
+    }
+
+  ],
+  "menu": [
+    {
+      "id": 1,
+      "title": "Entradas e Porções"
+    },
+    {
+      "id": 2,
+      "title": "Prato Principal"
+    },
+    {
+      "id": 3,
+      "title": "Lanches"
+    },
+    {
+      "id": 4,
+      "title": "Bebidas"
+    },
+    {
+      "id": 5,
+      "title": "pastel"
+    }
+  ]
+}
