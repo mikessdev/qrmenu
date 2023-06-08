@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { defineProps } from 'vue';
+
 const props = defineProps({
   placeholder: {
     type: String,
@@ -49,7 +51,6 @@ const props = defineProps({
 </template>
 <style lang="scss" scoped>
   .base-input{
-    font-family: 'Noto Sans';
     display: flex;
     flex-direction: column;
     input{

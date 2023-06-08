@@ -7,16 +7,17 @@ import Category from "@/utils/types/Category";
 </script>
 
 <template>
-    <Header />
+  <Header />
   <main>
     <Hero/>
     <HorizontalMenu />
   </main>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
   //teste de background irei arrumar ainda
   main {
-    background: #F7F7F7;
+    background: $qrmenu-white;
+    margin-top: 60px;
   }
 </style>

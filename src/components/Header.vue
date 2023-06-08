@@ -25,6 +25,9 @@ defineProps({
 </template>
 <style lang="scss" scoped>
     header {
+        width: 100%;
+        position: absolute;
+        top: 0;
         background: $qrmenu-red;
         color: $qrmenu-white;
         font-family: 'Noto Sans';
