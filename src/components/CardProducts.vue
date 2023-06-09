@@ -18,7 +18,7 @@
 <template>
     <div class="card">
         <div class="img-food">
-            <img src="@/assets/img/imgcomida.jpg" alt="img-produto">
+            <img src="@/assets/img/imgComida.jpg" alt="img-produto">
         </div>
         <div class="card-data">
             <h4>{{ props.title }}</h4>
@@ -31,6 +31,7 @@
 <style lang="scss" scoped>
     .card {
         display: flex;
+        max-width: 300px;
         justify-content: center;
         gap: 20px;
         padding-bottom: 10px;

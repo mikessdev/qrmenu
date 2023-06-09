@@ -91,7 +91,7 @@ onMounted(async () => {
         font-family: 'Noto Sans';
         list-style: none;
         display: flex;
-        flex-direction: column;
+        flex-wrap: wrap;
         align-items: center;
     }
     @media (min-width: 585px) {
