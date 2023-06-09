@@ -12,7 +12,7 @@ npm install
 npm run dev
 
 # run api mock
-npx json-server --watch ./json_server/db.json ---port 3000
+npm run api
 ```
 
 # Etapas para gera um link que não seja local (para você testar em outras máquinas)
