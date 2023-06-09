@@ -1,15 +1,15 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-export const userCategoryStore = defineStore('storeID', () => { 
-    const items = ref(); 
+export const useCategoryStore = defineStore('categoryManagement', () => { 
+    const product = ref(); 
     const menu = ref();
 
-    const getItems = async (): Promise<any> => {
+    const getProduct = async (): Promise<any> => {
         const response = await fetch("http://localhost:3000/items");
         // const response = await fetch("https://d21f-45-238-202-134.sa.ngrok.io/items");
         const jsonData = await response.json();
-        items.value = await jsonData;  
+        product.value = await jsonData;  
         return jsonData; 
     }
 
@@ -22,9 +22,9 @@ export const userCategoryStore = defineStore('storeID', () => {
     }
 
     return {
-        items,
+        product,
         menu,
-        getItems,
+        getProduct,
         getMenu
     }
 })

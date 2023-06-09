@@ -2,7 +2,6 @@
 import Header from "@/components/Header.vue";
 import Hero from "@/components/Hero.vue";
 import HorizontalMenu from "@/components/HorizontalMenu.vue";
-import Category from "@/utils/types/Category";
 
 </script>
 

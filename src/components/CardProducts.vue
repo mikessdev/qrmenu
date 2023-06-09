@@ -1,18 +1,24 @@
 <script setup lang="ts">
-    const props = defineProps({
-        title: {
-            type: String, 
-            default: ""
-        },
-        description: {
-            type: String, 
-            default: ""
-        },
-        value: {
-            type: String, 
-            default: "0,00"
-        }
-    })
+import { ref } from 'vue';
+import EditIcon from "@/components/icons/EditIcon.vue";
+import EditModal from "@/components/EditModal.vue";
+import { useUserStore } from "@/store/userStore";
+
+const userStore = useUserStore();
+
+const props = defineProps({
+    product: {
+        type: Object, 
+        default: {}
+    }
+})
+
+const showEditModal = ref(false);
+
+const toggleEditModal = () => { 
+    showEditModal.value = !showEditModal.value;
+}
+
 </script>
 
 <template>
@@ -21,10 +27,12 @@
             <img src="@/assets/img/imgComida.jpg" alt="img-produto">
         </div>
         <div class="card-data">
-            <h4>{{ props.title }}</h4>
-            <p>{{ props.description }}</p>
-            <span>{{ props.value }}</span>
+            <h4>{{ props.product.title }}</h4>
+            <p>{{ props.product.description }}</p>
+            <span>{{ props.product.value }}</span>
         </div>
+        <EditIcon v-if="userStore.isAdmin" @click="toggleEditModal" :color="'black'"/>
+        <EditModal v-if="showEditModal" @show-edit-modal="toggleEditModal" :product="props.product"/>
     </div>
 </template>
 
