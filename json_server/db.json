@@ -1,8 +1,8 @@
 {
-  "items":[
+  "menus":[
     {
       "id": "1",
-      "items": [
+      "products": [
         {
           "id": "1",
           "title": "Iscas de Frango",
@@ -25,7 +25,7 @@
     },
     {
       "id": "2",
-      "items": [
+      "products": [
         {
           "id": "1",
           "title": "Cuscuz com calabresa",
@@ -48,7 +48,7 @@
     },
     {
       "id": "3",
-      "items": [
+      "products": [
         {
           "id": "1",
           "title": "hamburguer",
@@ -71,7 +71,7 @@
     },
     {
       "id": "4",
-      "items": [
+      "products": [
         {
           "id": "1",
           "title": "coca cola",
@@ -94,7 +94,7 @@
     },
     {
       "id": "5",
-      "items": [
+      "products": [
         {
           "id": "1",
           "title": "pastel de carne",
@@ -117,7 +117,7 @@
     }
 
   ],
-  "menu": [
+  "categorys": [
     {
       "id": 1,
       "title": "Entradas e Porções"

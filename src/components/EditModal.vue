@@ -2,8 +2,7 @@
 import Button from "@/components/Button.vue";
 import { reactive } from "vue";
 import { useCategoryStore } from "@/store/categoryStore"; 
-
-const categoryStore = useCategoryStore();
+import { Product } from "@/utils/types/Product";
 
 const props = defineProps({
     product: {
@@ -19,29 +18,15 @@ const viewState = reactive({
     value: props.product.value
 })
 
-const emit = defineEmits(["showEditModal"]);
+const emit = defineEmits(["closeEditModal", "saveData"]);
 
-const sendEmit = () => {
-    let oldValue = props.product; 
-    let newValue = viewState;
-
-    if(JSON.stringify(newValue) == JSON.stringify(oldValue)){
-        emit("showEditModal", false);
-    }else{
-        saveData(newValue);
-        emit("showEditModal", false);
-    }
-
+const cancel = () => {
+    emit("closeEditModal");
 }
 
-const saveData = (newValue: object) => {
-    let productIndex = categoryStore.product.findIndex((e)=>{
-        return e.id === newValue.id
-    })
-    
-    categoryStore.product[productIndex] = newValue;
+const save = () => { 
+    emit('saveData', viewState); 
 }
-
 </script>
 <template>
     <div class="Dialog">
@@ -54,8 +39,8 @@ const saveData = (newValue: object) => {
             <input type="text" v-model="viewState.value">
         </div>
         <div>
-            <Button @click="sendEmit" :label="'Cancelar'" :type="'button'"/>
-            <Button @click="sendEmit" :label="'Salvar'" :type="'button'"/>
+            <Button @click="cancel" :label="'Cancelar'" :type="'button'"/>
+            <Button @click="save" :label="'Salvar'" :type="'button'"/>
         </div>
     </div>
 
