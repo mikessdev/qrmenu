@@ -1,54 +1,49 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import Category from '@/utils/types/Menumenu';
-import MenuItem from '@/utils/types/MenuItem';
-import { userCategoryStore } from '@/store/categoryStore';
+import { useCategoryStore } from '@/store/categoryStore';
 import CardProducts from "@/components/CardProducts.vue";
 
-const categoryStore = userCategoryStore();
-
-const loadData = async () => {
-     await categoryStore.getMenu();
-     await categoryStore.getItems();
-}
+const categoryStore = useCategoryStore();
 
 const menu = ref({
-      id: "0",
-      items: []
-    });
-    
-const subtitleItem = ref('');
+    id: "",
+    products: []
+});
 
-const getMenu = (id: string, subtitle: string) => { 
-    subtitleItem.value = subtitle;
-    categoryStore.items.forEach(element => {
-        if(id == element.id){
-            menu.value = element; 
-            return  
-        }
-    });
-}
+const subtitleItem = ref('');
 
 onMounted(async () => {
     await loadData();
-    const firstMenu = categoryStore.menu[0];
+    const firstMenu = categoryStore.categorys[0];
     const Id =  firstMenu.id;
     const title = firstMenu.title;
     getMenu(Id, title);
 });
+
+const loadData = async () => {
+     await categoryStore.getCategorys();
+     await categoryStore.getMenus();
+}
+
+const getMenu = (id: string, subtitle: string) => { 
+    subtitleItem.value = subtitle;
+    categoryStore.menus.forEach( (e: any) => {
+        if(id == e.id) menu.value = e;
+    });
+}
 </script>
 
 <template>
     <div class="menu-horizontal">
-        <div v-for="(menu, index) in categoryStore.menu" :key="index">
-            <button @click="getMenu(menu.id, menu.title)">{{ menu.title }}</button>
+        <div v-for="(category, index) in categoryStore.categorys" :key="index">
+            <button @click="getMenu(category.id, category.title)">{{ category.title }}</button>
         </div>
     </div>
     <h3> {{ subtitleItem }} </h3>
     <div>
         <ul class="card-product">
-            <li v-for="(element, index) in menu.items" :key="index">
-                <card-products :title="element.title" :description="element.description" :value="element.value" />
+            <li v-for="(product, index) in menu.products" :key="index">
+                <card-products :menuId="menu.id" :product="product"/>
             </li>
         </ul>
     </div>
