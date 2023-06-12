@@ -52,6 +52,7 @@ const handleInput = (e: Event) => {
   <div class="base-input">
     <label> {{ props.label }} </label>
     <input :type="props.inputType" :placeholder="props.placeholder" autofocus="true"  :value="modelValue" @input="(e) => handleInput(e)"/>
+    <label v-if="props.errorMessage"> {{ props.errorMessage }} </label>
   </div>
 </template>
 <style lang="scss" scoped>

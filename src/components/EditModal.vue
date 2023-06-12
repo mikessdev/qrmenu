@@ -4,6 +4,7 @@ import { reactive } from "vue";
 import { useCategoryStore } from "@/store/categoryStore"; 
 import { Product } from "@/utils/types/Product";
 import BaseInput from "@/components/BaseInput.vue";
+import { validateEmptyText } from "@/validators/emptyText";
 
 const props = defineProps({
     product: {
@@ -13,10 +14,30 @@ const props = defineProps({
 })
 
 const viewState = reactive({
-    id: props.product.id,
-    title: props.product.title, 
-    description: props.product.description,
-    value: props.product.value
+  id: props.product.id,
+  title: {
+    value: props.product.title ?? "",
+    error: "",
+    validator: () => {
+        viewState.title.error = validateEmptyText(viewState.title.value)
+    }
+  },
+  description: {
+    value: props.product.description ?? "",
+    error: "",
+    validator: () => {
+        viewState.description.error = validateEmptyText(viewState.description.value)
+    }
+  },
+  value: {
+    value: props.product.value ?? "",
+    error: "",
+    validator: () => {
+        viewState.value.error = validateEmptyText(viewState.value.value)
+    }
+  },
+
+   
 })
 
 const emit = defineEmits(["closeEditModal", "saveData"]);
@@ -26,22 +47,50 @@ const cancel = () => {
 }
 
 const save = () => { 
-    emit('saveData', viewState); 
+    let newDate = {} as Product;
+    newDate.id = viewState.id; 
+    newDate.title = viewState.title.value; 
+    newDate.description = viewState.description.value;
+    newDate.value = viewState.value.value;
+    emit('saveData', newDate); 
 }
 </script>
 <template>
     <div class="Dialog">
         <div class="img-food">
-            <img src="@/assets/img/imgComida.jpg" alt="img-produto">
+            <img 
+                src="@/assets/img/imgComida.jpg" 
+                alt="img-produto">
         </div>
         <div class="card-data">
-            <BaseInput type="text" v-model="viewState.title"/>
-            <BaseInput type="text" v-model="viewState.description"/>
-            <BaseInput type="text" v-model="viewState.value"/>
+            <BaseInput 
+                type="text" 
+                @validate="viewState.title.validator" 
+                label="Título" 
+                v-model="viewState.title.value" 
+                :error-message="viewState.title.error"/>
+            <BaseInput 
+                type="text" 
+                @validate="viewState.description.validator" 
+                label="Descrição" 
+                v-model="viewState.description.value" 
+                :error-message="viewState.description.error"/>
+            <BaseInput 
+                type="text" 
+                @validate="viewState.value.validator" 
+                label="Valor" 
+                v-model="viewState.value.value" 
+                :error-message="viewState.value.error"/>
         </div>
         <div>
-            <Button @click="cancel" :label="'Cancelar'" :type="'button'"/>
-            <Button @click="save" :label="'Salvar'" :type="'button'"/>
+            <Button 
+                @click="cancel" 
+                :label="'Cancelar'" 
+                :type="'button'"/>
+            <Button 
+                @click="save" 
+                :label="'Salvar'" 
+                :type="'button'"/>
         </div>
     </div>
 

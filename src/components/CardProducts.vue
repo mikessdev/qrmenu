@@ -27,7 +27,6 @@ const toggleEditModal = () => {
 
 const updateCard = (newData: Product) => {
     let oldData: Product = props.product; 
-
     if(JSON.stringify(newData) == JSON.stringify(oldData)){
         toggleEditModal();
     }else{

@@ -48,6 +48,7 @@ const getMenu = (id: string, subtitle: string) => {
 }
 
 const addNewCard = (NewCardData: Product) => { 
+    console.log("addNewCard")
     for(let menu of categoryStore.menus){
         if(menu.id == currentCategoryId.value){
             menu.products.push(NewCardData);
