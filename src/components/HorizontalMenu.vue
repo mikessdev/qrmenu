@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useCategoryStore } from '@/store/categoryStore';
-import { useUserStore } from "@/store/userStore";
 import CardProducts from "@/components/CardProducts.vue";
 import PlusIcon from "@/components/icons/PlusIcon.vue";
 import { Category } from "@/utils/types/Category";
+import { Product } from "@/utils/types/Product";
+import EditModal from "@/components/EditModal.vue";
+import { useCategoryStore } from '@/store/categoryStore';
+import { useUserStore } from "@/store/userStore";
 
 const categoryStore = useCategoryStore();
 const userStore = useUserStore();
@@ -16,27 +18,35 @@ const menu = ref({
 });
 
 const subTitle = ref('');
+const  showEditModal = ref(false);
+
 
 const loadData = async () => {
-     await categoryStore.getCategorys();
-     await categoryStore.getMenus();
+    await categoryStore.getCategorys();
+    await categoryStore.getMenus();
 }
 
 onMounted(async () => {
     await loadData();
     const firstMenu: Category  = categoryStore.categorys[0];
-    console.log("teste", JSON.stringify(firstMenu))
     const Id =  firstMenu.id;
     const title = firstMenu.title;
     getMenu(Id, title);
 });
 
+const toggleEditModal = () => { 
+    showEditModal.value = !showEditModal.value;
+}
 
 const getMenu = (id: string, subtitle: string) => { 
     subTitle.value = subtitle;
     categoryStore.menus.forEach( (e: any) => {
         if(id == e.id) menu.value = e;
     });
+}
+
+const addNewCard = (NewCardData: Product) => { 
+    // let menuIndex: number = findIndex(categoryStore.menus, props.menuId);
 }
 </script>
 
@@ -50,7 +60,8 @@ const getMenu = (id: string, subtitle: string) => {
     <div>
         <ul class="card-product">
             <li v-if="userStore.isAdmin">
-                <PlusIcon :color="'black'"/>
+                <PlusIcon @click="toggleEditModal" :color="'black'"/>
+                <EditModal v-if="showEditModal" @close-edit-modal="toggleEditModal" @save-data="(newData) => addNewCard(newData)"/>
             </li>
             <li v-for="(product, index) in menu.products" :key="index">
                 <card-products :menuId="menu.id" :product="product"/>
