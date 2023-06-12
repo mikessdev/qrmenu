@@ -40,11 +40,18 @@ const props = defineProps({
     type: String,
   },
 });
+
+const emit = defineEmits(['update:modelValue', 'validate'])
+
+const handleInput = (e: Event) => {
+  emit('update:modelValue', (e.target as HTMLInputElement).value ?? '')
+  emit('validate');
+}
 </script>
 <template>
   <div class="base-input">
     <label> {{ props.label }} </label>
-    <input :type="props.inputType" :placeholder="props.placeholder" autofocus="true" />
+    <input :type="props.inputType" :placeholder="props.placeholder" autofocus="true"  :value="modelValue" @input="(e) => handleInput(e)"/>
   </div>
 </template>
 <style lang="scss" scoped>

@@ -3,6 +3,7 @@ import Button from "@/components/Button.vue";
 import { reactive } from "vue";
 import { useCategoryStore } from "@/store/categoryStore"; 
 import { Product } from "@/utils/types/Product";
+import BaseInput from "@/components/BaseInput.vue";
 
 const props = defineProps({
     product: {
@@ -34,9 +35,9 @@ const save = () => {
             <img src="@/assets/img/imgComida.jpg" alt="img-produto">
         </div>
         <div class="card-data">
-            <input type="text" v-model="viewState.title">
-            <input type="text" v-model="viewState.description">
-            <input type="text" v-model="viewState.value">
+            <BaseInput type="text" v-model="viewState.title"/>
+            <BaseInput type="text" v-model="viewState.description"/>
+            <BaseInput type="text" v-model="viewState.value"/>
         </div>
         <div>
             <Button @click="cancel" :label="'Cancelar'" :type="'button'"/>

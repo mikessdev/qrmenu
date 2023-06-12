@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import CardProducts from "@/components/CardProducts.vue";
 import PlusIcon from "@/components/icons/PlusIcon.vue";
 import { Category } from "@/utils/types/Category";
+import { Menu } from "@/utils/types/Menu";
 import { Product } from "@/utils/types/Product";
 import EditModal from "@/components/EditModal.vue";
 import { useCategoryStore } from '@/store/categoryStore';
@@ -18,8 +19,8 @@ const menu = ref({
 });
 
 const subTitle = ref('');
-const  showEditModal = ref(false);
-
+const showEditModal = ref(false);
+const currentCategoryId = ref('');
 
 const loadData = async () => {
     await categoryStore.getCategorys();
@@ -29,9 +30,9 @@ const loadData = async () => {
 onMounted(async () => {
     await loadData();
     const firstMenu: Category  = categoryStore.categorys[0];
-    const Id =  firstMenu.id;
+    currentCategoryId.value =  firstMenu.id;
     const title = firstMenu.title;
-    getMenu(Id, title);
+    getMenu(currentCategoryId.value, title);
 });
 
 const toggleEditModal = () => { 
@@ -39,14 +40,20 @@ const toggleEditModal = () => {
 }
 
 const getMenu = (id: string, subtitle: string) => { 
+    currentCategoryId.value = id;
     subTitle.value = subtitle;
-    categoryStore.menus.forEach( (e: any) => {
-        if(id == e.id) menu.value = e;
-    });
+    for(let e of categoryStore.menus){
+        if(id == e.id) return menu.value = e;
+    }
 }
 
 const addNewCard = (NewCardData: Product) => { 
-    // let menuIndex: number = findIndex(categoryStore.menus, props.menuId);
+    for(let menu of categoryStore.menus){
+        if(menu.id == currentCategoryId.value){
+            menu.products.push(NewCardData);
+            return toggleEditModal();
+        }
+    }
 }
 </script>
 
