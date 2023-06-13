@@ -12,26 +12,42 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isDisabled: {
+    type: Boolean,
+    default: false,
+  },
 });
+
 </script>
 <template>
-    <input :type="props.type" :value="$props.label"/>
+    <input :class="[props.isDisabled ? 'isDisabled' : 'isEnabled']" :type="props.type" :value="$props.label"/>
 </template>
 <style lang="scss" scoped>
-input {
+.isEnabled {
     background-color: $qrmenu-red;
-    color: #fff;
+    color: $qrmenu-white;
     font-size: 14px;
     font-weight: 600;
-    border: none !important;
+    border: none;
     transition: all linear 160ms;
     cursor: pointer;
-    margin: 0 !important;
+    margin: 0;
 
     &hover {
         transform: scale(1.05);
         background-color: $qrmenu-red;
     }
 
+}
+
+.isDisabled {
+    background-color: $qrmenu-gray;
+    color: $qrmenu-white;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    transition: all linear 160ms;
+    cursor: pointer;
+    margin: 0;
 }
 </style>
