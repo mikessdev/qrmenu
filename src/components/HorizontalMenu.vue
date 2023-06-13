@@ -3,7 +3,6 @@ import { ref, onMounted } from "vue";
 import CardProducts from "@/components/CardProducts.vue";
 import PlusIcon from "@/components/icons/PlusIcon.vue";
 import { Category } from "@/utils/types/Category";
-import { Menu } from "@/utils/types/Menu";
 import { Product } from "@/utils/types/Product";
 import EditModal from "@/components/EditModal.vue";
 import { useCategoryStore } from '@/store/categoryStore';
@@ -48,7 +47,6 @@ const getMenu = (id: string, subtitle: string) => {
 }
 
 const addNewCard = (NewCardData: Product) => { 
-    console.log("addNewCard")
     for(let menu of categoryStore.menus){
         if(menu.id == currentCategoryId.value){
             menu.products.push(NewCardData);

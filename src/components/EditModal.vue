@@ -1,9 +1,8 @@
 <script setup lang="ts">
+import { reactive, ref, watch } from "vue";
 import Button from "@/components/Button.vue";
-import { reactive } from "vue";
-import { useCategoryStore } from "@/store/categoryStore"; 
-import { Product } from "@/utils/types/Product";
 import BaseInput from "@/components/BaseInput.vue";
+import { Product } from "@/utils/types/Product";
 import { validateEmptyText } from "@/validators/emptyText";
 
 const props = defineProps({
@@ -13,31 +12,31 @@ const props = defineProps({
     }
 })
 
+const buttonIsDisabled = ref(true);
+
 const viewState = reactive({
   id: props.product.id,
   title: {
     value: props.product.title ?? "",
     error: "",
     validator: () => {
-        viewState.title.error = validateEmptyText(viewState.title.value)
+        viewState.title.error = validateEmptyText(viewState.title.value);
     }
   },
   description: {
     value: props.product.description ?? "",
     error: "",
     validator: () => {
-        viewState.description.error = validateEmptyText(viewState.description.value)
+        viewState.description.error = validateEmptyText(viewState.description.value);
     }
   },
   value: {
     value: props.product.value ?? "",
     error: "",
     validator: () => {
-        viewState.value.error = validateEmptyText(viewState.value.value)
+        viewState.value.error = validateEmptyText(viewState.value.value);
     }
   },
-
-   
 })
 
 const emit = defineEmits(["closeEditModal", "saveData"]);
@@ -47,16 +46,26 @@ const cancel = () => {
 }
 
 const save = () => { 
-    let newDate = {} as Product;
-    newDate.id = viewState.id; 
-    newDate.title = viewState.title.value; 
-    newDate.description = viewState.description.value;
-    newDate.value = viewState.value.value;
-    emit('saveData', newDate); 
+    if(!buttonIsDisabled.value){
+        let newDate = {} as Product;
+        newDate.id = viewState.id; 
+        newDate.title = viewState.title.value; 
+        newDate.description = viewState.description.value;
+        newDate.value = viewState.value.value;
+        emit('saveData', newDate); 
+    }
 }
+
+watch(viewState, () => {
+    const isTitleEmpty = !!validateEmptyText(viewState.title.value);
+    const isDescriptionEmpty = !!validateEmptyText(viewState.description.value);
+    const isValueEmpty = !!validateEmptyText(viewState.value.value);
+    buttonIsDisabled.value = isTitleEmpty || isDescriptionEmpty || isValueEmpty;
+});
+
 </script>
 <template>
-    <div class="Dialog">
+    <div class="dialog">
         <div class="img-food">
             <img 
                 src="@/assets/img/imgComida.jpg" 
@@ -90,13 +99,14 @@ const save = () => {
             <Button 
                 @click="save" 
                 :label="'Salvar'" 
-                :type="'button'"/>
+                :type="'button'"
+                :is-disabled="buttonIsDisabled"/>
         </div>
     </div>
 
 </template>
 <style scoped lang="scss">
-    .Dialog {
+    .dialog {
         background-color: gray;
         position: absolute;
         width: 300px;
