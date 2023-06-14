@@ -63,13 +63,13 @@ const addNewCard = (NewCardData: Product) => {
         </div>
     </div>
     <h3> {{ subTitle }} </h3>
-        <ul class="card-product">
+        <ul>
+            <li class="cards" v-for="(product, index) in menu.products" :key="index">
+                <CardProducts :menuId="menu.id" :product="product"/>
+            </li>
             <li class="add-card" v-if="userStore.isAdmin">
                 <PlusIcon @click="toggleEditModal" :color="'black'"/>
                 <EditModal v-if="showEditModal" @close-edit-modal="toggleEditModal" @save-data="(newData) => addNewCard(newData)"/>
-            </li>
-            <li v-for="(product, index) in menu.products" :key="index">
-                <card-products :menuId="menu.id" :product="product"/>
             </li>
         </ul>
 </template>
@@ -80,7 +80,7 @@ const addNewCard = (NewCardData: Product) => {
         margin: 0 auto;
         display: flex;
         overflow-x: auto;
-
+        
         div {
             min-height: 2.2rem;
             padding: 0 3px;
@@ -91,7 +91,7 @@ const addNewCard = (NewCardData: Product) => {
                 font-size: 1rem;
                 font-weight: bold;
                 padding: 5px 10px;
-
+                
                 &:hover, &:focus{
                     background-color: $qrmenu-gray;
                     color: $qrmenu-white;
@@ -109,20 +109,36 @@ const addNewCard = (NewCardData: Product) => {
         margin: 10px 0;
         padding: 7px 10px;
     }       
-    .card-product {
+    ul {
         font-family: 'Noto Sans';
         list-style: none;
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        justify-content: center;
+        justify-content: space-around;
+
+        .add-card{
+            display: flex;
+            align-items: center;
+            width: 400px;
+            height: 200px;
+            // margin-left: 40px;
+        }
+
+        @media (max-width: 799px) {
+            .add-card {
+                justify-content: center;
+                width: 400px;
+                height: 100px;
+            }
+        }
+        
     }
-    .add-card{
-        position: absolute;
-    }
+    
     @media (min-width: 585px) {
         .menu-horizontal {
             justify-content: center;
         }
+    
     }
 </style>

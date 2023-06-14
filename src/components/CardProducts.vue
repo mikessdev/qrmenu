@@ -49,29 +49,44 @@ const findIndex = (array: Array<any>, id: string) => {
 
 <template>
     <div class="card">
-        <div class="img-food">
-            <img src="@/assets/img/imgComida.jpg" alt="img-produto">
+        <div class="card-information">
+            <div class="img-food">
+                <img src="@/assets/img/imgComida.jpg" alt="img-produto">
+            </div>
+            <div class="card-data">
+                <div>
+                    <h4>{{ props.product.title }}</h4>
+                    <p>{{ props.product.description }}</p>
+                </div>
+                <span>{{ props.product.value }}</span>
+            </div>
         </div>
-        <div class="card-data">
-            <h4>{{ props.product.title }}</h4>
-            <p>{{ props.product.description }}</p>
-            <span>{{ props.product.value }}</span>
+        <div class="icon">
+            <EditIcon 
+                v-if="userStore.isAdmin" 
+                @click="toggleEditModal" 
+                :color="'black'"/>
+            <EditModal 
+                v-if="showEditModal" 
+                @close-edit-modal="toggleEditModal" 
+                @save-data="(newData) => updateCard(newData)" 
+                :product="props.product"/>
         </div>
-        <EditIcon v-if="userStore.isAdmin" @click="toggleEditModal" :color="'black'"/>
-        <EditModal v-if="showEditModal" @close-edit-modal="toggleEditModal" @save-data="(newData) => updateCard(newData)" :product="props.product"/>
     </div>
 </template>
 
 <style lang="scss" scoped>
     .card {
-        width: 360px;
-        height: 170px;
+        width: 400px;
+        height: 200px;
         display: flex;
-        justify-content: space-between;
-        gap: 20px;
-        padding: 10px 0;
-
         border-bottom: 1px solid $qrmenu-gray;
+
+        .card-information{
+            display: flex;
+            width: 100%;
+        }
+
         .img-food {
             display: flex;
             align-items: center;
@@ -79,23 +94,40 @@ const findIndex = (array: Array<any>, id: string) => {
             img {
                 border: 2px solid $qrmenu-gray;
                 border-radius: 100%;
-                max-width: 80px;
+                width: 80px;
+                margin: 0 16px 0 16px;
             }
         }
+
         .card-data {
             display: flex;
             flex-direction: column;
-            word-break: break-word;
             justify-content: space-between;
+            word-break: break-word;
+            width: 100%;
+
+            h4{
+                margin: 16px 0 8px 0;
+            }
+
+            p{                
+                text-align: justify;
+            }
 
             span {
                 font-weight: bold;
+                margin: 8px 0 16px 0;
             }
         }
-    }
-    @media (max-width: 450px) {
-        .card {
-            width: 95vw;
+
+        .icon{
+            margin: 16px 16px 0 0;
         }
     }
+    @media (max-width: 400px) {
+            .card {
+                width: 100vw;
+                height: 90%;
+            }
+        }
 </style>
