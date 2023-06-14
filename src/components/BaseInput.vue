@@ -1,5 +1,9 @@
 <script setup lang="ts">
 const props = defineProps({
+  maxlength: {
+    type: String,
+    default: "",
+  },
   placeholder: {
     type: String,
     default: "",
@@ -51,7 +55,7 @@ const handleInput = (e: Event) => {
 <template>
   <div class="base-input">
     <label> {{ props.label }} </label>
-    <input :type="props.inputType" :placeholder="props.placeholder" autofocus="true"  :value="modelValue" @input="(e) => handleInput(e)"/>
+    <input :type="props.inputType" :placeholder="props.placeholder" autofocus="true" :maxlength="maxlength" :value="modelValue" @input="(e) => handleInput(e)"/>
     <label v-if="props.errorMessage"> {{ props.errorMessage }} </label>
   </div>
 </template>

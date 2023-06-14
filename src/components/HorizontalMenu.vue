@@ -63,9 +63,8 @@ const addNewCard = (NewCardData: Product) => {
         </div>
     </div>
     <h3> {{ subTitle }} </h3>
-    <div>
         <ul class="card-product">
-            <li v-if="userStore.isAdmin">
+            <li class="add-card" v-if="userStore.isAdmin">
                 <PlusIcon @click="toggleEditModal" :color="'black'"/>
                 <EditModal v-if="showEditModal" @close-edit-modal="toggleEditModal" @save-data="(newData) => addNewCard(newData)"/>
             </li>
@@ -73,12 +72,11 @@ const addNewCard = (NewCardData: Product) => {
                 <card-products :menuId="menu.id" :product="product"/>
             </li>
         </ul>
-    </div>
 </template>
 
 <style lang="scss" scoped>
     .menu-horizontal{
-        width: 100vw;
+        width: 95vw;
         margin: 0 auto;
         display: flex;
         overflow-x: auto;
@@ -117,6 +115,10 @@ const addNewCard = (NewCardData: Product) => {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
+        justify-content: center;
+    }
+    .add-card{
+        position: absolute;
     }
     @media (min-width: 585px) {
         .menu-horizontal {

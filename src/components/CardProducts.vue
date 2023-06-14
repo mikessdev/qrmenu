@@ -64,30 +64,38 @@ const findIndex = (array: Array<any>, id: string) => {
 
 <style lang="scss" scoped>
     .card {
+        width: 360px;
+        height: 170px;
         display: flex;
-        max-width: 300px;
-        justify-content: center;
+        justify-content: space-between;
         gap: 20px;
-        padding-bottom: 10px;
-        margin-bottom: 10px;
+        padding: 10px 0;
+
         border-bottom: 1px solid $qrmenu-gray;
-        .img-food img {
+        .img-food {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            border: 2px solid $qrmenu-gray;
-            max-width: 80px;
-            border-radius: 100%;
+
+            img {
+                border: 2px solid $qrmenu-gray;
+                border-radius: 100%;
+                max-width: 80px;
+            }
         }
         .card-data {
             display: flex;
-            justify-content: center;
             flex-direction: column;
+            word-break: break-word;
+            justify-content: space-between;
+
+            span {
+                font-weight: bold;
+            }
         }
     }
     @media (max-width: 450px) {
         .card {
-            width: 100vw;
+            width: 95vw;
         }
     }
 </style>

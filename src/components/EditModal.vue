@@ -74,17 +74,20 @@ watch(viewState, () => {
         <div class="card-data">
             <BaseInput 
                 type="text" 
+                maxlength="40"
                 @validate="viewState.title.validator" 
                 label="Título" 
                 v-model="viewState.title.value" 
                 :error-message="viewState.title.error"/>
             <BaseInput 
                 type="text" 
+                maxlength="100"
                 @validate="viewState.description.validator" 
                 label="Descrição" 
                 v-model="viewState.description.value" 
                 :error-message="viewState.description.error"/>
             <BaseInput 
+                maxlength="10"
                 type="text" 
                 @validate="viewState.value.validator" 
                 label="Valor" 
