@@ -1,8 +1,40 @@
 <script setup lang="ts">
-import ArrowBackIcon from '@/components/icons/ArrowBackIcon.vue';
 import Header from '@/components/Header.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import Button from '@/components/Button.vue';
+import { reactive, ref, watch } from 'vue';
+import { validateEmptyText } from '@/validators/emptyText';
+
+//TODO: Write validation for email and for password
+
+const buttonIsDisabled = ref(true);
+
+const viewState = reactive({
+  email: {
+    value: "",
+    error: "",
+    validator: () => {
+        viewState.email.error = validateEmptyText(viewState.email.value);
+    }
+  },
+  password: {
+    value: "",
+    error: "",
+    validator: () => {
+        viewState.password.error = validateEmptyText(viewState.password.value);
+    }
+  },
+})
+
+const submit = (e: any) => {
+  e.preventDefault();
+}
+
+watch(viewState, () => {
+    const isEmailEmpty = !!validateEmptyText(viewState.email.value);
+    const isPasswordEmpty = !!validateEmptyText(viewState.password.value);
+    buttonIsDisabled.value = isEmailEmpty || isPasswordEmpty;
+});
 
 </script>
 <template>
@@ -10,9 +42,25 @@ import Button from '@/components/Button.vue';
     <Header :isLoginPage="true"/>
         <form method="POST">
             <h1>Login</h1>
-            <BaseInput :label="'E-mail'" :inputType="'email'" :placeholder="'Digite seu e-mail'" />
-            <BaseInput :label="'Senha'" :inputType="'password'" :placeholder="'Digite sua senha'" />
-            <Button :type="'submit'" :label="'Acessar'" />
+            <BaseInput 
+              :label="'E-mail'" 
+              :inputType="'email'" 
+              :placeholder="'Digite seu e-mail'" 
+              v-model="viewState.email.value" 
+              :error-message="viewState.email.error" 
+              @validate="viewState.email.validator" />
+            <BaseInput 
+              :label="'Senha'" 
+              :inputType="'password'" 
+              :placeholder="'Digite sua senha'"
+              v-model="viewState.password.value" 
+              :error-message="viewState.password.error" 
+              @validate="viewState.password.validator" />
+            <Button 
+              :type="'submit'" 
+              :label="'Acessar'" 
+              @click="(e) => submit(e)" 
+              :is-disabled="buttonIsDisabled"/>
         </form>
     </div>
     

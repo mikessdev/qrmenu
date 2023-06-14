@@ -2,7 +2,6 @@
 import Header from "@/components/Header.vue";
 import Hero from "@/components/Hero.vue";
 import HorizontalMenu from "@/components/HorizontalMenu.vue";
-import Category from "@/utils/types/Category";
 
 </script>
 
@@ -15,9 +14,8 @@ import Category from "@/utils/types/Category";
 </template>
 
 <style lang="scss" scoped>
-  //teste de background irei arrumar ainda
   main {
-    background: $qrmenu-white;
-    margin-top: 60px;
+    background: $qrmenu-grayish-white;
+    padding-top: 60px;
   }
 </style>

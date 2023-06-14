@@ -1,65 +1,86 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import Category from '@/utils/types/Menumenu';
-import MenuItem from '@/utils/types/MenuItem';
-import { userCategoryStore } from '@/store/categoryStore';
 import CardProducts from "@/components/CardProducts.vue";
+import PlusIcon from "@/components/icons/PlusIcon.vue";
+import { Category } from "@/utils/types/Category";
+import { Product } from "@/utils/types/Product";
+import EditModal from "@/components/EditModal.vue";
+import { useCategoryStore } from '@/store/categoryStore';
+import { useUserStore } from "@/store/userStore";
 
-const categoryStore = userCategoryStore();
+const categoryStore = useCategoryStore();
+const userStore = useUserStore();
 
-const loadData = async () => {
-     await categoryStore.getMenu();
-     await categoryStore.getItems();
-}
 
 const menu = ref({
-      id: "0",
-      items: []
-    });
-    
-const subtitleItem = ref('');
+    id: "",
+    products: []
+});
 
-const getMenu = (id: string, subtitle: string) => { 
-    subtitleItem.value = subtitle;
-    categoryStore.items.forEach(element => {
-        if(id == element.id){
-            menu.value = element; 
-            return  
-        }
-    });
+const subTitle = ref('');
+const showEditModal = ref(false);
+const currentCategoryId = ref('');
+
+const loadData = async () => {
+    await categoryStore.getCategorys();
+    await categoryStore.getMenus();
 }
 
 onMounted(async () => {
     await loadData();
-    const firstMenu = categoryStore.menu[0];
-    const Id =  firstMenu.id;
+    const firstMenu: Category  = categoryStore.categorys[0];
+    currentCategoryId.value =  firstMenu.id;
     const title = firstMenu.title;
-    getMenu(Id, title);
+    getMenu(currentCategoryId.value, title);
 });
+
+const toggleEditModal = () => { 
+    showEditModal.value = !showEditModal.value;
+}
+
+const getMenu = (id: string, subtitle: string) => { 
+    currentCategoryId.value = id;
+    subTitle.value = subtitle;
+    for(let e of categoryStore.menus){
+        if(id == e.id) return menu.value = e;
+    }
+}
+
+const addNewCard = (NewCardData: Product) => { 
+    for(let menu of categoryStore.menus){
+        if(menu.id == currentCategoryId.value){
+            menu.products.push(NewCardData);
+            return toggleEditModal();
+        }
+    }
+}
 </script>
 
 <template>
     <div class="menu-horizontal">
-        <div v-for="(menu, index) in categoryStore.menu" :key="index">
-            <button @click="getMenu(menu.id, menu.title)">{{ menu.title }}</button>
+        <div v-for="(category, index) in categoryStore.categorys" :key="index">
+            <button @click="getMenu(category.id, category.title)">{{ category.title }}</button>
         </div>
     </div>
-    <h3> {{ subtitleItem }} </h3>
-    <div>
-        <ul class="card-product">
-            <li v-for="(element, index) in menu.items" :key="index">
-                <card-products :title="element.title" :description="element.description" :value="element.value" />
+    <h3> {{ subTitle }} </h3>
+        <ul>
+            <li class="cards" v-for="(product, index) in menu.products" :key="index">
+                <CardProducts :menuId="menu.id" :product="product"/>
+            </li>
+            <li class="add-card" v-if="userStore.isAdmin">
+                <PlusIcon @click="toggleEditModal" :color="'black'"/>
+                <EditModal v-if="showEditModal" @close-edit-modal="toggleEditModal" @save-data="(newData) => addNewCard(newData)"/>
             </li>
         </ul>
-    </div>
 </template>
 
 <style lang="scss" scoped>
     .menu-horizontal{
-        width: 100vw;
+        width: 95vw;
         margin: 0 auto;
         display: flex;
         overflow-x: auto;
+        
         div {
             min-height: 2.2rem;
             padding: 0 3px;
@@ -70,6 +91,7 @@ onMounted(async () => {
                 font-size: 1rem;
                 font-weight: bold;
                 padding: 5px 10px;
+                
                 &:hover, &:focus{
                     background-color: $qrmenu-gray;
                     color: $qrmenu-white;
@@ -87,16 +109,36 @@ onMounted(async () => {
         margin: 10px 0;
         padding: 7px 10px;
     }       
-    .card-product {
+    ul {
         font-family: 'Noto Sans';
         list-style: none;
         display: flex;
-        flex-direction: column;
+        flex-wrap: wrap;
         align-items: center;
+        justify-content: space-around;
+
+        .add-card{
+            display: flex;
+            align-items: center;
+            width: 400px;
+            height: 200px;
+            // margin-left: 40px;
+        }
+
+        @media (max-width: 799px) {
+            .add-card {
+                justify-content: center;
+                width: 400px;
+                height: 100px;
+            }
+        }
+        
     }
+    
     @media (min-width: 585px) {
         .menu-horizontal {
             justify-content: center;
         }
+    
     }
 </style>
