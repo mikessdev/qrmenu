@@ -1,48 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import EditIcon from "@/components/icons/EditIcon.vue";
-import EditModal from "@/components/EditModal.vue";
 import { useUserStore } from "@/store/userStore";
-import { useCategoryStore } from '@/store/categoryStore';
-import { Product } from "@/utils/types/Category";
 
 const userStore = useUserStore();
-const categoryStore = useCategoryStore();
+
+const emit = defineEmits(["editCardData"]);
 
 const props = defineProps({
     product: {
         type: Object, 
         default: {}
-    },
-    menuId: {
-        type: String,
-        default: {}
     }
 })
-const showEditModal = ref(false);
 
-const toggleEditModal = () => { 
-    showEditModal.value = !showEditModal.value;
-}
-
-const updateCard = (newData: Product) => {
-    let oldData: Product = props.product; 
-    if(JSON.stringify(newData) == JSON.stringify(oldData)){
-        toggleEditModal();
-    }else{
-        let menuIndex: number = findIndex(categoryStore.menus, props.menuId);
-        let productIndex: number = findIndex(categoryStore.menus[menuIndex].products, newData.id);
-        categoryStore.menus[menuIndex].products[productIndex] = newData;
-        toggleEditModal();
-    }
-
-}
-
-const findIndex = (array: Array<any>, id: string) => {
-    let menuIndex = array.findIndex((e: any) => {
-            return e.id == id;
-        })
-    return menuIndex;
+const editCardData = () => {
+    emit("editCardData", props.product);
 }
 
 </script>
@@ -64,13 +37,8 @@ const findIndex = (array: Array<any>, id: string) => {
         <div class="icon">
             <EditIcon 
                 v-if="userStore.isAdmin" 
-                @click="toggleEditModal" 
+                @click="editCardData" 
                 :color="'black'"/>
-            <EditModal 
-                v-if="showEditModal" 
-                @close-edit-modal="toggleEditModal" 
-                @save-data="(newData) => updateCard(newData)" 
-                :product="props.product"/>
         </div>
     </div>
 </template>

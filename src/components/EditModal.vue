@@ -31,7 +31,7 @@ const viewState = reactive({
     }
   },
   value: {
-    value: props.product.value ?? "",
+    value: props.product.value ?? "R$ 00,00",
     error: "",
     validator: () => {
         viewState.value.error = validateEmptyText(viewState.value.value);
@@ -65,75 +65,107 @@ watch(viewState, () => {
 
 </script>
 <template>
-    <div class="dialog">
-        <div class="img-food">
-            <img 
-                src="@/assets/img/imgComida.jpg" 
-                alt="img-produto">
-        </div>
-        <div class="card-data">
-            <BaseInput 
-                type="text" 
-                maxlength="40"
-                @validate="viewState.title.validator" 
-                label="Título" 
-                v-model="viewState.title.value" 
-                :error-message="viewState.title.error"/>
-            <BaseInput 
-                type="text" 
-                maxlength="100"
-                @validate="viewState.description.validator" 
-                label="Descrição" 
-                v-model="viewState.description.value" 
-                :error-message="viewState.description.error"/>
-            <BaseInput 
-                maxlength="10"
-                type="text" 
-                @validate="viewState.value.validator" 
-                label="Valor" 
-                v-model="viewState.value.value" 
-                :error-message="viewState.value.error"/>
-        </div>
-        <div>
-            <Button 
-                @click="cancel" 
-                :label="'Cancelar'" 
-                :type="'button'"/>
-            <Button 
-                @click="save" 
-                :label="'Salvar'" 
-                :type="'button'"
-                :is-disabled="buttonIsDisabled"/>
+    <div class="dialog-background">
+        <div class="dialog">
+            <div class="img-food">
+                <img 
+                    src="@/assets/img/imgComida.jpg" 
+                    alt="img-produto">
+            </div>
+            <div class="card-data">
+                <BaseInput 
+                    type="text" 
+                    maxlength="40"
+                    @validate="viewState.title.validator" 
+                    label="Título" 
+                    v-model="viewState.title.value" 
+                    :error-message="viewState.title.error"/>
+                <BaseInput 
+                    type="text" 
+                    maxlength="100"
+                    @validate="viewState.description.validator" 
+                    label="Descrição" 
+                    v-model="viewState.description.value" 
+                    :error-message="viewState.description.error"
+                    :text-area="true"/>
+                <BaseInput 
+                    maxlength="10"
+                    type="text" 
+                    @validate="viewState.value.validator" 
+                    label="Valor" 
+                    v-model="viewState.value.value" 
+                    :error-message="viewState.value.error"/>
+                    <div class="icons">
+                        <Button 
+                            @click="cancel" 
+                            :label="'Cancelar'" 
+                            :type="'button'"/>
+                        <Button 
+                            @click="save" 
+                            :label="'Salvar'" 
+                            :type="'button'"
+                            :is-disabled="buttonIsDisabled"/>
+                    </div>
+            </div>
         </div>
     </div>
-
 </template>
 <style scoped lang="scss">
+.dialog-background{
+    font-family: 'Noto Sans';
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(30px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    z-index: 9999;
+
     .dialog {
-        background-color: gray;
-        position: absolute;
-        width: 300px;
-        height: 300px;
-        z-index: 99999;
+        background-color: $qrmenu-white;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(65, 72, 86, 0.05);
         display: flex;
-        max-width: 300px;
-        justify-content: center;
-        gap: 20px;
-        padding-bottom: 10px;
-        margin-bottom: 10px;
-        border-bottom: 1px solid $qrmenu-gray;
-        .img-food img {
+        flex-direction: column;
+        width: 400px;
+        height: 520px;
+        margin: auto auto;
+
+        .img-food {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            border: 2px solid $qrmenu-gray;
-            max-width: 80px;
-            border-radius: 100%;
+
+            img {
+                border: 2px solid $qrmenu-gray;
+                border-radius: 100%;
+                width: 80px;
+                margin: 16px auto;
+            }
         }
+
         .card-data {
             display: flex;
-            justify-content: center;
             flex-direction: column;
+            display: flex;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .icons{
+            display: flex;
+            justify-content: space-evenly;
+            width: 80%;
+            margin: 0 auto;
         }
     }
+    @media (max-width: 300px) {
+            .dialog  {
+                height: 550px;
+            }
+        }
+}
 </style>
+
