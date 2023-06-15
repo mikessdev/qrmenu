@@ -131,7 +131,7 @@ watch(viewState, () => {
         display: flex;
         flex-direction: column;
         width: 400px;
-        height: 520px;
+        height: 560px;
         margin: auto auto;
 
         .img-food {
@@ -142,7 +142,7 @@ watch(viewState, () => {
                 border: 2px solid $qrmenu-gray;
                 border-radius: 100%;
                 width: 80px;
-                margin: 16px auto;
+                margin: 16px auto 0 auto;
             }
         }
 
@@ -158,7 +158,7 @@ watch(viewState, () => {
             display: flex;
             justify-content: space-evenly;
             width: 80%;
-            margin: 0 auto;
+            margin: 16px auto 0 auto;
         }
     }
     @media (max-width: 300px) {
