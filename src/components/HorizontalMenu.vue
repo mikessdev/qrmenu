@@ -7,15 +7,22 @@ import { Product } from "@/utils/types/Product";
 import EditModal from "@/components/EditModal.vue";
 import { useCategoryStore } from '@/store/categoryStore';
 import { useUserStore } from "@/store/userStore";
+import type { Menu } from "@/utils/types/Menu";
 
 const categoryStore = useCategoryStore();
 const userStore = useUserStore();
-
 
 const menu = ref({
     id: "",
     products: []
 });
+
+const editModalData = ref({
+    id: '',
+    title: '', 
+    description: '',  
+    value: ''
+})
 
 const subTitle = ref('');
 const showEditModal = ref(false);
@@ -36,6 +43,12 @@ onMounted(async () => {
 
 const toggleEditModal = () => { 
     showEditModal.value = !showEditModal.value;
+    if(showEditModal.value === false) editModalData.value = {} as Product
+}
+
+const getEmitEditModal = (cardData: Product) => {
+    editModalData.value = cardData;
+    return toggleEditModal();
 }
 
 const getMenu = (id: string, subtitle: string) => { 
@@ -46,14 +59,39 @@ const getMenu = (id: string, subtitle: string) => {
     }
 }
 
+const saveData = (newData: Product) => {
+     !newData.id ? addNewCard(newData) : updateCard(newData);
+}
+
 const addNewCard = (NewCardData: Product) => { 
+    let products: Product[] = menu.value.products; 
+    let lastProductId: number = parseInt(products[products.length -1].id);
+    
     for(let menu of categoryStore.menus){
         if(menu.id == currentCategoryId.value){
+            NewCardData.id = `${++lastProductId}`;
             menu.products.push(NewCardData);
             return toggleEditModal();
         }
     }
 }
+
+const updateCard = (newData: Product) => {
+    let menus: Menu[] = categoryStore.menus;
+    let menuIndex: number = menus.findIndex((e: any)=>{
+        return e.id == menu.value.id
+    })
+
+    let products: Product[] = categoryStore.menus[menuIndex].products;
+    let productIndex: number = products.findIndex((e: any)=>{
+        return e.id == newData.id
+    })
+    
+    categoryStore.menus[menuIndex].products[productIndex] = newData;
+    toggleEditModal();
+    editModalData.value = {} as Product;
+}
+
 </script>
 
 <template>
@@ -65,13 +103,20 @@ const addNewCard = (NewCardData: Product) => {
     <h3> {{ subTitle }} </h3>
         <ul>
             <li class="cards" v-for="(product, index) in menu.products" :key="index">
-                <CardProducts :menuId="menu.id" :product="product"/>
+                <CardProducts 
+                    :menuId="menu.id" 
+                    :product="product" 
+                    @edit-card-data="(cardData) => getEmitEditModal(cardData)"/>
             </li>
             <li class="add-card" v-if="userStore.isAdmin">
                 <PlusIcon @click="toggleEditModal" :color="'black'"/>
-                <EditModal v-if="showEditModal" @close-edit-modal="toggleEditModal" @save-data="(newData) => addNewCard(newData)"/>
             </li>
         </ul>
+        <EditModal 
+            v-if="showEditModal" 
+            :product="editModalData"
+            @close-edit-modal="toggleEditModal" 
+            @save-data="(newData) => saveData(newData)"/>
 </template>
 
 <style lang="scss" scoped>

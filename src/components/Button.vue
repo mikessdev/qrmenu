@@ -20,34 +20,34 @@ const props = defineProps({
 
 </script>
 <template>
-    <input :class="[props.isDisabled ? 'isDisabled' : 'isEnabled']" :type="props.type" :value="$props.label"/>
+    <input class="button" :class="[props.isDisabled ? 'isDisabled' : 'isEnabled']" :type="props.type" :value="$props.label"/>
 </template>
 <style lang="scss" scoped>
+.button{
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  transition: all linear 160ms;
+  cursor: pointer;
+  margin: 0;
+  width: 80px;
+  padding: 10px 0;
+  border-radius: 4px;
+
+}
 .isEnabled {
     background-color: $qrmenu-red;
     color: $qrmenu-white;
-    font-size: 14px;
-    font-weight: 600;
-    border: none;
-    transition: all linear 160ms;
-    cursor: pointer;
-    margin: 0;
-
+    
     &hover {
-        transform: scale(1.05);
-        background-color: $qrmenu-red;
+      transform: scale(1.05);
+      background-color: $qrmenu-red;
     }
-
-}
-
-.isDisabled {
+    
+  }
+  
+  .isDisabled {
     background-color: $qrmenu-gray;
     color: $qrmenu-white;
-    font-size: 14px;
-    font-weight: 600;
-    border: none;
-    transition: all linear 160ms;
-    cursor: pointer;
-    margin: 0;
-}
+  }
 </style>
