@@ -31,7 +31,7 @@ const viewState = reactive({
     }
   },
   value: {
-    value: props.product.value ?? "",
+    value: props.product.value ?? "R$ 00,00",
     error: "",
     validator: () => {
         viewState.value.error = validateEmptyText(viewState.value.value);

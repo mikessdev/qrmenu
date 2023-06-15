@@ -56,21 +56,17 @@ const handleInput = (e: Event) => {
 }
 </script>
 <template>
-  <div v-if="props.textArea" class="base-input">
+  <div class="base-input">
     <label>
       {{ props.label }}
     </label>
-    <textarea class="text-area" :type="props.inputType" :placeholder="props.placeholder"
-      autofocus="true" :maxlength="maxlength" :value="modelValue" @input="(e) => handleInput(e)" />
+      <textarea v-if="props.textArea" class="text-area" :type="props.inputType" :placeholder="props.placeholder"
+        autofocus="true" :maxlength="maxlength" :value="modelValue" @input="(e) => handleInput(e)" />
+      <input v-else :type="props.inputType" :placeholder="props.placeholder" autofocus="true" :maxlength="maxlength"
+      :value="modelValue" @input="(e) => handleInput(e)" />
     <label v-if="props.errorMessage">
       {{ props.errorMessage }}
     </label>
-  </div>
-  <div v-else class="base-input">
-    <label> {{ props.label }} </label>
-    <input :type="props.inputType" :placeholder="props.placeholder" autofocus="true" :maxlength="maxlength"
-      :value="modelValue" @input="(e) => handleInput(e)" />
-    <label v-if="props.errorMessage"> {{ props.errorMessage }} </label>
   </div>
 </template>
 <style lang="scss" scoped>
