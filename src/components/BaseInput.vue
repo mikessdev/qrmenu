@@ -43,6 +43,9 @@ const props = defineProps({
   inputId: {
     type: String,
   },
+  textArea: {
+    type: Boolean,
+  },
 });
 
 const emit = defineEmits(['update:modelValue', 'validate'])
@@ -53,34 +56,57 @@ const handleInput = (e: Event) => {
 }
 </script>
 <template>
-  <div class="base-input">
+  <div v-if="props.textArea" class="base-input">
+    <label>
+      {{ props.label }}
+    </label>
+    <textarea class="text-area" :type="props.inputType" :placeholder="props.placeholder"
+      autofocus="true" :maxlength="maxlength" :value="modelValue" @input="(e) => handleInput(e)" />
+    <label v-if="props.errorMessage">
+      {{ props.errorMessage }}
+    </label>
+  </div>
+  <div v-else class="base-input">
     <label> {{ props.label }} </label>
-    <input :type="props.inputType" :placeholder="props.placeholder" autofocus="true" :maxlength="maxlength" :value="modelValue" @input="(e) => handleInput(e)"/>
+    <input :type="props.inputType" :placeholder="props.placeholder" autofocus="true" :maxlength="maxlength"
+      :value="modelValue" @input="(e) => handleInput(e)" />
     <label v-if="props.errorMessage"> {{ props.errorMessage }} </label>
   </div>
 </template>
 <style lang="scss" scoped>
-  .base-input{
-    display: flex;
-    flex-direction: column;
-    input{
-      padding: 15px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      margin-bottom: 20px;
-      margin-top: 5px;
-      border-radius: 4px;
-      transition: all linear 160ms;
-      outline: none;
-  
-      &:focus {
-        border: 1px solid $qrmenu-red;
-      } 
+.base-input {
+  display: flex;
+  flex-direction: column;
+
+  input, textarea {
+    padding: 15px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    margin-top: 5px;
+    border-radius: 4px;
+    transition: all linear 160ms;
+    outline: none;
+    
+    &:focus {
+      border: 1px solid $qrmenu-red;
     }
+  }
   
-    label{
-      font-size: 14px;
-      font-weight: 600;
+  textarea{
+    resize: none;
+    height: 120px;
+  }
+
+  label {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 300px) {
+    textarea{
+      height:180px;
+    }
   }
 }
 </style>
