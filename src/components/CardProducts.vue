@@ -49,45 +49,85 @@ const findIndex = (array: Array<any>, id: string) => {
 
 <template>
     <div class="card">
-        <div class="img-food">
-            <img src="@/assets/img/imgComida.jpg" alt="img-produto">
+        <div class="card-information">
+            <div class="img-food">
+                <img src="@/assets/img/imgComida.jpg" alt="img-produto">
+            </div>
+            <div class="card-data">
+                <div>
+                    <h4>{{ props.product.title }}</h4>
+                    <p>{{ props.product.description }}</p>
+                </div>
+                <span>{{ props.product.value }}</span>
+            </div>
         </div>
-        <div class="card-data">
-            <h4>{{ props.product.title }}</h4>
-            <p>{{ props.product.description }}</p>
-            <span>{{ props.product.value }}</span>
+        <div class="icon">
+            <EditIcon 
+                v-if="userStore.isAdmin" 
+                @click="toggleEditModal" 
+                :color="'black'"/>
+            <EditModal 
+                v-if="showEditModal" 
+                @close-edit-modal="toggleEditModal" 
+                @save-data="(newData) => updateCard(newData)" 
+                :product="props.product"/>
         </div>
-        <EditIcon v-if="userStore.isAdmin" @click="toggleEditModal" :color="'black'"/>
-        <EditModal v-if="showEditModal" @close-edit-modal="toggleEditModal" @save-data="(newData) => updateCard(newData)" :product="props.product"/>
     </div>
 </template>
 
 <style lang="scss" scoped>
     .card {
+        width: 400px;
+        height: 200px;
         display: flex;
-        max-width: 300px;
-        justify-content: center;
-        gap: 20px;
-        padding-bottom: 10px;
-        margin-bottom: 10px;
         border-bottom: 1px solid $qrmenu-gray;
-        .img-food img {
+
+        .card-information{
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            border: 2px solid $qrmenu-gray;
-            max-width: 80px;
-            border-radius: 100%;
+            width: 100%;
         }
+
+        .img-food {
+            display: flex;
+            align-items: center;
+
+            img {
+                border: 2px solid $qrmenu-gray;
+                border-radius: 100%;
+                width: 80px;
+                margin: 0 16px 0 16px;
+            }
+        }
+
         .card-data {
             display: flex;
-            justify-content: center;
             flex-direction: column;
+            justify-content: space-between;
+            word-break: break-word;
+            width: 100%;
+
+            h4{
+                margin: 16px 0 8px 0;
+            }
+
+            p{                
+                text-align: justify;
+            }
+
+            span {
+                font-weight: bold;
+                margin: 8px 0 16px 0;
+            }
+        }
+
+        .icon{
+            margin: 16px 16px 0 0;
         }
     }
-    @media (max-width: 450px) {
-        .card {
-            width: 100vw;
+    @media (max-width: 400px) {
+            .card {
+                width: 100vw;
+                height: 90%;
+            }
         }
-    }
 </style>

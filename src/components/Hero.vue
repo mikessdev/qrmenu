@@ -5,7 +5,7 @@
         </div>
         <h1>Cardápio de Hoje</h1>
         <div class="banner">
-            <img src="@/assets/img/heroRestaurant.png" alt="Banner">
+            <img src="@/assets/img/restaurantBanner.png" alt="Banner">
         </div>
     </div>
 </template>
@@ -27,7 +27,7 @@
             margin: 20px 0;
         }
         .banner img {
-            width: 100vw;
+            width: 100%;
         }
     }
 </style>
