@@ -43,6 +43,7 @@ onMounted(async () => {
 
 const toggleEditModal = () => { 
     showEditModal.value = !showEditModal.value;
+    if(showEditModal.value === false) editModalData.value = {} as Product
 }
 
 const getEmitEditModal = (cardData: Product) => {
@@ -59,13 +60,13 @@ const getMenu = (id: string, subtitle: string) => {
 }
 
 const saveData = (newData: Product) => {
-    return !newData.id ? addNewCard(newData) : updateCard(newData);
+     !newData.id ? addNewCard(newData) : updateCard(newData);
 }
 
 const addNewCard = (NewCardData: Product) => { 
     let products: Product[] = menu.value.products; 
     let lastProductId: number = parseInt(products[products.length -1].id);
-
+    
     for(let menu of categoryStore.menus){
         if(menu.id == currentCategoryId.value){
             NewCardData.id = `${++lastProductId}`;
@@ -85,7 +86,7 @@ const updateCard = (newData: Product) => {
     let productIndex: number = products.findIndex((e: any)=>{
         return e.id == newData.id
     })
-
+    
     categoryStore.menus[menuIndex].products[productIndex] = newData;
     toggleEditModal();
     editModalData.value = {} as Product;
