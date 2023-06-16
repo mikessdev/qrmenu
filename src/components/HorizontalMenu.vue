@@ -97,7 +97,7 @@ const updateCard = (newData: Product) => {
 <template>
     <div class="menu-horizontal">
         <div v-for="(category, index) in categoryStore.categorys" :key="index">
-            <button @click="getMenu(category.id, category.title)">{{ category.title }}</button>
+            <button @click="getMenu(category.id, category.title)" autofocus>{{ category.title }}</button>
         </div>
     </div>
     <h3> {{ subTitle }} </h3>
@@ -126,9 +126,10 @@ const updateCard = (newData: Product) => {
         display: flex;
         overflow-x: auto;
         
-        div {
+        div{
             min-height: 2.2rem;
             padding: 0 3px;
+
             button{
                 white-space: nowrap;
                 border: none;
@@ -143,10 +144,14 @@ const updateCard = (newData: Product) => {
                     border-radius: 15px;
                     cursor: pointer;
                 }
+                &:focus-visible{
+                    outline: none;
+
+                }
             }
         }
     }
-    h3 {
+    h3{
         font-family: 'Noto Sans';
         font-size: 16px;
         color: $qrmenu-white;
@@ -154,7 +159,7 @@ const updateCard = (newData: Product) => {
         margin: 10px 0;
         padding: 7px 10px;
     }       
-    ul {
+    ul{
         font-family: 'Noto Sans';
         list-style: none;
         display: flex;
@@ -170,7 +175,7 @@ const updateCard = (newData: Product) => {
             // margin-left: 40px;
         }
 
-        @media (max-width: 799px) {
+        @media(max-width: 799px){
             .add-card {
                 justify-content: center;
                 width: 400px;
@@ -180,7 +185,7 @@ const updateCard = (newData: Product) => {
         
     }
     
-    @media (min-width: 585px) {
+    @media(min-width: 585px){
         .menu-horizontal {
             justify-content: center;
         }
