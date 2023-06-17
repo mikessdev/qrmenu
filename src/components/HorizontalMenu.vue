@@ -15,7 +15,7 @@ const userStore = useUserStore();
 const menu = ref({
     id: "",
     products: []
-});
+} as Menu);
 
 const editModalData = ref({
     id: '',
@@ -55,6 +55,7 @@ const getMenu = (id: string, subtitle: string) => {
     currentCategoryId.value = id;
     subTitle.value = subtitle;
     for(let e of categoryStore.menus){
+        console.log(e)
         if(id == e.id) return menu.value = e;
     }
 }
@@ -64,30 +65,12 @@ const saveData = (newData: Product) => {
 }
 
 const addNewCard = (NewCardData: Product) => { 
-    let products: Product[] = menu.value.products; 
-    let lastProductId: number = parseInt(products[products.length -1].id);
-    
-    for(let menu of categoryStore.menus){
-        if(menu.id == currentCategoryId.value){
-            NewCardData.id = `${++lastProductId}`;
-            menu.products.push(NewCardData);
-            return toggleEditModal();
-        }
-    }
+    categoryStore.addNewProduct(NewCardData, menu.value);
+    return toggleEditModal();
 }
 
 const updateCard = (newData: Product) => {
-    let menus: Menu[] = categoryStore.menus;
-    let menuIndex: number = menus.findIndex((e: any)=>{
-        return e.id == menu.value.id
-    })
-
-    let products: Product[] = categoryStore.menus[menuIndex].products;
-    let productIndex: number = products.findIndex((e: any)=>{
-        return e.id == newData.id
-    })
-    
-    categoryStore.menus[menuIndex].products[productIndex] = newData;
+    categoryStore.updateProduct(newData, menu.value.id);
     toggleEditModal();
     editModalData.value = {} as Product;
 }
@@ -96,8 +79,11 @@ const updateCard = (newData: Product) => {
 
 <template>
     <div class="menu-horizontal">
-        <div v-for="(category, index) in categoryStore.categorys" :key="index">
+        <div class="menus" v-for="(category, index) in categoryStore.categorys" :key="index">
             <button @click="getMenu(category.id, category.title)" autofocus>{{ category.title }}</button>
+        </div>
+        <div class="add-menu" v-if="userStore.isAdmin">
+            <PlusIcon @click="toggleEditModal" :color="'black'" :width="30" :height="30"/>
         </div>
     </div>
     <h3> {{ subTitle }} </h3>
@@ -121,14 +107,16 @@ const updateCard = (newData: Product) => {
 
 <style lang="scss" scoped>
     .menu-horizontal{
-        width: 95vw;
+        width: 100vw;
         margin: 0 auto;
         display: flex;
+        align-items: center;
         overflow-x: auto;
         
-        div{
+        .menus{
             min-height: 2.2rem;
             padding: 0 3px;
+            display: flex;
 
             button{
                 white-space: nowrap;
@@ -144,6 +132,7 @@ const updateCard = (newData: Product) => {
                     border-radius: 15px;
                     cursor: pointer;
                 }
+                
                 &:focus-visible{
                     outline: none;
 
