@@ -47,6 +47,13 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     menus.value[menuIndex].products[productIndex] = newCardData;
     }
 
+    const updateCategory = async (newCategoryData: Category): Promise<void> => {
+        let categoryIndex: number = categorys.value.findIndex((e: any)=>{
+            return e.id == newCategoryData.id;
+        })
+        categorys.value[categoryIndex] = newCategoryData;
+    }
+
     const addNewCategory = async (newCategoryData: Category):Promise<void> => {
         categorys.value.push(newCategoryData);
     }
@@ -58,6 +65,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
         getMenus,
         updateProduct,
         addNewProduct,
-        addNewCategory
+        addNewCategory,
+        updateCategory
     }
 })

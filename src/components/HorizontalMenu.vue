@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import CardProducts from "@/components/CardProducts.vue";
 import PlusIcon from "@/components/icons/PlusIcon.vue";
+import EditIcon from "@/components/icons/EditIcon.vue"
 import { Category } from "@/utils/types/Category";
 import { Product } from "@/utils/types/Product";
 import EditModal from "@/components/EditModal.vue";
@@ -42,8 +43,10 @@ onMounted(async () => {
     getMenu(currentCategoryId.value, title);
 });
 
-const openEditModalForCategory = () => {
+const openEditModalForCategory = (categoryId: string, categoryTitle: string) => {
     isProduct.value = false; 
+    editModalData.value.id = categoryId;
+    editModalData.value.title = categoryTitle;
     toggleEditModal();
 }
 
@@ -65,7 +68,6 @@ const getMenu = (id: string, subtitle: string) => {
     currentCategoryId.value = id;
     subTitle.value = subtitle;
     for(let e of categoryStore.menus){
-        console.log(e)
         if(id == e.id) return menu.value = e;
     }
 }
@@ -74,8 +76,13 @@ const saveData = (newData: any) => {
     if(newData.description && newData.value){
         !newData.id ? addNewCard(newData) : updateCard(newData);
     }else{
-        !newData.id ? addNewCategory(newData) : addNewCategory(newData);
+        !newData.id ? addNewCategory(newData) : updateCategory(newData);
     }
+}
+
+const updateCategory = (NewCategoryData: Category) => {
+    categoryStore.updateCategory(NewCategoryData);
+    return toggleEditModal();
 }
 
 const addNewCategory = (NewCategoryData: Product) => { 
@@ -100,6 +107,14 @@ const updateCard = (newData: Product) => {
     <div class="menu-horizontal">
         <div class="menus" v-for="(category, index) in categoryStore.categorys" :key="index">
             <button @click="getMenu(category.id, category.title)" autofocus>{{ category.title }}</button>
+            <div class="icon">
+            <EditIcon 
+                v-if="userStore.isAdmin" 
+                @click="openEditModalForCategory(category.id, category.title)" 
+                :color="'black'"
+                :width="20"
+                :height="20"/>
+        </div>
         </div>
         <div class="add-menu" v-if="userStore.isAdmin">
             <PlusIcon @click="openEditModalForCategory" :color="'black'" :width="30" :height="30"/>
@@ -160,6 +175,7 @@ const updateCard = (newData: Product) => {
             }
         }
     }
+
     h3{
         font-family: 'Noto Sans';
         font-size: 16px;
@@ -167,7 +183,8 @@ const updateCard = (newData: Product) => {
         background: $qrmenu-gray;
         margin: 10px 0;
         padding: 7px 10px;
-    }       
+    }    
+
     ul{
         font-family: 'Noto Sans';
         list-style: none;
