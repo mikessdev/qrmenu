@@ -27,6 +27,7 @@ const editModalData = ref({
 const subTitle = ref('');
 const showEditModal = ref(false);
 const currentCategoryId = ref('');
+const isProduct = ref(true);
 
 const loadData = async () => {
     await categoryStore.getCategorys();
@@ -41,9 +42,18 @@ onMounted(async () => {
     getMenu(currentCategoryId.value, title);
 });
 
+const openEditModalForCategory = () => {
+    isProduct.value = false; 
+    toggleEditModal();
+}
+
 const toggleEditModal = () => { 
     showEditModal.value = !showEditModal.value;
-    if(showEditModal.value === false) editModalData.value = {} as Product
+    if(showEditModal.value === false) clearModalData();
+}
+
+const clearModalData = () => { 
+    editModalData.value = {} as Product;
 }
 
 const getEmitEditModal = (cardData: Product) => {
@@ -60,8 +70,17 @@ const getMenu = (id: string, subtitle: string) => {
     }
 }
 
-const saveData = (newData: Product) => {
-     !newData.id ? addNewCard(newData) : updateCard(newData);
+const saveData = (newData: any) => {
+    if(newData.description && newData.value){
+        !newData.id ? addNewCard(newData) : updateCard(newData);
+    }else{
+        !newData.id ? addNewCategory(newData) : addNewCategory(newData);
+    }
+}
+
+const addNewCategory = (NewCategoryData: Product) => { 
+    categoryStore.addNewCategory(NewCategoryData);
+    return toggleEditModal();
 }
 
 const addNewCard = (NewCardData: Product) => { 
@@ -83,7 +102,7 @@ const updateCard = (newData: Product) => {
             <button @click="getMenu(category.id, category.title)" autofocus>{{ category.title }}</button>
         </div>
         <div class="add-menu" v-if="userStore.isAdmin">
-            <PlusIcon @click="toggleEditModal" :color="'black'" :width="30" :height="30"/>
+            <PlusIcon @click="openEditModalForCategory" :color="'black'" :width="30" :height="30"/>
         </div>
     </div>
     <h3> {{ subTitle }} </h3>
@@ -100,6 +119,7 @@ const updateCard = (newData: Product) => {
         </ul>
         <EditModal 
             v-if="showEditModal" 
+            :is-product="isProduct"
             :product="editModalData"
             @close-edit-modal="toggleEditModal" 
             @save-data="(newData) => saveData(newData)"/>
