@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import CardProducts from "@/components/CardProducts.vue";
+import AlertDialog from "@/components/AlertDialog.vue";
 import PlusIcon from "@/components/icons/PlusIcon.vue";
+import EditIcon from "@/components/icons/EditIcon.vue";
+import DeleteIcon from "@/components/icons/DeleteIcon.vue"
 import { Category } from "@/utils/types/Category";
 import { Product } from "@/utils/types/Product";
 import EditModal from "@/components/EditModal.vue";
@@ -15,7 +18,7 @@ const userStore = useUserStore();
 const menu = ref({
     id: "",
     products: []
-});
+} as Menu);
 
 const editModalData = ref({
     id: '',
@@ -24,9 +27,17 @@ const editModalData = ref({
     value: ''
 })
 
-const subTitle = ref('');
+const categoryToBeDeleted = ref({
+    id: '',
+    type: '',
+    name: ''
+})
+
+const categoryNameSelected = ref('');
 const showEditModal = ref(false);
+const showAlertDialog = ref(false);
 const currentCategoryId = ref('');
+const isProduct = ref(true);
 
 const loadData = async () => {
     await categoryStore.getCategorys();
@@ -41,9 +52,30 @@ onMounted(async () => {
     getMenu(currentCategoryId.value, title);
 });
 
-const toggleEditModal = () => { 
+const openEditModalForCategory = (categoryId: string, categoryTitle: string) => {
+    isProduct.value = false; 
+    editModalData.value.id = categoryId;
+    editModalData.value.title = categoryTitle;
     showEditModal.value = !showEditModal.value;
-    if(showEditModal.value === false) editModalData.value = {} as Product
+    if(showEditModal.value === false) clearModalData();
+    
+}
+
+const toggleEditModal = () => { 
+    isProduct.value = true; 
+    showEditModal.value = !showEditModal.value;
+    if(showEditModal.value === false) clearModalData();
+}
+
+const toggleAlertDialog = (category: Category) => { 
+    categoryToBeDeleted.value.id = category.id;
+    categoryToBeDeleted.value.name = category.title;
+    categoryToBeDeleted.value.type = 'Categoria';
+    return showAlertDialog.value = !showAlertDialog.value;
+}
+
+const clearModalData = () => { 
+    return editModalData.value = {} as Product;
 }
 
 const getEmitEditModal = (cardData: Product) => {
@@ -51,56 +83,79 @@ const getEmitEditModal = (cardData: Product) => {
     return toggleEditModal();
 }
 
-const getMenu = (id: string, subtitle: string) => { 
+const getMenu = (id: string, categoryName: string) => { 
     currentCategoryId.value = id;
-    subTitle.value = subtitle;
+    categoryNameSelected.value = categoryName;
     for(let e of categoryStore.menus){
         if(id == e.id) return menu.value = e;
     }
 }
 
-const saveData = (newData: Product) => {
-     !newData.id ? addNewCard(newData) : updateCard(newData);
-}
-
-const addNewCard = (NewCardData: Product) => { 
-    let products: Product[] = menu.value.products; 
-    let lastProductId: number = parseInt(products[products.length -1].id);
-    
-    for(let menu of categoryStore.menus){
-        if(menu.id == currentCategoryId.value){
-            NewCardData.id = `${++lastProductId}`;
-            menu.products.push(NewCardData);
-            return toggleEditModal();
-        }
+const saveData = (newData: any) => {
+    if(newData.description && newData.value){
+        return !newData.id ? addNewCard(newData) : updateCard(newData);
+    }else{
+        return !newData.id ? addNewCategory(newData) : updateCategory(newData);
     }
 }
 
-const updateCard = (newData: Product) => {
-    let menus: Menu[] = categoryStore.menus;
-    let menuIndex: number = menus.findIndex((e: any)=>{
-        return e.id == menu.value.id
-    })
+const updateCategory = (NewCategoryData: Category) => {
+    categoryStore.updateCategory(NewCategoryData);
+    return toggleEditModal();
+}
 
-    let products: Product[] = categoryStore.menus[menuIndex].products;
-    let productIndex: number = products.findIndex((e: any)=>{
-        return e.id == newData.id
-    })
-    
-    categoryStore.menus[menuIndex].products[productIndex] = newData;
+const addNewCategory = (NewCategoryData: Product) => { 
+    categoryStore.addNewCategory(NewCategoryData);
+    return toggleEditModal();
+}
+
+const deleteCategory = () => {
+    let category: Category;
+    category = {
+        id: categoryToBeDeleted.value.id,
+        title: categoryToBeDeleted.value.name
+    } as Category
+    categoryStore.deleteCategory(category);
+    return toggleAlertDialog({});
+}
+
+const addNewCard = (NewCardData: Product) => { 
+    categoryStore.addNewProduct(NewCardData, menu.value);
+    return toggleEditModal();
+}
+
+const updateCard = (newData: Product) => {
+    categoryStore.updateProduct(newData, menu.value.id);
     toggleEditModal();
-    editModalData.value = {} as Product;
+    return editModalData.value = {} as Product;
 }
 
 </script>
 
 <template>
     <div class="menu-horizontal">
-        <div v-for="(category, index) in categoryStore.categorys" :key="index">
+        <div class="menus" v-for="(category, index) in categoryStore.categorys" :key="index">
             <button @click="getMenu(category.id, category.title)" autofocus>{{ category.title }}</button>
+            <div class="icons">
+            <EditIcon 
+                v-if="userStore.isAdmin" 
+                @click="openEditModalForCategory(category.id, category.title)" 
+                :color="'black'"
+                :width="20"
+                :height="20"/>
+            <DeleteIcon
+                v-if="userStore.isAdmin" 
+                @click="toggleAlertDialog(category)" 
+                :color="'black'"
+                :width="20"
+                :height="20"/>
+        </div>
+        </div>
+        <div class="add-menu" v-if="userStore.isAdmin">
+            <PlusIcon @click="openEditModalForCategory" :color="'black'" :width="30" :height="30"/>
         </div>
     </div>
-    <h3> {{ subTitle }} </h3>
+    <h3> {{ categoryNameSelected }} </h3>
         <ul>
             <li class="cards" v-for="(product, index) in menu.products" :key="index">
                 <CardProducts 
@@ -114,21 +169,30 @@ const updateCard = (newData: Product) => {
         </ul>
         <EditModal 
             v-if="showEditModal" 
+            :is-product="isProduct"
             :product="editModalData"
             @close-edit-modal="toggleEditModal" 
             @save-data="(newData) => saveData(newData)"/>
+        <AlertDialog
+            v-if="showAlertDialog"
+            :name="categoryToBeDeleted.name"
+            :type="categoryToBeDeleted.type"
+            @allow="deleteCategory"
+            @not-allow="toggleAlertDialog"/>
 </template>
 
 <style lang="scss" scoped>
     .menu-horizontal{
-        width: 95vw;
+        width: 100vw;
         margin: 0 auto;
         display: flex;
+        align-items: center;
         overflow-x: auto;
         
-        div{
+        .menus{
             min-height: 2.2rem;
             padding: 0 3px;
+            display: flex;
 
             button{
                 white-space: nowrap;
@@ -144,13 +208,20 @@ const updateCard = (newData: Product) => {
                     border-radius: 15px;
                     cursor: pointer;
                 }
+                
                 &:focus-visible{
                     outline: none;
 
                 }
             }
+
+            .icons{
+                display: flex;
+                flex-direction: column;
+            }
         }
     }
+
     h3{
         font-family: 'Noto Sans';
         font-size: 16px;
@@ -158,7 +229,8 @@ const updateCard = (newData: Product) => {
         background: $qrmenu-gray;
         margin: 10px 0;
         padding: 7px 10px;
-    }       
+    }    
+
     ul{
         font-family: 'Noto Sans';
         list-style: none;

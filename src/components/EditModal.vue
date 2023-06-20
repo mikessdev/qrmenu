@@ -6,6 +6,10 @@ import { Product } from "@/utils/types/Product";
 import { validateEmptyText } from "@/validators/emptyText";
 
 const props = defineProps({
+    isProduct: {
+        type: Boolean,
+        default: true
+    },
     product: {
         type: Object, 
         default: {}
@@ -46,13 +50,25 @@ const cancel = () => {
 }
 
 const save = () => { 
+    let isProduct = viewState.description.value || viewState.value.value;
+
     if(!buttonIsDisabled.value){
-        let newDate = {} as Product;
-        newDate.id = viewState.id; 
-        newDate.title = viewState.title.value; 
-        newDate.description = viewState.description.value;
-        newDate.value = viewState.value.value;
-        emit('saveData', newDate); 
+        let newDate:  Category | Product; 
+
+        if(isProduct){
+            newDate = {
+                id: viewState.id,
+                title: viewState.title.value,
+                description: viewState.description.value,
+                value: viewState.value.value,
+            } as Product;
+        }else{
+            newDate = {
+                id: '', 
+                title: viewState.title.value,
+            } as Category;
+        }
+        return emit('saveData', newDate); 
     }
 }
 
@@ -60,13 +76,17 @@ watch(viewState, () => {
     const isTitleEmpty = !!validateEmptyText(viewState.title.value);
     const isDescriptionEmpty = !!validateEmptyText(viewState.description.value);
     const isValueEmpty = !!validateEmptyText(viewState.value.value);
-    buttonIsDisabled.value = isTitleEmpty || isDescriptionEmpty || isValueEmpty;
+    if(props.isProduct){
+        buttonIsDisabled.value = isTitleEmpty || isDescriptionEmpty || isValueEmpty;
+    }else{
+        buttonIsDisabled.value = isTitleEmpty;
+    }
 });
 
 </script>
 <template>
-    <div class="dialog-background">
-        <div class="dialog">
+    <div class="modal-background">
+        <div class="modal" :class="[isProduct ? 'tall-modal' : 'short-modal']">
             <div class="img-food">
                 <img 
                     src="@/assets/img/imgComida.jpg" 
@@ -81,6 +101,7 @@ watch(viewState, () => {
                     v-model="viewState.title.value" 
                     :error-message="viewState.title.error"/>
                 <BaseInput 
+                    v-if="isProduct"
                     type="text" 
                     maxlength="100"
                     @validate="viewState.description.validator" 
@@ -89,13 +110,14 @@ watch(viewState, () => {
                     :error-message="viewState.description.error"
                     :text-area="true"/>
                 <BaseInput 
+                    v-if="isProduct"
                     maxlength="10"
                     type="text" 
                     @validate="viewState.value.validator" 
                     label="Valor" 
                     v-model="viewState.value.value" 
                     :error-message="viewState.value.error"/>
-                    <div class="icons">
+                    <div class="buttons">
                         <Button 
                             @click="cancel" 
                             :label="'Cancelar'" 
@@ -111,7 +133,7 @@ watch(viewState, () => {
     </div>
 </template>
 <style scoped lang="scss">
-.dialog-background{
+.modal-background{
     font-family: 'Noto Sans';
     width: 100vw;
     height: 100vh;
@@ -124,14 +146,13 @@ watch(viewState, () => {
     display: flex;
     z-index: 9999;
 
-    .dialog {
+    .modal {
         background-color: $qrmenu-white;
         border-radius: 8px;
         box-shadow: 0 10px 30px rgba(65, 72, 86, 0.05);
         display: flex;
         flex-direction: column;
         width: 400px;
-        height: 560px;
         margin: auto auto;
 
         .img-food {
@@ -154,13 +175,22 @@ watch(viewState, () => {
             margin: 0 auto;
         }
 
-        .icons{
+        .buttons{
             display: flex;
             justify-content: space-evenly;
             width: 80%;
             margin: 16px auto 0 auto;
         }
     }
+
+    .tall-modal{
+        height: 560px;
+    }
+
+    .short-modal{
+        height: 280px;
+    }
+
     @media (max-width: 300px) {
             .dialog  {
                 height: 550px;
