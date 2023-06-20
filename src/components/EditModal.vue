@@ -50,13 +50,25 @@ const cancel = () => {
 }
 
 const save = () => { 
+    let isProduct = viewState.description.value || viewState.value.value;
+
     if(!buttonIsDisabled.value){
-        let newDate = {} as Product;
-        newDate.id = viewState.id; 
-        newDate.title = viewState.title.value; 
-        newDate.description = viewState.description.value;
-        newDate.value = viewState.value.value;
-        emit('saveData', newDate); 
+        let newDate:  Category | Product; 
+
+        if(isProduct){
+            newDate = {
+                id: viewState.id,
+                title: viewState.title.value,
+                description: viewState.description.value,
+                value: viewState.value.value,
+            } as Product;
+        }else{
+            newDate = {
+                id: '', 
+                title: viewState.title.value,
+            } as Category;
+        }
+        return emit('saveData', newDate); 
     }
 }
 
@@ -105,7 +117,7 @@ watch(viewState, () => {
                     label="Valor" 
                     v-model="viewState.value.value" 
                     :error-message="viewState.value.error"/>
-                    <div class="icons">
+                    <div class="buttons">
                         <Button 
                             @click="cancel" 
                             :label="'Cancelar'" 
@@ -163,7 +175,7 @@ watch(viewState, () => {
             margin: 0 auto;
         }
 
-        .icons{
+        .buttons{
             display: flex;
             justify-content: space-evenly;
             width: 80%;

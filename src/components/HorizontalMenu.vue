@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import CardProducts from "@/components/CardProducts.vue";
+import AlertDialog from "@/components/AlertDialog.vue";
 import PlusIcon from "@/components/icons/PlusIcon.vue";
-import EditIcon from "@/components/icons/EditIcon.vue"
+import EditIcon from "@/components/icons/EditIcon.vue";
+import DeleteIcon from "@/components/icons/DeleteIcon.vue"
 import { Category } from "@/utils/types/Category";
 import { Product } from "@/utils/types/Product";
 import EditModal from "@/components/EditModal.vue";
@@ -25,8 +27,15 @@ const editModalData = ref({
     value: ''
 })
 
-const subTitle = ref('');
+const categoryToBeDeleted = ref({
+    id: '',
+    type: '',
+    name: ''
+})
+
+const categoryNameSelected = ref('');
 const showEditModal = ref(false);
+const showAlertDialog = ref(false);
 const currentCategoryId = ref('');
 const isProduct = ref(true);
 
@@ -47,16 +56,26 @@ const openEditModalForCategory = (categoryId: string, categoryTitle: string) => 
     isProduct.value = false; 
     editModalData.value.id = categoryId;
     editModalData.value.title = categoryTitle;
-    toggleEditModal();
+    showEditModal.value = !showEditModal.value;
+    if(showEditModal.value === false) clearModalData();
+    
 }
 
 const toggleEditModal = () => { 
+    isProduct.value = true; 
     showEditModal.value = !showEditModal.value;
     if(showEditModal.value === false) clearModalData();
 }
 
+const toggleAlertDialog = (category: Category) => { 
+    categoryToBeDeleted.value.id = category.id;
+    categoryToBeDeleted.value.name = category.title;
+    categoryToBeDeleted.value.type = 'Categoria';
+    return showAlertDialog.value = !showAlertDialog.value;
+}
+
 const clearModalData = () => { 
-    editModalData.value = {} as Product;
+    return editModalData.value = {} as Product;
 }
 
 const getEmitEditModal = (cardData: Product) => {
@@ -64,9 +83,9 @@ const getEmitEditModal = (cardData: Product) => {
     return toggleEditModal();
 }
 
-const getMenu = (id: string, subtitle: string) => { 
+const getMenu = (id: string, categoryName: string) => { 
     currentCategoryId.value = id;
-    subTitle.value = subtitle;
+    categoryNameSelected.value = categoryName;
     for(let e of categoryStore.menus){
         if(id == e.id) return menu.value = e;
     }
@@ -74,9 +93,9 @@ const getMenu = (id: string, subtitle: string) => {
 
 const saveData = (newData: any) => {
     if(newData.description && newData.value){
-        !newData.id ? addNewCard(newData) : updateCard(newData);
+        return !newData.id ? addNewCard(newData) : updateCard(newData);
     }else{
-        !newData.id ? addNewCategory(newData) : updateCategory(newData);
+        return !newData.id ? addNewCategory(newData) : updateCategory(newData);
     }
 }
 
@@ -90,6 +109,16 @@ const addNewCategory = (NewCategoryData: Product) => {
     return toggleEditModal();
 }
 
+const deleteCategory = () => {
+    let category: Category;
+    category = {
+        id: categoryToBeDeleted.value.id,
+        title: categoryToBeDeleted.value.name
+    } as Category
+    categoryStore.deleteCategory(category);
+    return toggleAlertDialog({});
+}
+
 const addNewCard = (NewCardData: Product) => { 
     categoryStore.addNewProduct(NewCardData, menu.value);
     return toggleEditModal();
@@ -98,7 +127,7 @@ const addNewCard = (NewCardData: Product) => {
 const updateCard = (newData: Product) => {
     categoryStore.updateProduct(newData, menu.value.id);
     toggleEditModal();
-    editModalData.value = {} as Product;
+    return editModalData.value = {} as Product;
 }
 
 </script>
@@ -107,10 +136,16 @@ const updateCard = (newData: Product) => {
     <div class="menu-horizontal">
         <div class="menus" v-for="(category, index) in categoryStore.categorys" :key="index">
             <button @click="getMenu(category.id, category.title)" autofocus>{{ category.title }}</button>
-            <div class="icon">
+            <div class="icons">
             <EditIcon 
                 v-if="userStore.isAdmin" 
                 @click="openEditModalForCategory(category.id, category.title)" 
+                :color="'black'"
+                :width="20"
+                :height="20"/>
+            <DeleteIcon
+                v-if="userStore.isAdmin" 
+                @click="toggleAlertDialog(category)" 
                 :color="'black'"
                 :width="20"
                 :height="20"/>
@@ -120,7 +155,7 @@ const updateCard = (newData: Product) => {
             <PlusIcon @click="openEditModalForCategory" :color="'black'" :width="30" :height="30"/>
         </div>
     </div>
-    <h3> {{ subTitle }} </h3>
+    <h3> {{ categoryNameSelected }} </h3>
         <ul>
             <li class="cards" v-for="(product, index) in menu.products" :key="index">
                 <CardProducts 
@@ -138,6 +173,12 @@ const updateCard = (newData: Product) => {
             :product="editModalData"
             @close-edit-modal="toggleEditModal" 
             @save-data="(newData) => saveData(newData)"/>
+        <AlertDialog
+            v-if="showAlertDialog"
+            :name="categoryToBeDeleted.name"
+            :type="categoryToBeDeleted.type"
+            @allow="deleteCategory"
+            @not-allow="toggleAlertDialog"/>
 </template>
 
 <style lang="scss" scoped>
@@ -172,6 +213,11 @@ const updateCard = (newData: Product) => {
                     outline: none;
 
                 }
+            }
+
+            .icons{
+                display: flex;
+                flex-direction: column;
             }
         }
     }
