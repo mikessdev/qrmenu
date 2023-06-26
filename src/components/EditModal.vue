@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue";
+import { reactive, ref, watch} from "vue";
 import Button from "@/components/Button.vue";
 import BaseInput from "@/components/BaseInput.vue";
 import { Product } from "@/utils/types/Product";
@@ -50,18 +50,17 @@ const cancel = () => {
 }
 
 const save = () => { 
-    let isProduct = viewState.description.value || viewState.value.value;
-
     if(!buttonIsDisabled.value){
         let newDate:  Category | Product; 
 
-        if(isProduct){
+        if(props.isProduct){
             newDate = {
                 id: viewState.id,
                 title: viewState.title.value,
                 description: viewState.description.value,
                 value: viewState.value.value,
             } as Product;
+            console.log("test")
         }else{
             newDate = {
                 id: '', 
