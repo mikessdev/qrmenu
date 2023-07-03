@@ -22,14 +22,21 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     }
 
     const addNewProduct = async (newCardData: Product, menu: Menu): Promise<void> => {
-        let products: Product[] = menu.products; 
-        let lastProductId: number = parseInt(products[products.length -1].id);
-        let newProductId = `${++lastProductId}`;
+        const EMPTY = 0; 
+        let products: Product[] = menu.products;
+        let newProductId: string = '1';
 
-        for(let menu of menus.value){
-            if(menu.id == menu.id){
+        if(products.length != EMPTY){
+            let lastProductId: number = parseInt(products[products.length -1].id);
+            newProductId = `${++lastProductId}`;
+        }
+
+        for(let item of menus.value){
+            if(menu.id == item.id){
+                console.log("dsadas")
                 newCardData.id = newProductId;
                 menu.products.push(newCardData);
+                console.table(menu.products)
                 break;
             }
         }
@@ -63,10 +70,12 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     }
 
     const addNewCategory = async (newCategoryData: Category):Promise<void> => {
-        let lastCategoryId: number = parseInt(categorys.value[categorys.value.length -1].id); 
-        let newCategoryId = `${++lastCategoryId}`;
-        newCategoryData.id = newCategoryId;
+        let lastId: number = parseInt(categorys.value[categorys.value.length -1].id); 
+        let newId = `${++lastId}`;
+        let newMenu = {id: newId, products: []} as Menu;
+        newCategoryData.id = newId;
         categorys.value.push(newCategoryData);
+        menus.value.push(newMenu);
     }
 
     return {
