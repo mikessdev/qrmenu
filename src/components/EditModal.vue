@@ -60,7 +60,6 @@ const save = () => {
                 description: viewState.description.value,
                 value: viewState.value.value,
             } as Product;
-            console.log("test")
         }else{
             newDate = {
                 id: '', 
