@@ -192,7 +192,7 @@ const updateCard = (newData: Product) => {
             :name="itemToBeDeleted.name"
             :type="itemToBeDeleted.type"
             @allow="deleteItem"
-            @not-allow="toggleAlertDialog"/>
+            @not-allow="toggleAlertDialog({})"/>
 </template>
 
 <style lang="scss" scoped>
