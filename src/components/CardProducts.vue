@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import EditIcon from "@/components/icons/EditIcon.vue";
+import DeleteIcon from './icons/DeleteIcon.vue';
 import { useUserStore } from "@/store/userStore";
 
 const userStore = useUserStore();
 
-const emit = defineEmits(["editCardData"]);
+const emit = defineEmits(["editCardData", "toggleAlertDialog"]);
 
 const props = defineProps({
     product: {
@@ -16,6 +17,10 @@ const props = defineProps({
 
 const editCardData = () => {
     emit("editCardData", props.product);
+}
+
+const toggleAlertDialog = () => {
+    emit("toggleAlertDialog", props.product);
 }
 
 </script>
@@ -39,6 +44,12 @@ const editCardData = () => {
                 v-if="userStore.isAdmin" 
                 @click="editCardData" 
                 :color="'black'"/>
+            <DeleteIcon
+                v-if="userStore.isAdmin" 
+                @click="toggleAlertDialog()"
+                :color="'black'"
+                :width="30"
+                :height="30"/>
         </div>
     </div>
 </template>

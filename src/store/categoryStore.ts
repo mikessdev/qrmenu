@@ -55,6 +55,18 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     menus.value[menuIndex].products[productIndex] = newCardData;
     }
 
+    const deleteProductByid = async (productId: string, menuId: string): Promise<void> => {
+        let menuIndex: number = menus.value.findIndex((e: any)=>{
+            return e.id == menuId;
+        })
+
+        let products: Product[] = menus.value[menuIndex].products;
+        let productIndex: number = products.findIndex((e: any)=>{
+            return e.id == productId;
+        })
+        products.splice(productIndex, 1);
+    }
+
     const updateCategory = async (newCategoryData: Category): Promise<void> => {
         let categoryIndex: number = categorys.value.findIndex((e: any)=>{
             return e.id == newCategoryData.id;
@@ -62,9 +74,9 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
         categorys.value[categoryIndex] = newCategoryData;
     }
 
-    const deleteCategory = async (newCategoryData: Category): Promise<void> => {
+    const deleteCategoryById = async (categoryId: string): Promise<void> => {
         let categoryIndex: number = categorys.value.findIndex((e: any)=>{
-            return e.id == newCategoryData.id;
+            return e.id == categoryId;
         })
         categorys.value.splice(categoryIndex, 1);
     }
@@ -85,8 +97,9 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
         getMenus,
         updateProduct,
         addNewProduct,
+        deleteProductByid,
         addNewCategory,
         updateCategory,
-        deleteCategory
+        deleteCategoryById,
     }
 })

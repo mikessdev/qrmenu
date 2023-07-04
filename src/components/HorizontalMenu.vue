@@ -27,10 +27,11 @@ const editModalData = ref({
     value: ''
 })
 
-const categoryToBeDeleted = ref({
+const itemToBeDeleted = ref({
     id: '',
     type: '',
-    name: ''
+    name: '',
+    description: ''
 })
 
 const categoryNameSelected = ref('');
@@ -67,10 +68,19 @@ const toggleEditModal = () => {
     if(showEditModal.value === false) clearModalData();
 }
 
-const toggleAlertDialog = (category: Category) => { 
-    categoryToBeDeleted.value.id = category.id;
-    categoryToBeDeleted.value.name = category.title;
-    categoryToBeDeleted.value.type = 'Categoria';
+const toggleAlertDialog = (item: Product | Category) => { 
+    let isProduct = !!item.description;
+    itemToBeDeleted.value.name = item.title;
+    itemToBeDeleted.value.id = item.id;
+
+    if(isProduct){
+        itemToBeDeleted.value.type = 'Produto';
+        itemToBeDeleted.value.description = item.description;
+    } 
+    if(!isProduct){
+        itemToBeDeleted.value.type = 'Categoria';
+    } 
+
     return showAlertDialog.value = !showAlertDialog.value;
 }
 
@@ -109,13 +119,16 @@ const addNewCategory = (NewCategoryData: Product) => {
     return toggleEditModal();
 }
 
-const deleteCategory = () => {
-    let category: Category;
-    category = {
-        id: categoryToBeDeleted.value.id,
-        title: categoryToBeDeleted.value.name
-    } as Category
-    categoryStore.deleteCategory(category);
+const deleteItem = () => {
+    let isProduct = !!itemToBeDeleted.value.description;
+    let itemId = itemToBeDeleted.value.id;
+    let menuId = currentCategoryId.value;
+    if(isProduct){
+        categoryStore.deleteProductByid(itemId, menuId);
+    }
+    if(!isProduct){   
+        categoryStore.deleteCategoryById(itemId);
+    }
     return toggleAlertDialog({});
 }
 
@@ -161,7 +174,8 @@ const updateCard = (newData: Product) => {
                 <CardProducts 
                     :menuId="menu.id" 
                     :product="product" 
-                    @edit-card-data="(cardData) => getEmitEditModal(cardData)"/>
+                    @edit-card-data="(cardData) => getEmitEditModal(cardData)"
+                    @toggle-alert-dialog="(e) => toggleAlertDialog(e)"/>
             </li>
             <li class="add-card" v-if="userStore.isAdmin">
                 <PlusIcon @click="toggleEditModal" :color="'black'"/>
@@ -175,15 +189,15 @@ const updateCard = (newData: Product) => {
             @save-data="(newData) => saveData(newData)"/>
         <AlertDialog
             v-if="showAlertDialog"
-            :name="categoryToBeDeleted.name"
-            :type="categoryToBeDeleted.type"
-            @allow="deleteCategory"
-            @not-allow="toggleAlertDialog"/>
+            :name="itemToBeDeleted.name"
+            :type="itemToBeDeleted.type"
+            @allow="deleteItem"
+            @not-allow="toggleAlertDialog({})"/>
 </template>
 
 <style lang="scss" scoped>
     .menu-horizontal{
-        width: 100vw;
+        width: 100%;
         margin: 0 auto;
         display: flex;
         align-items: center;
