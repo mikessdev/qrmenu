@@ -36,10 +36,25 @@ const submit = async (e: any) => {
   try {
     await signInWithEmailAndPassword(firebaseAuth, viewState.email.value, viewState.password.value);
     userStore.isAdmin = true;
-    router.push('/')
+    router.push('/');
     
   } catch (error) {
-    console.log(error);
+    console.log(error)
+    // switch (error.code) {
+    //       case 'auth/invalid-email':
+    //           viewState.email.value = 'Invalid email'
+    //           break
+    //       case 'auth/user-not-found':
+    //           alert('No account with that email was found');
+    //           break
+    //       case 'auth/wrong-password':
+    //           viewState.password.value = 'Incorrect password';
+    //           break
+    //       default:
+    //           viewState.password.value = 'Email or password was incorrect';
+    //           viewState.email.value = 'Email or password was incorrect';
+    //           break
+    //     }
   }
 
 }
@@ -53,7 +68,7 @@ watch(viewState, () => {
 </script>
 <template>
   <div class="login-page">
-    <Header :isLoginPage="true"/>
+    <Header/>
         <form method="POST">
             <h1>Login</h1>
             <BaseInput 
