@@ -10,7 +10,7 @@ const userStore = useUserStore()
 </script>
 
 <template>
-  <Header />
+  <Header :hide-back-button="true"/>
   <main>
     <Welcome v-if="userStore.isAdmin"/>
     <Hero/>
