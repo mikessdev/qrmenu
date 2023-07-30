@@ -57,14 +57,14 @@ const handleInput = (e: Event) => {
 </script>
 <template>
   <div class="base-input">
-    <label>
+    <label class="label">
       {{ props.label }}
     </label>
       <textarea v-if="props.textArea" class="text-area" :type="props.inputType" :placeholder="props.placeholder"
         autofocus="true" :maxlength="maxlength" :value="modelValue" @input="(e) => handleInput(e)" />
       <input v-else :type="props.inputType" :placeholder="props.placeholder" autofocus="true" :maxlength="maxlength"
       :value="modelValue" @input="(e) => handleInput(e)" />
-    <label v-if="props.errorMessage">
+    <label class="error-message" >
       {{ props.errorMessage }}
     </label>
   </div>
@@ -78,7 +78,6 @@ const handleInput = (e: Event) => {
     padding: 15px;
     font-size: 14px;
     border: 1px solid #ccc;
-    margin-bottom: 20px;
     margin-top: 5px;
     border-radius: 4px;
     transition: all linear 160ms;
@@ -94,9 +93,15 @@ const handleInput = (e: Event) => {
     height: 120px;
   }
 
-  label {
+  .label{
+    margin-top: 16px;
     font-size: 14px;
     font-weight: 600;
+  }
+  .error-message{
+    color: $qrmenu-red;
+    font-weight: 500;
+    font-size: 12px;
   }
 
   @media (max-width: 300px) {
