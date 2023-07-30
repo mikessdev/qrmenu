@@ -1,3 +1,6 @@
+<script setup lang="ts">
+    alert('mounted')
+</script>
 <template>
     <router-view/>
 </template>

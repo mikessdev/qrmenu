@@ -7,8 +7,10 @@ import { validateEmptyText } from '@/validators/emptyText';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
 import router from '@/router';
+import { useUserStore } from '@/store/userStore';
 
 //TODO: Write validation for email and for password
+const userStore = useUserStore();
 
 const buttonIsDisabled = ref(true);
 
@@ -33,6 +35,7 @@ const submit = async (e: any) => {
   e.preventDefault();
   try {
     await signInWithEmailAndPassword(firebaseAuth, viewState.email.value, viewState.password.value);
+    userStore.isAdmin = true;
     router.push('/')
     
   } catch (error) {

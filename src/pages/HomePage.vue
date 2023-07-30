@@ -2,12 +2,17 @@
 import Header from "@/components/Header.vue";
 import Hero from "@/components/Hero.vue";
 import HorizontalMenu from "@/components/HorizontalMenu.vue";
+import Welcome from "@/components/Welcome.vue"
 
+import { useUserStore } from '@/store/userStore';
+
+const userStore = useUserStore()
 </script>
 
 <template>
   <Header />
   <main>
+    <Welcome v-if="userStore.isAdmin"/>
     <Hero/>
     <HorizontalMenu />
   </main>
@@ -16,6 +21,7 @@ import HorizontalMenu from "@/components/HorizontalMenu.vue";
 <style lang="scss" scoped>
   main {
     background: $qrmenu-grayish-white;
-    padding-top: 60px;
+    margin-top: 60px;
+    padding-top: 20px;
   }
 </style>

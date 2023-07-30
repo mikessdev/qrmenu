@@ -169,16 +169,16 @@ const updateCard = (newData: Product) => {
         </div>
     </div>
     <h3> {{ categoryNameSelected }} </h3>
-        <ul>
+    <ul>
+            <li class="add-card" v-if="userStore.isAdmin">
+                <PlusIcon @click="toggleEditModal" :color="'black'"/>
+            </li>
             <li class="cards" v-for="(product, index) in menu.products" :key="index">
                 <CardProducts 
                     :menuId="menu.id" 
                     :product="product" 
                     @edit-card-data="(cardData) => getEmitEditModal(cardData)"
                     @toggle-alert-dialog="(e) => toggleAlertDialog(e)"/>
-            </li>
-            <li class="add-card" v-if="userStore.isAdmin">
-                <PlusIcon @click="toggleEditModal" :color="'black'"/>
             </li>
         </ul>
         <EditModal 
@@ -251,30 +251,20 @@ const updateCard = (newData: Product) => {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        justify-content: space-around;
+        justify-content: space-between;
 
         .add-card{
             display: flex;
             align-items: center;
-            width: 400px;
-            height: 200px;
-            // margin-left: 40px;
+            justify-content: center;
+            margin: 0 20px 0 20px;
+            width: 400px
         }
-
-        @media(max-width: 799px){
-            .add-card {
-                justify-content: center;
-                width: 400px;
-                height: 100px;
-            }
-        }
-        
     }
-    
+ 
     @media(min-width: 585px){
         .menu-horizontal {
             justify-content: center;
         }
-    
     }
 </style>
