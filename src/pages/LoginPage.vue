@@ -4,6 +4,9 @@ import BaseInput from '@/components/BaseInput.vue';
 import Button from '@/components/Button.vue';
 import { reactive, ref, watch } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { firebaseAuth } from '@/firebase/config';
+import router from '@/router';
 
 //TODO: Write validation for email and for password
 
@@ -26,8 +29,16 @@ const viewState = reactive({
   },
 })
 
-const submit = (e: any) => {
+const submit = async (e: any) => {
   e.preventDefault();
+  try {
+    await signInWithEmailAndPassword(firebaseAuth, viewState.email.value, viewState.password.value);
+    router.push('/')
+    
+  } catch (error) {
+    console.log(error);
+  }
+
 }
 
 watch(viewState, () => {
