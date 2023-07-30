@@ -33,7 +33,6 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
 
         for(let item of menus.value){
             if(menu.id == item.id){
-                console.log("dsadas")
                 newCardData.id = newProductId;
                 menu.products.push(newCardData);
                 console.table(menu.products)

@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import EditIcon from "@/components/icons/EditIcon.vue";
 import DeleteIcon from './icons/DeleteIcon.vue';
 import { useUserStore } from "@/store/userStore";
 
 const userStore = useUserStore();
-
 const emit = defineEmits(["editCardData", "toggleAlertDialog"]);
 
 const props = defineProps({
