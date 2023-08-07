@@ -23,7 +23,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
 
     const addNewProduct = async (newCardData: Product, menu: Menu): Promise<void> => {
         const EMPTY = 0; 
-        let products: Product[] = menu.products;
+        const products: Product[] = menu.products;
         let newProductId: string = '1';
 
         if(products.length != EMPTY){
@@ -31,7 +31,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
             newProductId = `${++lastProductId}`;
         }
 
-        for(let item of menus.value){
+        for(const item of menus.value){
             if(menu.id == item.id){
                 newCardData.id = newProductId;
                 menu.products.push(newCardData);
@@ -42,12 +42,12 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     }
 
     const updateProduct = async (newCardData: Product, categoryId: String): Promise<void> => {
-    let menuIndex: number = menus.value.findIndex((e: any)=>{
+    const menuIndex: number = menus.value.findIndex((e: any)=>{
             return e.id == categoryId;
         })
 
-    let products: Product[] = menus.value[menuIndex].products;
-    let productIndex: number = products.findIndex((e: any)=>{
+    const products: Product[] = menus.value[menuIndex].products;
+    const productIndex: number = products.findIndex((e: any)=>{
             return e.id == newCardData.id;
         })
     
@@ -55,26 +55,26 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     }
 
     const deleteProductByid = async (productId: string, menuId: string): Promise<void> => {
-        let menuIndex: number = menus.value.findIndex((e: any)=>{
+        const menuIndex: number = menus.value.findIndex((e: any)=>{
             return e.id == menuId;
         })
 
-        let products: Product[] = menus.value[menuIndex].products;
-        let productIndex: number = products.findIndex((e: any)=>{
+        const products: Product[] = menus.value[menuIndex].products;
+        const productIndex: number = products.findIndex((e: any)=>{
             return e.id == productId;
         })
         products.splice(productIndex, 1);
     }
 
     const updateCategory = async (newCategoryData: Category): Promise<void> => {
-        let categoryIndex: number = categorys.value.findIndex((e: any)=>{
+        const categoryIndex: number = categorys.value.findIndex((e: any)=>{
             return e.id == newCategoryData.id;
         })
         categorys.value[categoryIndex] = newCategoryData;
     }
 
     const deleteCategoryById = async (categoryId: string): Promise<void> => {
-        let categoryIndex: number = categorys.value.findIndex((e: any)=>{
+        const categoryIndex: number = categorys.value.findIndex((e: any)=>{
             return e.id == categoryId;
         })
         categorys.value.splice(categoryIndex, 1);
@@ -82,8 +82,8 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
 
     const addNewCategory = async (newCategoryData: Category):Promise<void> => {
         let lastId: number = parseInt(categorys.value[categorys.value.length -1].id); 
-        let newId = `${++lastId}`;
-        let newMenu = {id: newId, products: []} as Menu;
+        const newId = `${++lastId}`;
+        const newMenu = {id: newId, products: []} as Menu;
         newCategoryData.id = newId;
         categorys.value.push(newCategoryData);
         menus.value.push(newMenu);

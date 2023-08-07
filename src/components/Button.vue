@@ -26,13 +26,14 @@ const props = defineProps({
 .button{
   font-size: 14px;
   font-weight: 600;
+  text-align: center;
   border: none;
   transition: all linear 160ms;
   cursor: pointer;
   margin: 0;
-  width: 80px;
   padding: 10px 0;
   border-radius: 4px;
+  display: flex;
 
 }
 .isEnabled {
