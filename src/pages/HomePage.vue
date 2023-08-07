@@ -3,15 +3,22 @@ import Header from "@/components/Header.vue";
 import Hero from "@/components/Hero.vue";
 import HorizontalMenu from "@/components/HorizontalMenu.vue";
 import Welcome from "@/components/Welcome.vue"
-
+import Button from "@/components/Button.vue";
 import { useUserStore } from '@/store/userStore';
 
 const userStore = useUserStore()
+
+const toggleUserMode = () => {
+  userStore.isAdmin = !userStore.isAdmin;
+}
 </script>
 
 <template>
   <Header :hide-back-button="true"/>
   <main>
+    <div class="button-wrapper">
+      <Button :label="'Modo Admin'" @click="toggleUserMode()" />
+    </div>
     <Welcome v-if="userStore.isAdmin"/>
     <Hero/>
     <HorizontalMenu />
@@ -23,5 +30,9 @@ const userStore = useUserStore()
     background: $qrmenu-grayish-white;
     margin-top: 60px;
     padding-top: 20px;
+    .button-wrapper{
+      position: absolute;
+      right: 10px;
+    }
   }
 </style>
