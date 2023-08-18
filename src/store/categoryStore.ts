@@ -1,11 +1,14 @@
+import type { Category } from '@/utils/types/Category';
 import type { Menu } from '@/utils/types/Menu';
 import type { Product } from '@/utils/types/Product';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useCategoryStore = defineStore('categoryManagement', () => { 
-    const menus = ref({} as Menu[]); 
-    const categorys = ref({} as Category[]);
+    const menus = ref<Menu[]>({} as Menu[]); 
+    const categorys = ref<Category[]>({} as Category[]);
+    const currentCategoryTitle = ref<string>('');
+    const currentCategoryId = ref<string>('');
 
     const getMenus = async (): Promise<void> => {
         const response = await fetch("http://localhost:3000/menus");
@@ -54,7 +57,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     menus.value[menuIndex].products[productIndex] = newCardData;
     }
 
-    const deleteProductByid = async (productId: string, menuId: string): Promise<void> => {
+    const deleteProductById = async (productId: string, menuId: string): Promise<void> => {
         const menuIndex: number = menus.value.findIndex((e: any)=>{
             return e.id == menuId;
         })
@@ -92,11 +95,13 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     return {
         menus,
         categorys,
+        currentCategoryTitle,
+        currentCategoryId,
         getCategorys,
         getMenus,
         updateProduct,
         addNewProduct,
-        deleteProductByid,
+        deleteProductById,
         addNewCategory,
         updateCategory,
         deleteCategoryById,

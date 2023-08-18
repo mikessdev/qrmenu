@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { PropType } from "vue";
+import type { Product } from "@/utils/types/Product";
 import EditIcon from "@/components/icons/EditIcon.vue";
 import DeleteIcon from './icons/DeleteIcon.vue';
 import { useUserStore } from "@/store/userStore";
@@ -8,8 +10,8 @@ const emit = defineEmits(["editCardData", "toggleAlertDialog"]);
 
 const props = defineProps({
     product: {
-        type: Object, 
-        default: {}
+        type: Object as PropType<Product>, 
+        default: {} as Product
     }
 })
 

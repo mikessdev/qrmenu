@@ -5,8 +5,8 @@ import AlertDialog from "@/components/AlertDialog.vue";
 import PlusIcon from "@/components/icons/PlusIcon.vue";
 import EditIcon from "@/components/icons/EditIcon.vue";
 import DeleteIcon from "@/components/icons/DeleteIcon.vue"
-import { Category } from "@/utils/types/Category";
-import { Product } from "@/utils/types/Product";
+import type { Category } from "@/utils/types/Category";
+import type { Product } from "@/utils/types/Product";
 import EditModal from "@/components/EditModal.vue";
 import { useCategoryStore } from '@/store/categoryStore';
 import { useUserStore } from "@/store/userStore";
@@ -23,7 +23,7 @@ export interface productOrMenu {
 }
 
 const menu = ref<Menu>({
-    id: "",
+    id: '',
     products: []
 });
 
@@ -41,10 +41,9 @@ const itemToBeDeleted = ref<productOrMenu>({
     description: ''
 })
 
-const categoryNameSelected = ref<string>('');
+
 const showEditModal = ref<boolean>(false);
 const showAlertDialog = ref<boolean>(false);
-const currentCategoryId = ref<string>('');
 const isProduct = ref<boolean>(true);
 
 const loadData = async () => {
@@ -56,16 +55,18 @@ onMounted(async () => {
     await loadData();
     const { id, title } = categoryStore.categorys[0];
 
-    currentCategoryId.value =  id;
+    categoryStore.currentCategoryId =  id;
     getMenu(id, title);
 })
 
-const openEditModalForCategory = (categoryId: string, categoryTitle: string) => {
+const openEditModalForCategory = (categoryId: string = '', categoryTitle: string = '') => {
     isProduct.value = false; 
     editModalData.value.id = categoryId;
     editModalData.value.title = categoryTitle;
     showEditModal.value = !showEditModal.value;
-    if(showEditModal.value === false) clearModalData();
+
+    const editModalClosed = showEditModal.value === false;
+    if (editModalClosed) clearModalData();
 }
 
 const toggleEditModal = () => { 
@@ -75,19 +76,18 @@ const toggleEditModal = () => {
 }
 
 const toggleAlertDialog = (item: Product | Category) => { 
-    const { id, title, description } = item;
-    const isProduct = !!description;
+    const isProduct = 'description' in item; 
+    const { id, title} = item;
     itemToBeDeleted.value.name = title;
     itemToBeDeleted.value.id = id;
-
+    
     if(isProduct){
         itemToBeDeleted.value.type = 'Produto';
-        itemToBeDeleted.value.description = description;
+        itemToBeDeleted.value.description = item.description;
     } 
-    if(!isProduct){
+    if (!isProduct) {
         itemToBeDeleted.value.type = 'Categoria';
-    } 
-
+    }
     return showAlertDialog.value = !showAlertDialog.value;
 }
 
@@ -101,19 +101,22 @@ const getEmitEditModal = (cardData: Product) => {
 }
 
 const getMenu = (id: string, categoryName: string) => { 
-    currentCategoryId.value = id;
-    categoryNameSelected.value = categoryName;
+    categoryStore.currentCategoryId = id;
+    categoryStore.currentCategoryTitle = categoryName;
     for(let e of categoryStore.menus){
         if(id == e.id) return menu.value = e;
     }
 }
 
-const saveData = (newData: any) => {
-    const { id, description, value } = newData;
-    if(description && value){
-        return !id ? addNewCard(newData) : updateCard(newData);
-    }else{
-        return !id ? addNewCategory(newData) : updateCategory(newData);
+const saveData = (newData: Product | Category) => {
+    const isProduct: boolean = 'description' in newData && 'value' in newData; 
+    const { id } = newData;
+    
+    if (isProduct) {
+        return !id ? addNewCard(newData as Product) : updateCard(newData as Product);
+    }
+    if (!isProduct) {
+        return !id ? addNewCategory(newData as Category) : updateCategory(newData as Category);
     }
 }
 
@@ -122,21 +125,21 @@ const updateCategory = (NewCategoryData: Category) => {
     return toggleEditModal();
 }
 
-const addNewCategory = (NewCategoryData: Product) => { 
+const addNewCategory = (NewCategoryData: Category) => { 
     categoryStore.addNewCategory(NewCategoryData);
     return toggleEditModal();
 }
 
 const deleteItem = () => {
     const { id, description } = itemToBeDeleted.value;
-    const { value } = currentCategoryId;
+    const { currentCategoryId } = categoryStore;
     const isProduct = !!description;
 
     isProduct ?
-    categoryStore.deleteProductByid(id, value) :
+    categoryStore.deleteProductById(id, currentCategoryId) :
     categoryStore.deleteCategoryById(id);
 
-    return toggleAlertDialog({});
+    return toggleAlertDialog({} as Category | Product);
 }
 
 const addNewCard = (NewCardData: Product) => { 
@@ -173,22 +176,28 @@ const updateCard = (newData: Product) => {
         </div>
         </div>
         <div class="add-menu" v-if="userStore.isAdmin">
-            <PlusIcon @click="openEditModalForCategory" :color="'black'" :width="30" :height="30"/>
+            <PlusIcon 
+                @click="openEditModalForCategory()" 
+                :color="'black'" 
+                :width="30" 
+                :height="30"/>
         </div>
     </div>
-    <h3> {{ categoryNameSelected }} </h3>
+    <h3> {{ categoryStore.currentCategoryTitle }} </h3>
     <ul>
-            <li class="add-card" v-if="userStore.isAdmin">
-                <PlusIcon @click="toggleEditModal" :color="'black'"/>
-            </li>
-            <li class="cards" v-for="(product, index) in menu.products" :key="index">
-                <CardProducts 
-                    :menuId="menu.id" 
-                    :product="product" 
-                    @edit-card-data="(cardData) => getEmitEditModal(cardData)"
-                    @toggle-alert-dialog="(e) => toggleAlertDialog(e)"/>
-            </li>
-        </ul>
+        <li class="add-card" v-if="userStore.isAdmin">
+            <PlusIcon 
+                @click="toggleEditModal" 
+                :color="'black'"/>
+        </li>
+        <li class="cards" v-for="(product, index) in menu.products" :key="index">
+            <CardProducts 
+                :menuId="menu.id" 
+                :product="product" 
+                @edit-card-data="(cardData) => getEmitEditModal(cardData)"
+                @toggle-alert-dialog="(e) => toggleAlertDialog(e)"/>
+        </li>
+    </ul>
         <EditModal 
             v-if="showEditModal" 
             :is-product="isProduct"
@@ -200,7 +209,7 @@ const updateCard = (newData: Product) => {
             :name="itemToBeDeleted.name"
             :type="itemToBeDeleted.type"
             @allow="deleteItem"
-            @not-allow="toggleAlertDialog({})"/>
+            @not-allow="toggleAlertDialog({} as Category | Product)"/>
 </template>
 
 <style lang="scss" scoped>

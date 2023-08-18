@@ -6,8 +6,8 @@ import { ref } from 'vue';
 export const useAuthStore = defineStore('auth', () => { 
     const user = ref(null); 
 
-    const setUser = (user: any) => { 
-        user.value = user
+    const setUser = (userData: any) => { 
+        user.value = userData
     }
     return {
         user,

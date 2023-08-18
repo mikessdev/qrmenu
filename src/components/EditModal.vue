@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { reactive, ref, watch} from "vue";
+import { reactive, ref, watch, toRefs} from "vue";
 import Button from "@/components/Button.vue";
 import BaseInput from "@/components/BaseInput.vue";
-import { Product } from "@/utils/types/Product";
 import { validateEmptyText } from "@/validators/emptyText";
 
 const props = defineProps({
@@ -11,32 +10,33 @@ const props = defineProps({
         default: true
     },
     product: {
-        type: Object, 
-        default: {}
+        type: Object , 
+        default: {} as Object
     }
 })
 
 const buttonIsDisabled = ref(true);
 
+const { id, title, description, value } = toRefs(props).product.value;
 const viewState = reactive({
-  id: props.product.id,
+  id: id ?? '',
   title: {
-    value: props.product.title ?? "",
-    error: "",
+    value: title ?? '',
+    error: '',
     validator: () => {
         viewState.title.error = validateEmptyText(viewState.title.value);
     }
   },
   description: {
-    value: props.product.description ?? "",
-    error: "",
+    value: description ?? '',
+    error: '',
     validator: () => {
         viewState.description.error = validateEmptyText(viewState.description.value);
     }
   },
   value: {
-    value: props.product.value ?? "R$ 00,00",
-    error: "",
+    value: value ?? "R$ 00,00",
+    error: '',
     validator: () => {
         viewState.value.error = validateEmptyText(viewState.value.value);
     }
@@ -50,35 +50,29 @@ const cancel = () => {
 }
 
 const save = () => { 
-    if(!buttonIsDisabled.value){
-        let newDate:  Category | Product; 
+    const { id, title, description, value } = viewState;
+    const isProduct = props.isProduct;
+    const buttonEnabled = !buttonIsDisabled.value;
 
-        if(props.isProduct){
-            newDate = {
-                id: viewState.id,
-                title: viewState.title.value,
-                description: viewState.description.value,
-                value: viewState.value.value,
-            } as Product;
-        }else{
-            newDate = {
-                id: '', 
-                title: viewState.title.value,
-            } as Category;
-        }
-        return emit('saveData', newDate); 
+    if (buttonEnabled) {
+        const newData = isProduct ?
+        { id, title: title.value, description: description.value, value: value.value } :
+        { id, title: title.value };
+        console.log('viewState.id', viewState.id)
+        emit('saveData', newData);
     }
 }
 
 watch(viewState, () => {
-    const isTitleEmpty = !!validateEmptyText(viewState.title.value);
-    const isDescriptionEmpty = !!validateEmptyText(viewState.description.value);
-    const isValueEmpty = !!validateEmptyText(viewState.value.value);
-    if(props.isProduct){
-        buttonIsDisabled.value = isTitleEmpty || isDescriptionEmpty || isValueEmpty;
-    }else{
-        buttonIsDisabled.value = isTitleEmpty;
-    }
+    const { title, description, value } = viewState;
+    const isTitleEmpty = !!validateEmptyText(title.value);
+    const isDescriptionEmpty = !!validateEmptyText(description.value);
+    const isValueEmpty = !!validateEmptyText(value.value);
+    const isProduct = props.isProduct;
+
+    buttonIsDisabled.value = isProduct ? 
+    isTitleEmpty || isDescriptionEmpty || isValueEmpty : 
+    isTitleEmpty
 });
 
 </script>
@@ -131,7 +125,7 @@ watch(viewState, () => {
     </div>
 </template>
 <style scoped lang="scss">
-.modal-background{
+.modal-background {
     font-family: 'Noto Sans';
     width: 100vw;
     height: 100vh;
@@ -164,7 +158,6 @@ watch(viewState, () => {
                 margin: 16px auto 0 auto;
             }
         }
-
         .card-data {
             display: flex;
             flex-direction: column;
@@ -173,7 +166,7 @@ watch(viewState, () => {
             margin: 0 auto;
         }
 
-        .buttons{
+        .buttons {
             display: flex;
             justify-content: space-evenly;
             width: 80%;
@@ -181,11 +174,11 @@ watch(viewState, () => {
         }
     }
 
-    .tall-modal{
+    .tall-modal {
         height: 560px;
     }
 
-    .short-modal{
+    .short-modal {
         height: 280px;
     }
 
