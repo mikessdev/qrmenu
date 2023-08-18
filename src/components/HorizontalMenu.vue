@@ -41,7 +41,7 @@ const itemToBeDeleted = ref<productOrMenu>({
     description: ''
 })
 
-
+const warningMessage = ref<string>('');
 const showEditModal = ref<boolean>(false);
 const showAlertDialog = ref<boolean>(false);
 const isProduct = ref<boolean>(true);
@@ -87,6 +87,7 @@ const toggleAlertDialog = (item: Product | Category) => {
     } 
     if (!isProduct) {
         itemToBeDeleted.value.type = 'Categoria';
+        warningMessage.value = 'Ao deletar uma categoria, todos os produtos que estão nela também serão deletados!'
     }
     return showAlertDialog.value = !showAlertDialog.value;
 }
@@ -105,7 +106,7 @@ const getMenu = (id: string, categoryName: string) => {
     categoryStore.currentCategoryTitle = categoryName;
     for(let e of categoryStore.menus){
         if(id == e.id) return menu.value = e;
-    }
+    };
 }
 
 const saveData = (newData: Product | Category) => {
@@ -195,7 +196,7 @@ const updateCard = (newData: Product) => {
                 :menuId="menu.id" 
                 :product="product" 
                 @edit-card-data="(cardData) => getEmitEditModal(cardData)"
-                @toggle-alert-dialog="(e) => toggleAlertDialog(e)"/>
+                @toggle-alert-dialog="(product) => toggleAlertDialog(product)"/>
         </li>
     </ul>
         <EditModal 
@@ -208,6 +209,7 @@ const updateCard = (newData: Product) => {
             v-if="showAlertDialog"
             :name="itemToBeDeleted.name"
             :type="itemToBeDeleted.type"
+            :message="warningMessage"
             @allow="deleteItem"
             @not-allow="toggleAlertDialog({} as Category | Product)"/>
 </template>

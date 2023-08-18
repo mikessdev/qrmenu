@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PropType } from "vue";
+import { toRefs, type PropType } from "vue";
 import type { Product } from "@/utils/types/Product";
 import EditIcon from "@/components/icons/EditIcon.vue";
 import DeleteIcon from './icons/DeleteIcon.vue';
@@ -14,6 +14,8 @@ const props = defineProps({
         default: {} as Product
     }
 })
+
+const { title, description, value } = toRefs(props).product.value;
 
 const editCardData = () => {
     emit("editCardData", props.product);
@@ -33,10 +35,10 @@ const toggleAlertDialog = () => {
             </div>
             <div class="card-data">
                 <div>
-                    <h4>{{ props.product.title }}</h4>
-                    <p>{{ props.product.description }}</p>
+                    <h4>{{ title }}</h4>
+                    <p>{{ description }}</p>
                 </div>
-                <span>{{ props.product.value }}</span>
+                <span>{{ value }}</span>
             </div>
         </div>
         <div class="icon">

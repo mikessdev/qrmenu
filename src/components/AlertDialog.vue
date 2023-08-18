@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Button from "@/components/Button.vue";
+import { toRefs } from "vue";
 
 const props = defineProps({
     name: {
@@ -9,9 +10,14 @@ const props = defineProps({
     type: {
         type: String,
         default: ''
+    },
+    message: {
+        type: String,
+        default: ''
     }
 })
 
+const { name, type } = toRefs(props);
 
 const emit = defineEmits(["Allow", "NotAllow"]);
 
@@ -27,7 +33,7 @@ const Allow = () => {
     <div class="modal-background">
         <div class="modal">
             <span>
-                Você tem certeza que deseja deletar o(a) <strong>{{ type }}</strong> de <strong>{{ name }}</strong> 
+                Você tem certeza que deseja deletar o(a) <strong>{{ type }}</strong> de <strong>{{ name }}</strong>. <br> {{ message }}
             </span>
             <div class="buttons">
                 <Button 
@@ -39,7 +45,6 @@ const Allow = () => {
                     :label="'Sim'" 
                     :type="'button'"/>
             </div>
-
         </div>
     </div>
 </template>

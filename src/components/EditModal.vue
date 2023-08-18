@@ -58,7 +58,6 @@ const save = () => {
         const newData = isProduct ?
         { id, title: title.value, description: description.value, value: value.value } :
         { id, title: title.value };
-        console.log('viewState.id', viewState.id)
         emit('saveData', newData);
     }
 }
