@@ -15,7 +15,7 @@ const props = defineProps({
     }
 })
 
-const { title, description, value } = toRefs(props).product.value;
+const { product } = toRefs(props);
 
 const editCardData = () => {
     emit("editCardData", props.product);
@@ -35,10 +35,10 @@ const toggleAlertDialog = () => {
             </div>
             <div class="card-data">
                 <div>
-                    <h4>{{ title }}</h4>
-                    <p>{{ description }}</p>
+                    <h4>{{ product.title }}</h4>
+                    <p>{{ product.description }}</p>
                 </div>
-                <span>{{ value }}</span>
+                <span>{{ product.value }}</span>
             </div>
         </div>
         <div class="icon">

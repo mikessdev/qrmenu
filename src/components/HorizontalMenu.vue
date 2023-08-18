@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useCategoryStore } from '@/store/categoryStore';
+import { useUserStore } from "@/store/userStore";
+import type { Category } from "@/utils/types/Category";
+import type { Product } from "@/utils/types/Product";
+import type { Menu } from "@/utils/types/Menu";
 import CardProducts from "@/components/CardProducts.vue";
 import AlertDialog from "@/components/AlertDialog.vue";
 import PlusIcon from "@/components/icons/PlusIcon.vue";
 import EditIcon from "@/components/icons/EditIcon.vue";
 import DeleteIcon from "@/components/icons/DeleteIcon.vue"
-import type { Category } from "@/utils/types/Category";
-import type { Product } from "@/utils/types/Product";
 import EditModal from "@/components/EditModal.vue";
-import { useCategoryStore } from '@/store/categoryStore';
-import { useUserStore } from "@/store/userStore";
-import type { Menu } from "@/utils/types/Menu";
 
 const categoryStore = useCategoryStore();
 const userStore = useUserStore();
@@ -22,7 +22,7 @@ export interface productOrMenu {
     description: string,  
 }
 
-const menu = ref<Menu>({
+let menu = ref<Menu>({
     id: '',
     products: []
 });
@@ -41,6 +41,8 @@ const itemToBeDeleted = ref<productOrMenu>({
     description: ''
 })
 
+const currentCategoryTitle = ref<string>('');
+const currentCategoryId = ref<string>('');
 const warningMessage = ref<string>('');
 const showEditModal = ref<boolean>(false);
 const showAlertDialog = ref<boolean>(false);
@@ -54,9 +56,8 @@ const loadData = async () => {
 onMounted(async () => {
     await loadData();
     const { id, title } = categoryStore.categorys[0];
-
-    categoryStore.currentCategoryId =  id;
-    getMenu(id, title);
+    currentCategoryId.value =  id;
+    changeMenu(id, title);
 })
 
 const openEditModalForCategory = (categoryId: string = '', categoryTitle: string = '') => {
@@ -101,12 +102,12 @@ const getEmitEditModal = (cardData: Product) => {
     return toggleEditModal();
 }
 
-const getMenu = (id: string, categoryName: string) => { 
-    categoryStore.currentCategoryId = id;
-    categoryStore.currentCategoryTitle = categoryName;
-    for(let e of categoryStore.menus){
-        if(id == e.id) return menu.value = e;
-    };
+const changeMenu = (id: string, categoryTitle: string) => { 
+    currentCategoryId.value = id;
+    currentCategoryTitle.value = categoryTitle;
+    categoryStore.menus.forEach(e => { 
+        if(id === e.id) return menu.value = e as Menu;
+    });
 }
 
 const saveData = (newData: Product | Category) => {
@@ -131,14 +132,17 @@ const addNewCategory = (NewCategoryData: Category) => {
     return toggleEditModal();
 }
 
-const deleteItem = () => {
+const  deleteItem = async () => {
     const { id, description } = itemToBeDeleted.value;
-    const { currentCategoryId } = categoryStore;
     const isProduct = !!description;
 
-    isProduct ?
-    categoryStore.deleteProductById(id, currentCategoryId) :
+    await isProduct ?
+    categoryStore.deleteProductById(id, currentCategoryId.value) :
     categoryStore.deleteCategoryById(id);
+    
+    const nextCategoryId = categoryStore.categorys[0].id;
+    const nextCategoryTitle = categoryStore.categorys[0].title;
+    changeMenu(nextCategoryId, nextCategoryTitle);
 
     return toggleAlertDialog({} as Category | Product);
 }
@@ -160,7 +164,7 @@ const updateCard = (newData: Product) => {
 <template>
     <div class="menu-horizontal">
         <div class="menus" v-for="(category, index) in categoryStore.categorys" :key="index">
-            <button @click="getMenu(category.id, category.title)" autofocus>{{ category.title }}</button>
+            <button @click="changeMenu(category.id, category.title)" autofocus>{{ category.title }}</button>
             <div class="icons">
             <EditIcon 
                 v-if="userStore.isAdmin" 
@@ -184,7 +188,7 @@ const updateCard = (newData: Product) => {
                 :height="30"/>
         </div>
     </div>
-    <h3> {{ categoryStore.currentCategoryTitle }} </h3>
+    <h3> {{ currentCategoryTitle }} </h3>
     <ul>
         <li class="add-card" v-if="userStore.isAdmin">
             <PlusIcon 
