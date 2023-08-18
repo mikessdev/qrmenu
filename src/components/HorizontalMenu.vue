@@ -15,30 +15,37 @@ import type { Menu } from "@/utils/types/Menu";
 const categoryStore = useCategoryStore();
 const userStore = useUserStore();
 
-const menu = ref({
+export interface productOrMenu {
+    id: string,
+    type: string, 
+    name: string,
+    description: string,  
+}
+
+const menu = ref<Menu>({
     id: "",
     products: []
-} as Menu);
+});
 
-const editModalData = ref({
+const editModalData = ref<Product>({
     id: '',
     title: '', 
     description: '',  
     value: ''
 })
 
-const itemToBeDeleted = ref({
+const itemToBeDeleted = ref<productOrMenu>({
     id: '',
     type: '',
     name: '',
     description: ''
 })
 
-const categoryNameSelected = ref('');
-const showEditModal = ref(false);
-const showAlertDialog = ref(false);
-const currentCategoryId = ref('');
-const isProduct = ref(true);
+const categoryNameSelected = ref<string>('');
+const showEditModal = ref<boolean>(false);
+const showAlertDialog = ref<boolean>(false);
+const currentCategoryId = ref<string>('');
+const isProduct = ref<boolean>(true);
 
 const loadData = async () => {
     await categoryStore.getCategorys();
@@ -47,11 +54,11 @@ const loadData = async () => {
 
 onMounted(async () => {
     await loadData();
-    const firstMenu: Category  = categoryStore.categorys[0];
-    currentCategoryId.value =  firstMenu.id;
-    const title = firstMenu.title;
-    getMenu(currentCategoryId.value, title);
-});
+    const { id, title } = categoryStore.categorys[0];
+
+    currentCategoryId.value =  id;
+    getMenu(id, title);
+})
 
 const openEditModalForCategory = (categoryId: string, categoryTitle: string) => {
     isProduct.value = false; 
@@ -59,7 +66,6 @@ const openEditModalForCategory = (categoryId: string, categoryTitle: string) => 
     editModalData.value.title = categoryTitle;
     showEditModal.value = !showEditModal.value;
     if(showEditModal.value === false) clearModalData();
-    
 }
 
 const toggleEditModal = () => { 
@@ -83,16 +89,16 @@ const toggleAlertDialog = (item: Product | Category) => {
     } 
 
     return showAlertDialog.value = !showAlertDialog.value;
-};
+}
 
 const clearModalData = () => { 
     return editModalData.value = {} as Product;
-};
+}
 
 const getEmitEditModal = (cardData: Product) => {
     editModalData.value = cardData;
     return toggleEditModal();
-};
+}
 
 const getMenu = (id: string, categoryName: string) => { 
     currentCategoryId.value = id;
@@ -129,7 +135,7 @@ const deleteItem = () => {
     isProduct ?
     categoryStore.deleteProductByid(id, value) :
     categoryStore.deleteCategoryById(id);
-    
+
     return toggleAlertDialog({});
 }
 
@@ -139,7 +145,8 @@ const addNewCard = (NewCardData: Product) => {
 }
 
 const updateCard = (newData: Product) => {
-    categoryStore.updateProduct(newData, menu.value.id);
+    const { id } = menu.value;
+    categoryStore.updateProduct(newData, id);
     toggleEditModal();
     return editModalData.value = {} as Product;
 }
