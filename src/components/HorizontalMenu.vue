@@ -69,29 +69,30 @@ const toggleEditModal = () => {
 }
 
 const toggleAlertDialog = (item: Product | Category) => { 
-    let isProduct = !!item.description;
-    itemToBeDeleted.value.name = item.title;
-    itemToBeDeleted.value.id = item.id;
+    const { id, title, description } = item;
+    const isProduct = !!description;
+    itemToBeDeleted.value.name = title;
+    itemToBeDeleted.value.id = id;
 
     if(isProduct){
         itemToBeDeleted.value.type = 'Produto';
-        itemToBeDeleted.value.description = item.description;
+        itemToBeDeleted.value.description = description;
     } 
     if(!isProduct){
         itemToBeDeleted.value.type = 'Categoria';
     } 
 
     return showAlertDialog.value = !showAlertDialog.value;
-}
+};
 
 const clearModalData = () => { 
     return editModalData.value = {} as Product;
-}
+};
 
 const getEmitEditModal = (cardData: Product) => {
     editModalData.value = cardData;
     return toggleEditModal();
-}
+};
 
 const getMenu = (id: string, categoryName: string) => { 
     currentCategoryId.value = id;
@@ -102,10 +103,11 @@ const getMenu = (id: string, categoryName: string) => {
 }
 
 const saveData = (newData: any) => {
-    if(newData.description && newData.value){
-        return !newData.id ? addNewCard(newData) : updateCard(newData);
+    const { id, description, value } = newData;
+    if(description && value){
+        return !id ? addNewCard(newData) : updateCard(newData);
     }else{
-        return !newData.id ? addNewCategory(newData) : updateCategory(newData);
+        return !id ? addNewCategory(newData) : updateCategory(newData);
     }
 }
 
@@ -120,15 +122,14 @@ const addNewCategory = (NewCategoryData: Product) => {
 }
 
 const deleteItem = () => {
-    let isProduct = !!itemToBeDeleted.value.description;
-    let itemId = itemToBeDeleted.value.id;
-    let menuId = currentCategoryId.value;
-    if(isProduct){
-        categoryStore.deleteProductByid(itemId, menuId);
-    }
-    if(!isProduct){   
-        categoryStore.deleteCategoryById(itemId);
-    }
+    const { id, description } = itemToBeDeleted.value;
+    const { value } = currentCategoryId;
+    const isProduct = !!description;
+
+    isProduct ?
+    categoryStore.deleteProductByid(id, value) :
+    categoryStore.deleteCategoryById(id);
+    
     return toggleAlertDialog({});
 }
 
