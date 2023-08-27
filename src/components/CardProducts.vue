@@ -1,114 +1,112 @@
 <script setup lang="ts">
-import { toRefs, type PropType } from "vue";
-import type { Product } from "@/utils/types/Product";
-import EditIcon from "@/components/icons/EditIcon.vue";
+import { toRefs, type PropType } from 'vue';
+import type { Product } from '@/utils/types/Product';
+import EditIcon from '@/components/icons/EditIcon.vue';
 import DeleteIcon from './icons/DeleteIcon.vue';
-import { useUserStore } from "@/store/userStore";
+import { useUserStore } from '@/store/userStore';
 
 const userStore = useUserStore();
-const emit = defineEmits(["editCardData", "toggleAlertDialog"]);
+const emit = defineEmits(['editCardData', 'toggleAlertDialog']);
 
 const props = defineProps({
-    product: {
-        type: Object as PropType<Product>, 
-        default: {} as Product
-    }
-})
+  product: {
+    type: Object as PropType<Product>,
+    default: {} as Product
+  }
+});
 
 const { product } = toRefs(props);
 
 const editCardData = () => {
-    emit("editCardData", props.product);
-}
+  emit('editCardData', props.product);
+};
 
 const toggleAlertDialog = () => {
-    emit("toggleAlertDialog", props.product);
-}
-
+  emit('toggleAlertDialog', props.product);
+};
 </script>
 
 <template>
-    <div class="card">
-        <div class="card-information">
-            <div class="img-food">
-                <img src="@/assets/img/imgComida.jpg" alt="img-produto">
-            </div>
-            <div class="card-data">
-                <div>
-                    <h4>{{ product.title }}</h4>
-                    <p>{{ product.description }}</p>
-                </div>
-                <span>{{ product.value }}</span>
-            </div>
+  <div class="card">
+    <div class="card-information">
+      <div class="img-food">
+        <img src="@/assets/img/imgComida.jpg" alt="img-produto" />
+      </div>
+      <div class="card-data">
+        <div>
+          <h4>{{ product.title }}</h4>
+          <p>{{ product.description }}</p>
         </div>
-        <div class="icon">
-            <EditIcon 
-                v-if="userStore.isAdmin" 
-                @click="editCardData" 
-                :color="'black'"/>
-            <DeleteIcon
-                v-if="userStore.isAdmin" 
-                @click="toggleAlertDialog()"
-                :color="'black'"
-                :width="30"
-                :height="30"/>
-        </div>
+        <span>{{ product.price }}</span>
+      </div>
     </div>
+    <div class="icon">
+      <EditIcon v-if="userStore.isAdmin" @click="editCardData" :color="'black'" />
+      <DeleteIcon
+        v-if="userStore.isAdmin"
+        @click="toggleAlertDialog()"
+        :color="'black'"
+        :width="30"
+        :height="30"
+      />
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-    .card {
-        width: 400px;
-        height: 200px;
-        display: flex;
-        border-bottom: 1px solid $qrmenu-gray;
+.card {
+  width: 400px;
+  height: 200px;
+  display: flex;
+  border-bottom: 1px solid $qrmenu-gray;
 
-        .card-information{
-            display: flex;
-            width: 100%;
-        }
+  .card-information {
+    display: flex;
+    width: 100%;
+  }
 
-        .img-food {
-            display: flex;
-            align-items: center;
+  .img-food {
+    display: flex;
+    align-items: center;
 
-            img {
-                border: 2px solid $qrmenu-gray;
-                border-radius: 100%;
-                width: 80px;
-                margin: 0 16px 0 16px;
-            }
-        }
-
-        .card-data {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            word-break: break-word;
-            width: 100%;
-
-            h4{
-                margin: 16px 0 8px 0;
-            }
-
-            p{                
-                text-align: justify;
-            }
-
-            span {
-                font-weight: bold;
-                margin: 8px 0 16px 0;
-            }
-        }
-
-        .icon{
-            margin: 16px 16px 0 0;
-        }
+    img {
+      border: 2px solid $qrmenu-gray;
+      border-radius: 100%;
+      width: 80px;
+      margin: 0 16px 0 16px;
     }
-    @media (max-width: 400px) {
-            .card {
-                width: 100vw;
-                height: 90%;
-            }
-        }
+  }
+
+  .card-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    word-break: break-word;
+    width: 100%;
+
+    h4 {
+      margin: 16px 0 8px 0;
+    }
+
+    p {
+      text-align: justify;
+    }
+
+    span {
+      font-weight: bold;
+      margin: 8px 0 16px 0;
+    }
+  }
+
+  .icon {
+    margin: 16px 16px 0 0;
+  }
+}
+@media (max-width: 400px) {
+  .card {
+    width: 100vw;
+    height: 90%;
+  }
+}
 </style>
+@/utils/interfaces/Product
