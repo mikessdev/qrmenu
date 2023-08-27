@@ -2,11 +2,9 @@
 
 online menu for restaurants
 
-![image](https://github.com/mikessdev/qrmenu/assets/77863237/ec301952-1612-4eb4-aa36-18990c6f9a9c)
+![image](https://github.com/mikessdev/qrmenu/assets/77863237/03616a7b-4362-400e-b5a9-6ebef6ad1e81)
 
-
-
-# Etapas para rodar o projeto localmente
+# Steps to run the project locally
 
 ```bash
 # First it will be necessary to clone the qrmenu_backend, the step by step on how to run it is described in its README.
