@@ -7,7 +7,8 @@ online menu for restaurants
 # Steps to run the project locally
 
 ```bash
-# First it will be necessary to clone the qrmenu_backend, the step by step on how to run it is described in its README.
+# First it will be necessary to clone the qrmenu_backend.
+# The step by step on how to run it is described in its README.
 ```
 
 [Link to qrmenu_backend](https://github.com/mikessdev/qrmenu_backend)
