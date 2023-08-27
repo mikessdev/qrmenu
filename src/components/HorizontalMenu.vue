@@ -147,7 +147,7 @@ const deleteItem = async () => {
 
   const isProduct = !!description;
   if (isProduct) await deleteProduct(id, categoryId);
-  if (!isProduct) await deleteCategory(categoryId);
+  if (!isProduct) await deleteCategory(id);
 
   const nextCategoryId = categoryStore.categories[0].id;
   const nextCategoryTitle = categoryStore.categories[0].title;
