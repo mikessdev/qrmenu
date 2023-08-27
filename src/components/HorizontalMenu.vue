@@ -1,270 +1,323 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import CardProducts from "@/components/CardProducts.vue";
-import AlertDialog from "@/components/AlertDialog.vue";
-import PlusIcon from "@/components/icons/PlusIcon.vue";
-import EditIcon from "@/components/icons/EditIcon.vue";
-import DeleteIcon from "@/components/icons/DeleteIcon.vue"
-import { Category } from "@/utils/types/Category";
-import { Product } from "@/utils/types/Product";
-import EditModal from "@/components/EditModal.vue";
+import { ref, onMounted } from 'vue';
 import { useCategoryStore } from '@/store/categoryStore';
-import { useUserStore } from "@/store/userStore";
-import type { Menu } from "@/utils/types/Menu";
+import { useUserStore } from '@/store/userStore';
+import { Category } from '@/utils/types/Category';
+import type { Product } from '@/utils/types/Product';
+import CardProducts from '@/components/CardProducts.vue';
+import AlertDialog from '@/components/AlertDialog.vue';
+import PlusIcon from '@/components/icons/PlusIcon.vue';
+import EditIcon from '@/components/icons/EditIcon.vue';
+import DeleteIcon from '@/components/icons/DeleteIcon.vue';
+import EditModal from '@/components/EditModal.vue';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const categoryStore = useCategoryStore();
+const authStore = useAuthStore();
 const userStore = useUserStore();
 
-const menu = ref({
-    id: "",
-    products: []
-} as Menu);
+let menu = ref<Product[]>([] as Product[]);
 
-const editModalData = ref({
-    id: '',
-    title: '', 
-    description: '',  
-    value: ''
-})
-
-const itemToBeDeleted = ref({
-    id: '',
-    type: '',
-    name: '',
-    description: ''
-})
-
-const categoryNameSelected = ref('');
-const showEditModal = ref(false);
-const showAlertDialog = ref(false);
-const currentCategoryId = ref('');
-const isProduct = ref(true);
-
-const loadData = async () => {
-    await categoryStore.getCategorys();
-    await categoryStore.getMenus();
-}
-
-onMounted(async () => {
-    await loadData();
-    const firstMenu: Category  = categoryStore.categorys[0];
-    currentCategoryId.value =  firstMenu.id;
-    const title = firstMenu.title;
-    getMenu(currentCategoryId.value, title);
+const editModalData = ref<Product>({
+  id: '',
+  title: '',
+  description: '',
+  value: ''
 });
 
-const openEditModalForCategory = (categoryId: string, categoryTitle: string) => {
-    isProduct.value = false; 
-    editModalData.value.id = categoryId;
-    editModalData.value.title = categoryTitle;
-    showEditModal.value = !showEditModal.value;
-    if(showEditModal.value === false) clearModalData();
-    
-}
+const itemToBeDeleted = ref<Product | Category>({
+  id: '',
+  categoryId: '',
+  type: '',
+  title: '',
+  description: ''
+});
 
-const toggleEditModal = () => { 
-    isProduct.value = true; 
-    showEditModal.value = !showEditModal.value;
-    if(showEditModal.value === false) clearModalData();
-}
+const currentCategory = ref<Category>({} as Category);
+const warningMessage = ref<string>('');
+const showEditModal = ref<boolean>(false);
+const showAlertDialog = ref<boolean>(false);
+const isProduct = ref<boolean>(true);
 
-const toggleAlertDialog = (item: Product | Category) => { 
-    let isProduct = !!item.description;
-    itemToBeDeleted.value.name = item.title;
-    itemToBeDeleted.value.id = item.id;
+const loadData = async () => {
+  await categoryStore.getCategories();
+};
 
-    if(isProduct){
-        itemToBeDeleted.value.type = 'Produto';
-        itemToBeDeleted.value.description = item.description;
-    } 
-    if(!isProduct){
-        itemToBeDeleted.value.type = 'Categoria';
-    } 
+onMounted(async () => {
+  await loadData();
+  const { id, title } = categoryStore.categories[0];
+  changeMenu(id, title);
+});
 
-    return showAlertDialog.value = !showAlertDialog.value;
-}
+const openEditModalForCategory = (categoryId: string = '', categoryTitle: string = '') => {
+  isProduct.value = false;
+  editModalData.value.id = categoryId;
+  editModalData.value.title = categoryTitle;
+  showEditModal.value = !showEditModal.value;
 
-const clearModalData = () => { 
-    return editModalData.value = {} as Product;
-}
+  const editModalClosed = showEditModal.value === false;
+  if (editModalClosed) clearModalData();
+};
+
+const toggleEditModal = () => {
+  isProduct.value = true;
+  showEditModal.value = !showEditModal.value;
+  if (showEditModal.value === false) clearModalData();
+};
+
+const toggleAlertDialog = (item: Product | Category) => {
+  const isProduct = 'description' in item;
+  const { id, categoryId, description, title } = item;
+  itemToBeDeleted.value.title = title;
+  itemToBeDeleted.value.id = id;
+
+  if (isProduct) {
+    itemToBeDeleted.value = { id, categoryId, title, type: 'Produto', description };
+  }
+  if (!isProduct) {
+    itemToBeDeleted.value = { id, title, type: 'Categoria' };
+    warningMessage.value =
+      'Ao deletar uma categoria, todos os produtos que estão nela também serão deletados!';
+  }
+  return (showAlertDialog.value = !showAlertDialog.value);
+};
+
+const clearModalData = () => {
+  return (editModalData.value = {} as Product);
+};
 
 const getEmitEditModal = (cardData: Product) => {
-    editModalData.value = cardData;
-    return toggleEditModal();
-}
+  editModalData.value = cardData;
+  return toggleEditModal();
+};
 
-const getMenu = (id: string, categoryName: string) => { 
-    currentCategoryId.value = id;
-    categoryNameSelected.value = categoryName;
-    for(let e of categoryStore.menus){
-        if(id == e.id) return menu.value = e;
-    }
-}
+const changeMenu = async (id: string, categoryTitle: string) => {
+  const { categoryWithProducts } = categoryStore;
+  const categoryExist = categoryWithProducts.some((e) => e.id === id);
 
-const saveData = (newData: any) => {
-    if(newData.description && newData.value){
-        return !newData.id ? addNewCard(newData) : updateCard(newData);
-    }else{
-        return !newData.id ? addNewCategory(newData) : updateCategory(newData);
-    }
-}
+  if (!categoryExist) await categoryStore.getCategoryWithProducts(id);
 
-const updateCategory = (NewCategoryData: Category) => {
-    categoryStore.updateCategory(NewCategoryData);
-    return toggleEditModal();
-}
+  currentCategory.value = { id, title: categoryTitle };
 
-const addNewCategory = (NewCategoryData: Product) => { 
-    categoryStore.addNewCategory(NewCategoryData);
-    return toggleEditModal();
-}
+  updateMenu(id);
+};
 
-const deleteItem = () => {
-    let isProduct = !!itemToBeDeleted.value.description;
-    let itemId = itemToBeDeleted.value.id;
-    let menuId = currentCategoryId.value;
-    if(isProduct){
-        categoryStore.deleteProductByid(itemId, menuId);
-    }
-    if(!isProduct){   
-        categoryStore.deleteCategoryById(itemId);
-    }
-    return toggleAlertDialog({});
-}
+const saveData = (newData: Product | Category) => {
+  const isProduct: boolean = 'description' in newData && 'price' in newData;
+  const { id } = newData;
 
-const addNewCard = (NewCardData: Product) => { 
-    categoryStore.addNewProduct(NewCardData, menu.value);
-    return toggleEditModal();
-}
+  if (isProduct) {
+    return !id ? addNewProduct(newData as Product) : updateProduct(newData as Product);
+  }
+  if (!isProduct) {
+    return !id ? addNewCategory(newData as Category) : updateCategory(newData as Category);
+  }
+};
 
-const updateCard = (newData: Product) => {
-    categoryStore.updateProduct(newData, menu.value.id);
-    toggleEditModal();
-    return editModalData.value = {} as Product;
-}
+const updateCategory = async (newData: Category) => {
+  const { accessToken } = authStore.user;
+  await categoryStore.updateCategory(newData, accessToken);
+  await categoryStore.getCategories();
+  return toggleEditModal();
+};
 
+const addNewCategory = async (NewCategoryData: Category) => {
+  const { accessToken } = authStore.user;
+  await categoryStore.addNewCategory(NewCategoryData, accessToken);
+  await categoryStore.getCategories();
+  return toggleEditModal();
+};
+
+const deleteProduct = async (id: string, categoryId: string) => {
+  const { accessToken } = authStore.user;
+
+  await categoryStore.deleteProductById(id, accessToken);
+  await categoryStore.getCategoryWithProducts(categoryId);
+  updateMenu(categoryId);
+};
+
+const deleteCategory = async (id: string) => {
+  const { accessToken } = authStore.user;
+  await categoryStore.deleteCategoryById(id, accessToken);
+  await categoryStore.getCategories();
+};
+
+const deleteItem = async () => {
+  const { id, categoryId, description } = itemToBeDeleted.value;
+
+  const isProduct = !!description;
+  if (isProduct) await deleteProduct(id, categoryId);
+  if (!isProduct) await deleteCategory(categoryId);
+
+  const nextCategoryId = categoryStore.categories[0].id;
+  const nextCategoryTitle = categoryStore.categories[0].title;
+  changeMenu(nextCategoryId, nextCategoryTitle);
+
+  return toggleAlertDialog({} as Category | Product);
+};
+
+const addNewProduct = async (NewProduct: Product) => {
+  const { accessToken } = authStore.user;
+  const categoryId = currentCategory.value.id;
+
+  NewProduct.categoryId = categoryId;
+
+  await categoryStore.addNewProduct(NewProduct, accessToken);
+  await categoryStore.getCategoryWithProducts(categoryId);
+
+  updateMenu(categoryId);
+  toggleEditModal();
+};
+
+const updateProduct = async (product: Product) => {
+  const { accessToken } = authStore.user;
+  const { categoryId } = product;
+
+  await categoryStore.updateProduct(product, accessToken);
+  await categoryStore.getCategoryWithProducts(categoryId);
+
+  updateMenu(categoryId);
+  toggleEditModal();
+  clearModalData();
+};
+
+const updateMenu = (categoryId: string) => {
+  const { categoryWithProducts } = categoryStore;
+  categoryWithProducts.forEach((e) => {
+    if (categoryId === e.id) return (menu.value = e.product);
+  });
+};
 </script>
 
 <template>
-    <div class="menu-horizontal">
-        <div class="menus" v-for="(category, index) in categoryStore.categorys" :key="index">
-            <button @click="getMenu(category.id, category.title)" autofocus>{{ category.title }}</button>
-            <div class="icons">
-            <EditIcon 
-                v-if="userStore.isAdmin" 
-                @click="openEditModalForCategory(category.id, category.title)" 
-                :color="'black'"
-                :width="20"
-                :height="20"/>
-            <DeleteIcon
-                v-if="userStore.isAdmin" 
-                @click="toggleAlertDialog(category)" 
-                :color="'black'"
-                :width="20"
-                :height="20"/>
-        </div>
-        </div>
-        <div class="add-menu" v-if="userStore.isAdmin">
-            <PlusIcon @click="openEditModalForCategory" :color="'black'" :width="30" :height="30"/>
-        </div>
+  <div class="menu-horizontal">
+    <div class="menus" v-for="(category, index) in categoryStore.categories" :key="index">
+      <button @click="changeMenu(category.id, category.title)" autofocus>
+        {{ category.title }}
+      </button>
+      <div class="icons">
+        <EditIcon
+          v-if="userStore.isAdmin"
+          @click="openEditModalForCategory(category.id, category.title)"
+          :color="'black'"
+          :width="20"
+          :height="20"
+        />
+        <DeleteIcon
+          v-if="userStore.isAdmin"
+          @click="toggleAlertDialog(category)"
+          :color="'black'"
+          :width="20"
+          :height="20"
+        />
+      </div>
     </div>
-    <h3> {{ categoryNameSelected }} </h3>
-    <ul>
-            <li class="add-card" v-if="userStore.isAdmin">
-                <PlusIcon @click="toggleEditModal" :color="'black'"/>
-            </li>
-            <li class="cards" v-for="(product, index) in menu.products" :key="index">
-                <CardProducts 
-                    :menuId="menu.id" 
-                    :product="product" 
-                    @edit-card-data="(cardData) => getEmitEditModal(cardData)"
-                    @toggle-alert-dialog="(e) => toggleAlertDialog(e)"/>
-            </li>
-        </ul>
-        <EditModal 
-            v-if="showEditModal" 
-            :is-product="isProduct"
-            :product="editModalData"
-            @close-edit-modal="toggleEditModal" 
-            @save-data="(newData) => saveData(newData)"/>
-        <AlertDialog
-            v-if="showAlertDialog"
-            :name="itemToBeDeleted.name"
-            :type="itemToBeDeleted.type"
-            @allow="deleteItem"
-            @not-allow="toggleAlertDialog({})"/>
+    <div class="add-menu" v-if="userStore.isAdmin">
+      <PlusIcon @click="openEditModalForCategory()" :color="'black'" :width="30" :height="30" />
+    </div>
+  </div>
+  <h3>{{ currentCategory.title }}</h3>
+  <ul>
+    <li class="add-card" v-if="userStore.isAdmin">
+      <PlusIcon @click="toggleEditModal" :color="'black'" />
+    </li>
+    <li class="cards" v-for="(product, index) in menu" :key="index">
+      <CardProducts
+        :menuId="product.categoryId"
+        :product="product"
+        @edit-card-data="(cardData) => getEmitEditModal(cardData)"
+        @toggle-alert-dialog="(product) => toggleAlertDialog(product)"
+      />
+    </li>
+  </ul>
+  <EditModal
+    v-if="showEditModal"
+    :is-product="isProduct"
+    :product="editModalData"
+    @close-edit-modal="toggleEditModal"
+    @save-data="(newData) => saveData(newData)"
+  />
+  <AlertDialog
+    v-if="showAlertDialog"
+    :name="itemToBeDeleted.title"
+    :type="itemToBeDeleted.type"
+    :message="warningMessage"
+    @allow="deleteItem"
+    @not-allow="toggleAlertDialog({} as Category | Product)"
+  />
 </template>
 
 <style lang="scss" scoped>
-    .menu-horizontal{
-        width: 100%;
-        margin: 0 auto;
-        display: flex;
-        align-items: center;
-        overflow-x: auto;
-        
-        .menus{
-            min-height: 2.2rem;
-            padding: 0 3px;
-            display: flex;
+.menu-horizontal {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
 
-            button{
-                white-space: nowrap;
-                border: none;
-                background: none;
-                font-size: 1rem;
-                font-weight: bold;
-                padding: 5px 10px;
-                
-                &:hover, &:focus{
-                    background-color: $qrmenu-gray;
-                    color: $qrmenu-white;
-                    border-radius: 15px;
-                    cursor: pointer;
-                }
-                
-                &:focus-visible{
-                    outline: none;
+  .menus {
+    min-height: 2.2rem;
+    padding: 0 3px;
+    display: flex;
 
-                }
-            }
+    button {
+      white-space: nowrap;
+      border: none;
+      background: none;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 5px 10px;
 
-            .icons{
-                display: flex;
-                flex-direction: column;
-            }
-        }
-    }
-
-    h3{
-        font-family: 'Noto Sans';
-        font-size: 16px;
+      &:hover,
+      &:focus {
+        background-color: $qrmenu-gray;
         color: $qrmenu-white;
-        background: $qrmenu-gray;
-        margin: 10px 0;
-        padding: 7px 10px;
-    }    
+        border-radius: 15px;
+        cursor: pointer;
+      }
 
-    ul{
-        font-family: 'Noto Sans';
-        list-style: none;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
+      &:focus-visible {
+        outline: none;
+      }
+    }
 
-        .add-card{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 20px 0 20px;
-            width: 400px
-        }
+    .icons {
+      display: flex;
+      flex-direction: column;
     }
- 
-    @media(min-width: 585px){
-        .menu-horizontal {
-            justify-content: center;
-        }
-    }
+  }
+}
+
+h3 {
+  font-family: 'Noto Sans';
+  font-size: 16px;
+  color: $qrmenu-white;
+  background: $qrmenu-gray;
+  margin: 10px 0;
+  padding: 7px 10px;
+}
+
+ul {
+  font-family: 'Noto Sans';
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+
+  .add-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 20px 0 20px;
+    width: 400px;
+  }
+}
+
+@media (min-width: 585px) {
+  .menu-horizontal {
+    justify-content: center;
+  }
+}
 </style>
+@/utils/interfaces/Category@/utils/interfaces/Product@/utils/interfaces/Menu

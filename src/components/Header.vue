@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import SettingsIcon from '@/components/icons/SettingsIcon.vue';
 import LogoutIcon from '@/components/icons/LogoutIcon.vue';

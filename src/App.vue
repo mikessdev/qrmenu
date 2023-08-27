@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, type User } from 'firebase/auth';
 import { firebaseAuth } from './firebase/config';
 import { useAuthStore } from './store/useAuthStore';
 import { useUserStore } from './store/userStore';
@@ -8,26 +8,25 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 
 onAuthStateChanged(firebaseAuth, (user) => {
-    if(user){
-        authStore.setUser(user);
-        userStore.isAdmin = true;
-    }
+  if (user) {
+    authStore.setUser(user);
+    userStore.isAdmin = true;
+  }
 
-    if(!user){
-        authStore.setUser(null);
-        userStore.isAdmin = false;
-    }
+  if (!user) {
+    authStore.setUser({} as User);
+    userStore.isAdmin = false;
+  }
 });
-
 </script>
 <template>
-    <router-view/>
+  <router-view />
 </template>
 
 <style>
-    *{
-        padding: 0;
-        margin: 0;
-        box-sizing: border-box;
-    }
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
 </style>
