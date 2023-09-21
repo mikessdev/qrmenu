@@ -36,13 +36,6 @@ const submit = async (e: any) => {
   try {
     await signInWithEmailAndPassword(firebaseAuth, viewState.email.value, viewState.password.value)
     userStore.isAdmin = true
-    console.log(
-      await signInWithEmailAndPassword(
-        firebaseAuth,
-        viewState.email.value,
-        viewState.password.value
-      )
-    )
     router.push('/')
   } catch (error) {
     console.log(error)

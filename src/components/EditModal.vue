@@ -5,6 +5,8 @@ import BaseInput from '@/components/BaseInput.vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import type { Product } from '@/utils/interfaces/Product';
 import type { Category } from '@/utils/interfaces/Category';
+import { uploadImage } from '../firebase/cloud.storage';
+import { useAuthStore } from '../store/useAuthStore';
 
 const props = defineProps({
   isProduct: {
@@ -17,7 +19,12 @@ const props = defineProps({
   }
 });
 
+const authStore = useAuthStore();
+
 const buttonIsDisabled = ref(true);
+const selectedFile = ref();
+const imageUrl = ref();
+const fileInput = ref();
 
 const { id, categoryId, title, description, value } = toRefs(props).product.value;
 const viewState = reactive({
@@ -63,6 +70,23 @@ const save = () => {
   }
 };
 
+const openFileInput = () => {
+  fileInput.value.click();
+};
+
+const handleFileChange = (event: any) => {
+  const file = event.target.files[0];
+  if (file) {
+    selectedFile.value = file;
+    uploadImage(file, authStore.user.uid, props.product.id);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imageUrl.value = e.target?.result;
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
 watch(viewState, () => {
   const { title, description, price } = viewState;
   const isTitleEmpty = !!validateEmptyText(title.value);
@@ -79,7 +103,8 @@ watch(viewState, () => {
   <div class="modal-background">
     <div class="modal" :class="[isProduct ? 'tall-modal' : 'short-modal']">
       <div class="img-food">
-        <img src="@/assets/img/imgComida.jpg" alt="img-produto" />
+        <input class="input-img" type="file" @change="handleFileChange" ref="fileInput" />
+        <img :src="imageUrl" @click="openFileInput" alt="product image" />
       </div>
       <div class="card-data">
         <BaseInput
@@ -148,6 +173,10 @@ watch(viewState, () => {
     .img-food {
       display: flex;
       align-items: center;
+
+      .input-img {
+        display: none;
+      }
 
       img {
         border: 2px solid $qrmenu-gray;
