@@ -1,10 +1,4 @@
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  type StorageReference
-} from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 export const uploadImage = (file: any, uid: string, fileName: string) => {
   const storage = getStorage();

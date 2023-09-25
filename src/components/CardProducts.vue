@@ -33,12 +33,11 @@ const toggleAlertDialog = () => {
 
 onMounted(async () => {
   imageUrl.value = await donwloadImage(`${AuthStore.user.uid}/products/${props.product.id}.jpg`);
-  console.log(imageUrl.value)
 })
 </script>
 
 <template>
-  <div class="card">
+  <div class="card bg-amber-600">
     <div class="card-information">
       <div class="img-food">
         <img :src="imageUrl" alt="product image"  />
@@ -66,8 +65,6 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .card {
-  width: 400px;
-  height: 200px;
   display: flex;
   border-bottom: 1px solid $qrmenu-gray;
 
