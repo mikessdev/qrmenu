@@ -1,0 +1,26 @@
+name: '[CI] Continuous Integration'
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.17.1'
+
+      - name: Debug
+        run: 'ls -la'
+
+      - name: Install Dependencies
+        run: 'npm ci'
+
+      - name: Lint
+        run: 'npm run lint'
