@@ -2,7 +2,6 @@
 import Header from "@/components/Header.vue";
 import Hero from "@/components/Hero.vue";
 import HorizontalMenu from "@/components/HorizontalMenu.vue";
-import Welcome from "@/components/Welcome.vue"
 import Button from "@/components/Button.vue";
 import { useUserStore } from '@/store/userStore';
 
@@ -19,7 +18,6 @@ const toggleUserMode = () => {
     <div class="button-wrapper">
       <Button :label="'Modo Admin'" @click="toggleUserMode()" />
     </div>
-    <Welcome v-if="userStore.isAdmin"/>
     <Hero/>
     <HorizontalMenu />
   </main>
