@@ -60,5 +60,8 @@ jobs:
       - name: Install Dependenciess
         run: 'npm ci'
 
+      - name: Run project
+        run: 'npm run dev'
+
       - name: cypress
         run: 'npx cypress run --env EMAIL=${{ secrets.CYPRESS_EMAIL }},PASSWORD=${{ secrets.CYPRESS_PASSWORD }}'
