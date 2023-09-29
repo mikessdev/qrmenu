@@ -1,9 +1,16 @@
-import { fileURLToPath, URL } from 'node:url'
-
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { fileURLToPath, URL } from 'node:url';
+import type { UserConfig as VitestUserConfigInterface } from 'vitest/config';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
 // https://vitejs.dev/config/
+const vitestConfig: VitestUserConfigInterface = {
+  test: {
+    globals: true,
+    environment: 'happy-dom'
+  }
+};
+
 export default defineConfig({
   plugins: [vue()],
   resolve: {
@@ -13,9 +20,10 @@ export default defineConfig({
   },
   css: {
     preprocessorOptions: {
-      scss: { 
+      scss: {
         additionalData: `@import "src/scss/app.scss";`
-      },
-    },
-  }
-})
+      }
+    }
+  },
+  test: vitestConfig.test
+});

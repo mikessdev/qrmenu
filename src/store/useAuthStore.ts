@@ -2,8 +2,6 @@ import type { User } from '@/utils/interfaces/User';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-//TODO Implement communication with the backend when the backend is available
-
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User>({} as User);
 

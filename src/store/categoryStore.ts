@@ -1,5 +1,4 @@
 import type { Category, CategoryWithProducts } from '@/utils/interfaces/Category';
-import type { Menu } from '@/utils/interfaces/Menu';
 import type { Product } from '@/utils/interfaces/Product';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';

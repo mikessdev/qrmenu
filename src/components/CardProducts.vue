@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import { toRefs, type PropType } from 'vue';
+import { onMounted, ref, toRefs, type PropType } from 'vue';
 import type { Product } from '@/utils/types/Product';
 import EditIcon from '@/components/icons/EditIcon.vue';
 import DeleteIcon from './icons/DeleteIcon.vue';
 import { useUserStore } from '@/store/userStore';
+import { donwloadImage } from '../firebase/cloud.storage';
+import { useAuthStore } from '../store/useAuthStore';
 
 const userStore = useUserStore();
+const AuthStore = useAuthStore();
+
+const imageUrl = ref();
+
 const emit = defineEmits(['editCardData', 'toggleAlertDialog']);
 
 const props = defineProps({
@@ -24,13 +30,17 @@ const editCardData = () => {
 const toggleAlertDialog = () => {
   emit('toggleAlertDialog', props.product);
 };
+
+onMounted(async () => {
+  imageUrl.value = await donwloadImage(`${AuthStore.user.uid}/products/${props.product.id}.jpg`);
+})
 </script>
 
 <template>
-  <div class="card">
+  <div class="card bg-amber-600">
     <div class="card-information">
       <div class="img-food">
-        <img src="@/assets/img/imgComida.jpg" alt="img-produto" />
+        <img :src="imageUrl" alt="product image"  />
       </div>
       <div class="card-data">
         <div>
@@ -55,8 +65,6 @@ const toggleAlertDialog = () => {
 
 <style lang="scss" scoped>
 .card {
-  width: 400px;
-  height: 200px;
   display: flex;
   border-bottom: 1px solid $qrmenu-gray;
 
