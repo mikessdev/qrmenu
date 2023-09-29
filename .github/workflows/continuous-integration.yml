@@ -61,4 +61,4 @@ jobs:
         run: 'npm ci'
 
       - name: cypress
-        run: 'npx cypress run --env EMAIL=${{ secrets.CYPRESS_EMAIL }}, PASSWORD=${{ secrets.CYPRESS_PASSWORD }}'
+        run: 'npx cypress run --env EMAIL=${{ secrets.CYPRESS_EMAIL }},PASSWORD=${{ secrets.CYPRESS_PASSWORD }}'
