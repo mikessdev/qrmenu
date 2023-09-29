@@ -44,3 +44,21 @@ jobs:
 
       - name: Unit test
         run: 'npm run test'
+
+  E2Etest:
+    runs-on: ubuntu-latest
+    container: cypress/browsers:node18.12.0-chrome106-ff106
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.17.1'
+
+      - name: Install Dependenciess
+        run: 'npm ci'
+
+      - name: cypress
+        run: 'npx cypress run --env EMAIL=${{secrets.CYPRESS_EMAIL }}, PASSWORD=${{secrets.CYPRESS_PASSWORD}}'
