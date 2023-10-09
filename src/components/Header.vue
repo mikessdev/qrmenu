@@ -13,62 +13,22 @@ defineProps({
     type: Boolean,
     default: false
   }
-})
+});
 
 const userStore = useUserStore();
 
 const settings = () => {
-     return userStore.isAdmin ? router.push('/userconfig') : router.push('/login');
-}
+  return userStore.isAdmin ? router.push('/userconfig') : router.push('/login');
+};
 
 const logOut = () => {
-      signOut(firebaseAuth);
-      return userStore.isAdmin = false;
-}
-
+  signOut(firebaseAuth);
+  return (userStore.isAdmin = false);
+};
 </script>
 <template>
-    <header>
-        <p>Boteco Peace</p>    
-        <div v-if="!hideBackButton" class="arrow-back-icon">
-            <router-link to="/">
-                <ArrowBackIcon :color="'white'"/>
-            </router-link>
-        </div>
-        <div v-else class="settings-wrapper">
-            <SettingsIcon @click="settings()" :color="'white'"/>
-            <LogoutIcon v-if="userStore.isAdmin" class="logout-icon" @click="logOut()" :color="'white'"/>
-        </div>
-    </header>
+  <header class="h-[60px] w-full bg-orange-500">
+    <p>Logo</p>
+    <p>Boteco Peace</p>
+  </header>
 </template>
-<style lang="scss" scoped>
-    header {
-        width: 100%;
-        height: 60px;
-        position: absolute;
-        top: 0;
-        background: $qrmenu-red;
-        color: $qrmenu-white;
-        font-family: 'Noto Sans';
-        font-weight: bold;
-        text-align: center;
-        padding: 1rem 1rem;
-            .arrow-back-icon{
-                position: absolute;
-                left: 10px;
-                top: 12px;
-            }
-            .settings-wrapper{
-                position: absolute;
-                display: flex;  
-                right: 10px;
-                top: 0px; 
-                align-items: center;
-                height: 60px;
-                .logout-icon{
-                    margin-left: 20px;  
-                }           
-            }
-    }
-</style>
-

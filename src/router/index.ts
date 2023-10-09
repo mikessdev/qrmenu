@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomePage from '@/pages/HomePage.vue';
+import LandingPage from '@/pages/LandingPage.vue';
 import LoginPage from '@/pages/LoginPage.vue';
 import UserConfigPage from '@/pages/UserConfigPage.vue';
 
@@ -8,8 +8,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomePage
+      name: 'landingPage',
+      component: LandingPage
     },
     {
       path: '/login',
@@ -20,8 +20,8 @@ const router = createRouter({
       path: '/userconfig',
       name: 'userconfig',
       component: UserConfigPage
-    },
+    }
   ]
-})
+});
 
-export default router
+export default router;
