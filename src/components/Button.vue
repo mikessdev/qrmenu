@@ -1,55 +1,21 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 const props = defineProps({
   label: {
     type: String,
-    default: "",
-  },
-  type: {
-    type: String,
-    default: "",
-  },
-  submit: {
-    type: Boolean,
-    default: false,
+    default: ''
   },
   isDisabled: {
     type: Boolean,
-    default: false,
-  },
+    default: false
+  }
 });
-
 </script>
 <template>
-    <input class="button" :class="[props.isDisabled ? 'isDisabled' : 'isEnabled']" :type="props.type" :value="$props.label"/>
+  <button
+    class="button h-[48px] cursor-pointer rounded-[10px] bg-qr-light-gray px-[16px] font-notosans text-xl font-bold text-black shadow-[0_2px_4px_rgb(45,35,66,0.4),0_7px_13px_-3px_rgb(45,35,66,0.3),0_-3px_0_inset_#d6d6e7] transition-transform duration-150 hover:-translate-y-[2px] hover:shadow-[0_4px_8px_rgb(45,35,66,0.4),0_7px_13px_-3px_rgb(45,35,66,0.3),0_-3px_0_inset_#d6d6e7] focus-visible:outline-none active:-translate-y-[-2px] active:shadow-[0_3px_7px_inset_#d6d6e7]"
+    :class="[props.isDisabled ? 'isDisabled' : 'isEnabled']"
+  >
+    {{ props.label }}
+  </button>
 </template>
-<style lang="scss" scoped>
-.button{
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  border: none;
-  transition: all linear 160ms;
-  cursor: pointer;
-  margin: 0;
-  padding: 10px 0;
-  border-radius: 4px;
-  display: flex;
-
-}
-.isEnabled {
-    background-color: $qrmenu-red;
-    color: $qrmenu-white;
-    
-    &hover {
-      transform: scale(1.05);
-      background-color: $qrmenu-red;
-    }
-    
-  }
-  
-  .isDisabled {
-    background-color: $qrmenu-gray;
-    color: $qrmenu-white;
-  }
-</style>
+<style lang="scss" scoped></style>
