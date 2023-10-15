@@ -3,6 +3,61 @@ import Header from '@/components/Header.vue';
 import Button from '@/components/Button.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import Footer from '@/components/Footer.vue';
+import { reactive, watch } from 'vue';
+import { validateEmptyText } from '@/validators/emptyText';
+import { validateEmail } from '@/validators/email';
+
+const sendEmail = (e: Event) => {
+  e.preventDefault();
+
+  viewState.name.validator();
+  viewState.email.validator();
+  viewState.subject.validator();
+
+  const nameError = viewState.name.error;
+  const emailError = viewState.email.error;
+  const subjectError = viewState.subject.error;
+
+  const noExistErrors = !nameError && !emailError && !subjectError;
+
+  if (noExistErrors) {
+    return console.log('sending email');
+  }
+};
+
+const viewState = reactive({
+  name: {
+    value: '',
+    error: '',
+    validator: () => {
+      viewState.name.error = validateEmptyText(viewState.name.value)
+        ? 'Você precisa preencher o campo do seu nome!'
+        : '';
+    }
+  },
+  email: {
+    value: '',
+    error: '',
+    validator: () => {
+      viewState.email.error = validateEmptyText(viewState.email.value)
+        ? 'Você precisa preencher o campo do seu E-mail!'
+        : '';
+
+      if (viewState.email.value) {
+        viewState.email.error = validateEmail(viewState.email.value);
+      }
+    }
+  },
+  subject: {
+    value: '',
+    error: '',
+    validator: () => {
+      viewState.subject.error = validateEmptyText(viewState.subject.value)
+        ? 'Você precisa preencher o campo de mensagem!'
+        : '';
+    }
+  }
+});
 </script>
 
 <template>
@@ -59,7 +114,7 @@ import Footer from '@/components/Footer.vue';
   </section>
   <section class="w-full bg-qr-light-gray px-[20px] pb-[60px]">
     <div class="mx-auto my-0 flex max-w-[1200px] flex-col items-center">
-      <p class="my-[60px] max-w-[750px] font-notosans text-xl text-black">
+      <p class="my-[60px] max-w-[750px] text-center font-notosans text-xl text-black">
         Se você está pronto para elevar a apresentação do seu cardápio a um nível totalmente novo,
         comece agora mesmo no <strong class="text-qr-primary-orange">Seu Cardápio.</strong>
       </p>
@@ -91,9 +146,31 @@ import Footer from '@/components/Footer.vue';
         Você tem mais alguma dúvida? Por favor, entre em contato.
       </p>
       <form class="flex w-[70%] flex-col">
-        <BaseInput label="Nome" maxlength="35" />
-        <BaseInput label="E-mail" maxlength="35" />
-        <BaseInput label="Mensagem" :textArea="true" maxlength="600" />
+        <BaseInput
+          label="Nome"
+          maxlength="35"
+          :errorMessage="viewState.name.error"
+          v-model="viewState.name.value"
+          @validate="viewState.name.validator"
+        />
+        <BaseInput
+          label="E-mail"
+          maxlength="35"
+          :errorMessage="viewState.email.error"
+          v-model="viewState.email.value"
+          @validate="viewState.email.validator"
+        />
+        <BaseInput
+          label="Mensagem"
+          :textArea="true"
+          maxlength="600"
+          :errorMessage="viewState.subject.error"
+          v-model="viewState.subject.value"
+          @validate="viewState.subject.validator"
+        />
+        <div class="mx-auto mt-[40px]">
+          <Button label="Enviar" type="submit" @click="(e) => sendEmail(e)" variante="secundary" />
+        </div>
       </form>
     </div>
   </section>

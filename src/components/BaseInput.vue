@@ -81,51 +81,9 @@ const handleInput = (e: Event) => {
       :value="modelValue"
       @input="(e) => handleInput(e)"
     />
-    <label class="error-message">
+    <label class="pl-[6px] font-notosans font-bold text-qr-primary-orange">
       {{ props.errorMessage }}
     </label>
   </div>
 </template>
-<style lang="scss" scoped>
-// .base-input {
-//   display: flex;
-//   flex-direction: column;
-
-//   input,
-//   textarea {
-//     padding: 15px;
-//     font-size: 14px;
-//     border: 1px solid #ccc;
-//     margin-top: 5px;
-//     border-radius: 4px;
-//     transition: all linear 160ms;
-//     outline: none;
-
-//     &:focus {
-//       border: 1px solid $qrmenu-red;
-//     }
-//   }
-
-//   textarea {
-//     resize: none;
-//     height: 120px;
-//   }
-
-//   .label {
-//     margin-top: 16px;
-//     font-size: 14px;
-//     font-weight: 600;
-//   }
-//   .error-message {
-//     color: $qrmenu-red;
-//     font-weight: 500;
-//     font-size: 12px;
-//   }
-
-//   @media (max-width: 300px) {
-//     textarea {
-//       height: 180px;
-//     }
-//   }
-// }
-</style>
+<style lang="scss" scoped></style>
