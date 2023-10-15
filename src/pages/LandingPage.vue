@@ -3,11 +3,12 @@ import Header from '@/components/Header.vue';
 import Button from '@/components/Button.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import Footer from '@/components/Footer.vue';
-import { reactive, watch } from 'vue';
+import { reactive } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateEmail } from '@/validators/email';
+import { sendEmailWithBrevo, type BrevoEmailBody } from '@/utils/sendEmail';
 
-const sendEmail = (e: Event) => {
+const sendEmail = async (e: Event) => {
   e.preventDefault();
 
   viewState.name.validator();
@@ -18,10 +19,24 @@ const sendEmail = (e: Event) => {
   const emailError = viewState.email.error;
   const subjectError = viewState.subject.error;
 
-  const noExistErrors = !nameError && !emailError && !subjectError;
+  const thereIsNoError = !nameError && !emailError && !subjectError;
 
-  if (noExistErrors) {
-    return console.log('sending email');
+  if (thereIsNoError) {
+    const emailBody: BrevoEmailBody = {
+      sender: {
+        name: viewState.name.value,
+        email: viewState.email.value
+      },
+      to: [
+        {
+          email: import.meta.env.VITE_EMAIL,
+          name: 'Seu Cardápio'
+        }
+      ],
+      subject: 'Dúvida seu cardápio',
+      htmlContent: `<html><head></head><body><p>${viewState.subject.value}</p></body></html>`
+    };
+    await sendEmailWithBrevo(emailBody);
   }
 };
 
@@ -65,7 +80,7 @@ const viewState = reactive({
   <section class="h-[600px] w-full overflow-hidden bg-qr-primary-orange px-[20px]">
     <div class="relative mx-auto my-0 flex max-w-[1200px]">
       <div class="absolute left-0 z-10 mt-[60px] max-w-[600px] font-notosans text-white">
-        <h1 class="text-5xl font-bold">Crie o seu cardápio personalizado de forma gratuita</h1>
+        <h1 class="text-5xl font-bold">Crie seu cardápio personalizado de forma gratuita</h1>
         <p class="mb-[60px] mt-[40px] max-w-[380px] text-xl">
           Nós entendemos o quanto um cardápio bem elaborado pode fazer a diferença no seu negócio ou
           na sua experiência culinária, e é por isso que estamos aqui para ajudar.
