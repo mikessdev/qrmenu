@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Header from '@/components/Header.vue';
 import Button from '@/components/Button.vue';
+import BaseInput from '@/components/BaseInput.vue';
+import Footer from '@/components/Footer.vue';
 </script>
 
 <template>
@@ -55,7 +57,7 @@ import Button from '@/components/Button.vue';
       <img class="absolute right-[60px] mt-[40px] w-[320px]" src="@/assets/img/phone.png" />
     </div>
   </section>
-  <section class="h-[600px] w-full bg-qr-light-gray px-[20px]">
+  <section class="w-full bg-qr-light-gray px-[20px] pb-[60px]">
     <div class="mx-auto my-0 flex max-w-[1200px] flex-col items-center">
       <p class="my-[60px] max-w-[750px] font-notosans text-xl text-black">
         Se você está pronto para elevar a apresentação do seu cardápio a um nível totalmente novo,
@@ -88,8 +90,14 @@ import Button from '@/components/Button.vue';
       <p class="my-[40px] text-xl text-black">
         Você tem mais alguma dúvida? Por favor, entre em contato.
       </p>
+      <form class="flex w-[70%] flex-col">
+        <BaseInput label="Nome" maxlength="35" />
+        <BaseInput label="E-mail" maxlength="35" />
+        <BaseInput label="Mensagem" :textArea="true" maxlength="600" />
+      </form>
     </div>
   </section>
+  <Footer />
 </template>
 
 <style lang="scss" scoped></style>
