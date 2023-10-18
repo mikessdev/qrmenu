@@ -7,6 +7,7 @@ import { reactive } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateEmail } from '@/validators/email';
 import { sendEmailWithBrevo, type BrevoEmailBody } from '@/utils/sendEmail';
+import { useChallengeV2 } from 'vue-recaptcha';
 
 const sendEmail = async (e: Event) => {
   e.preventDefault();
@@ -72,6 +73,19 @@ const viewState = reactive({
         : '';
     }
   }
+});
+
+const { root, onVerify } = useChallengeV2({
+  options: {
+    theme: 'light',
+    size: 'normal'
+  }
+});
+
+onVerify((response) => {
+  // do something with response
+  console.log('test');
+  console.log(response);
 });
 </script>
 
@@ -184,6 +198,7 @@ const viewState = reactive({
           @validate="viewState.subject.validator"
         />
         <div class="mx-auto mt-[40px]">
+          <div ref="root" />
           <Button label="Enviar" type="submit" @click="(e) => sendEmail(e)" variante="secundary" />
         </div>
       </form>
