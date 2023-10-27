@@ -11,6 +11,7 @@ import { useChallengeV2 } from 'vue-recaptcha';
 
 const reCAPTCHAChecked = ref<Boolean>(false);
 const sendButtonIsClicked = ref<Boolean>(false);
+const fixedHeader = ref<Boolean>(true);
 
 const sendEmail = async (e: Event) => {
   e.preventDefault();
@@ -116,8 +117,11 @@ onVerify(() => {
 </script>
 
 <template>
-  <Header />
-  <section class="h-[600px] w-full overflow-hidden bg-qr-primary-orange px-[20px]">
+  <Header :fixed="fixedHeader" />
+  <section
+    :class="fixedHeader ? 'h-[660px] pt-[60px]' : 'h-[600px]'"
+    class="w-full overflow-hidden bg-qr-primary-orange px-[20px]"
+  >
     <div class="relative mx-auto my-0 flex max-w-[1200px]">
       <div class="absolute left-0 z-10 mt-[60px] max-w-[600px] font-notosans text-white">
         <h1 class="text-5xl font-bold">Crie seu cardápio personalizado de forma gratuita</h1>
