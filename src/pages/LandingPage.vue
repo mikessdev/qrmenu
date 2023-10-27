@@ -3,24 +3,19 @@ import Header from '@/components/Header.vue';
 import Button from '@/components/Button.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import Footer from '@/components/Footer.vue';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateEmail } from '@/validators/email';
 import { sendEmailWithBrevo, type BrevoEmailBody } from '@/utils/sendEmail';
 import { useChallengeV2 } from 'vue-recaptcha';
 
+const reCAPTCHAChecked = ref<Boolean>(false);
+const sendButtonIsClicked = ref<Boolean>(false);
+
 const sendEmail = async (e: Event) => {
   e.preventDefault();
-
-  viewState.name.validator();
-  viewState.email.validator();
-  viewState.subject.validator();
-
-  const nameError = viewState.name.error;
-  const emailError = viewState.email.error;
-  const subjectError = viewState.subject.error;
-
-  const thereIsNoError = !nameError && !emailError && !subjectError;
+  sendButtonIsClicked.value = true;
+  const thereIsNoError = validFilds();
 
   if (thereIsNoError) {
     const emailBody: BrevoEmailBody = {
@@ -38,7 +33,23 @@ const sendEmail = async (e: Event) => {
       htmlContent: `<html><head></head><body><p>${viewState.subject.value}</p></body></html>`
     };
     await sendEmailWithBrevo(emailBody);
+    reCAPTCHAChecked.value = false;
   }
+};
+
+const validFilds = () => {
+  viewState.name.validator();
+  viewState.email.validator();
+  viewState.subject.validator();
+  viewState.recaptcha.validator();
+
+  const nameError = viewState.name.error;
+  const emailError = viewState.email.error;
+  const subjectError = viewState.subject.error;
+  const recaptchaError = viewState.recaptcha.error;
+  const thereIsNoError = !nameError && !emailError && !subjectError && !recaptchaError;
+
+  return thereIsNoError;
 };
 
 const viewState = reactive({
@@ -46,21 +57,25 @@ const viewState = reactive({
     value: '',
     error: '',
     validator: () => {
-      viewState.name.error = validateEmptyText(viewState.name.value)
-        ? 'Você precisa preencher o campo do seu nome!'
-        : '';
+      if (sendButtonIsClicked.value) {
+        viewState.name.error = validateEmptyText(viewState.name.value)
+          ? 'Você precisa preencher o campo do seu nome!'
+          : '';
+      }
     }
   },
   email: {
     value: '',
     error: '',
     validator: () => {
-      viewState.email.error = validateEmptyText(viewState.email.value)
-        ? 'Você precisa preencher o campo do seu E-mail!'
-        : '';
+      if (sendButtonIsClicked.value) {
+        viewState.email.error = validateEmptyText(viewState.email.value)
+          ? 'Você precisa preencher o campo do seu E-mail!'
+          : '';
 
-      if (viewState.email.value) {
-        viewState.email.error = validateEmail(viewState.email.value);
+        if (viewState.email.value) {
+          viewState.email.error = validateEmail(viewState.email.value);
+        }
       }
     }
   },
@@ -68,9 +83,21 @@ const viewState = reactive({
     value: '',
     error: '',
     validator: () => {
-      viewState.subject.error = validateEmptyText(viewState.subject.value)
-        ? 'Você precisa preencher o campo de mensagem!'
-        : '';
+      if (sendButtonIsClicked.value) {
+        viewState.subject.error = validateEmptyText(viewState.subject.value)
+          ? 'Você precisa preencher o campo de mensagem!'
+          : '';
+      }
+    }
+  },
+  recaptcha: {
+    error: '',
+    validator: () => {
+      if (sendButtonIsClicked.value) {
+        viewState.recaptcha.error = reCAPTCHAChecked.value
+          ? ''
+          : 'Você precisa marcar a caixinha de verificação acima!';
+      }
     }
   }
 });
@@ -82,10 +109,9 @@ const { root, onVerify } = useChallengeV2({
   }
 });
 
-onVerify((response) => {
-  // do something with response
-  console.log('test');
-  console.log(response);
+onVerify(() => {
+  reCAPTCHAChecked.value = true;
+  viewState.recaptcha.validator();
 });
 </script>
 
@@ -197,9 +223,22 @@ onVerify((response) => {
           v-model="viewState.subject.value"
           @validate="viewState.subject.validator"
         />
-        <div class="mx-auto mt-[40px]">
+        <div class="mx-auto mt-[40px] flex flex-col items-center">
           <div ref="root" />
-          <Button label="Enviar" type="submit" @click="(e) => sendEmail(e)" variante="secundary" />
+          <span
+            v-if="viewState.recaptcha.error"
+            class="pl-[6px] font-notosans font-bold text-qr-primary-orange"
+          >
+            {{ viewState.recaptcha.error }}
+          </span>
+
+          <Button
+            class="mt-[40px]"
+            label="Enviar"
+            type="submit"
+            @click="(e) => sendEmail(e)"
+            variante="secundary"
+          />
         </div>
       </form>
     </div>

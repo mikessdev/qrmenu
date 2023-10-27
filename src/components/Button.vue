@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ButtonHTMLAttributes } from 'vue';
-import { PropType } from 'vue';
+import { type ButtonHTMLAttributes } from 'vue';
+import { type PropType } from 'vue';
 
 const props = defineProps({
   label: {

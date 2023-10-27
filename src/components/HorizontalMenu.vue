@@ -2,8 +2,8 @@
 import { ref, onMounted } from 'vue';
 import { useCategoryStore } from '@/store/categoryStore';
 import { useUserStore } from '@/store/userStore';
-import { Category } from '@/utils/types/Category';
-import type { Product } from '@/utils/types/Product';
+import { type Category } from '@/utils/interfaces/Category';
+import type { Product } from '@/utils/interfaces/Product';
 import CardProducts from '@/components/CardProducts.vue';
 import AlertDialog from '@/components/AlertDialog.vue';
 import PlusIcon from '@/components/icons/PlusIcon.vue';
@@ -20,15 +20,15 @@ let menu = ref<Product[]>([] as Product[]);
 
 const editModalData = ref<Product>({
   id: '',
+  categoryId: '',
   title: '',
   description: '',
-  value: ''
+  price: ''
 });
 
 const itemToBeDeleted = ref<Product | Category>({
   id: '',
   categoryId: '',
-  type: '',
   title: '',
   description: ''
 });
@@ -67,18 +67,18 @@ const toggleEditModal = () => {
 
 const toggleAlertDialog = (item: Product | Category) => {
   const isProduct = 'description' in item;
-  const { id, categoryId, description, title } = item;
+  const { id, title } = item;
   itemToBeDeleted.value.title = title;
   itemToBeDeleted.value.id = id;
 
-  if (isProduct) {
-    itemToBeDeleted.value = { id, categoryId, title, type: 'Produto', description };
-  }
-  if (!isProduct) {
-    itemToBeDeleted.value = { id, title, type: 'Categoria' };
-    warningMessage.value =
-      'Ao deletar uma categoria, todos os produtos que estão nela também serão deletados!';
-  }
+  // if (isProduct) {
+  //   itemToBeDeleted.value = { id, categoryId, title, type: 'Produto', description };
+  // }
+  // if (!isProduct) {
+  //   itemToBeDeleted.value = { id, title, type: 'Categoria' };
+  //   warningMessage.value =
+  //     'Ao deletar uma categoria, todos os produtos que estão nela também serão deletados!';
+  // }
   return (showAlertDialog.value = !showAlertDialog.value);
 };
 
@@ -143,11 +143,11 @@ const deleteCategory = async (id: string) => {
 };
 
 const deleteItem = async () => {
-  const { id, categoryId, description } = itemToBeDeleted.value;
+  // const { id, categoryId, description } = itemToBeDeleted.value;
 
-  const isProduct = !!description;
-  if (isProduct) await deleteProduct(id, categoryId);
-  if (!isProduct) await deleteCategory(id);
+  // const isProduct = !!description;
+  // if (isProduct) await deleteProduct(id, categoryId);
+  // if (!isProduct) await deleteCategory(id);
 
   const nextCategoryId = categoryStore.categories[0].id;
   const nextCategoryTitle = categoryStore.categories[0].title;
@@ -240,10 +240,8 @@ const updateMenu = (categoryId: string) => {
   <AlertDialog
     v-if="showAlertDialog"
     :name="itemToBeDeleted.title"
-    :type="itemToBeDeleted.type"
     :message="warningMessage"
     @allow="deleteItem"
-    @not-allow="toggleAlertDialog({} as Category | Product)"
   />
 </template>
 
