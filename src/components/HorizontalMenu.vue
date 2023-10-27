@@ -199,27 +199,27 @@ const updateMenu = (categoryId: string) => {
         <EditIcon
           v-if="userStore.isAdmin"
           @click="openEditModalForCategory(category.id, category.title)"
-          :color="'black'"
+          color="black"
           :width="20"
           :height="20"
         />
         <DeleteIcon
           v-if="userStore.isAdmin"
           @click="toggleAlertDialog(category)"
-          :color="'black'"
+          color="black'"
           :width="20"
           :height="20"
         />
       </div>
     </div>
     <div class="add-menu" v-if="userStore.isAdmin">
-      <PlusIcon @click="openEditModalForCategory()" :color="'black'" :width="30" :height="30" />
+      <PlusIcon @click="openEditModalForCategory()" color="black" :width="30" :height="30" />
     </div>
   </div>
   <h3>{{ currentCategory.title }}</h3>
   <ul>
     <li class="add-card" v-if="userStore.isAdmin">
-      <PlusIcon @click="toggleEditModal" :color="'black'" />
+      <PlusIcon @click="toggleEditModal" color="black" />
     </li>
     <li class="cards" v-for="(product, index) in menu" :key="index">
       <CardProducts

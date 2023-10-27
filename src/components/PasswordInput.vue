@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import EyesIcon from '@/components/icons/EyesIcon.vue';
+import { ref } from 'vue';
+
 const props = defineProps({
   maxlength: {
     type: String,
@@ -23,36 +26,32 @@ const props = defineProps({
   errorMessage: {
     type: String,
     default: ''
-  },
-  textArea: {
-    type: Boolean
   }
 });
 
-const emit = defineEmits(['update:modelValue', 'validate']);
+const emit = defineEmits(['update:modelValue', 'validate', 'passwordVisible']);
 
 const handleInput = (e: Event) => {
   emit('update:modelValue', (e.target as HTMLInputElement).value ?? '');
   emit('validate');
 };
+
+const passwordVisible = ref<boolean>(false);
+
+const togglePasswordVisibility = () => {
+  passwordVisible.value = !passwordVisible.value;
+
+  const visible: boolean = props.inputType === 'password';
+  visible ? emit('passwordVisible', 'text') : emit('passwordVisible', 'password');
+};
 </script>
 <template>
-  <div class="mt-[10px] flex w-full flex-col">
+  <div class="relative mt-[10px] flex w-full flex-col">
     <label class="font-base pl-[6px] font-notosans font-bold text-qr-bit-light-gray">
       {{ props.label }}
     </label>
-    <textarea
-      v-if="props.textArea"
-      class="font-base h-[200px] resize-none rounded-[10px] border-2 border-qr-primary-orange bg-qr-light-gray p-[10px] font-notosans font-bold text-qr-bit-light-gray focus-visible:outline-none"
-      :type="props.inputType"
-      :placeholder="props.placeholder"
-      autofocus="true"
-      :maxlength="maxlength"
-      :value="modelValue"
-      @input="(e) => handleInput(e)"
-    />
+    <!-- <div class="relative flex w-full"> -->
     <input
-      v-else
       class="font-base rounded-[10px] border-2 border-qr-primary-orange bg-qr-light-gray p-[10px] font-notosans font-bold text-qr-bit-light-gray focus-visible:outline-none"
       :type="props.inputType"
       :placeholder="props.placeholder"
@@ -61,6 +60,12 @@ const handleInput = (e: Event) => {
       :value="modelValue"
       @input="(e) => handleInput(e)"
     />
+    <div
+      @click="togglePasswordVisibility()"
+      class="absolute right-[10px] top-[34px] cursor-pointer"
+    >
+      <EyesIcon :visible="passwordVisible" color="black" :height="26" :width="26" />
+    </div>
     <label class="pl-[6px] font-notosans font-bold text-qr-primary-orange">
       {{ props.errorMessage }}
     </label>

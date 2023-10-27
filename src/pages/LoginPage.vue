@@ -1,19 +1,20 @@
 <script setup lang="ts">
+import { reactive, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import Header from '@/components/Header.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import Button from '@/components/Button.vue';
-import { reactive, ref, watch } from 'vue';
+import PasswordInput from '@/components/PasswordInput.vue';
 import { validateEmptyText } from '@/validators/emptyText';
+import { validateEmail } from '@/validators/email.ts';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
-import router from '@/router';
-import { useUserStore } from '@/store/userStore';
-import { HeaderLinks } from '../components/Header.vue';
+import { type HeaderLinks } from '../components/Header.vue';
 
-//TODO: Write validation for email and for password
-const userStore = useUserStore();
+const router = useRouter();
 
-const buttonIsDisabled = ref(true);
+const loginErrorMessage = ref<string>('');
+const passwordInputType = ref<string>('password');
 
 const viewState = reactive({
   email: {
@@ -21,6 +22,9 @@ const viewState = reactive({
     error: '',
     validator: () => {
       viewState.email.error = validateEmptyText(viewState.email.value);
+      if (viewState.email.value) {
+        viewState.email.error = validateEmail(viewState.email.value);
+      }
     }
   },
   password: {
@@ -32,67 +36,106 @@ const viewState = reactive({
   }
 });
 
+const validFilds = () => {
+  viewState.email.validator();
+  viewState.password.validator();
+
+  const emailError = viewState.email.error;
+  const nameError = viewState.password.error;
+  const thereIsNoError = !nameError && !emailError;
+
+  return thereIsNoError;
+};
+
 const submit = async (e: any) => {
   e.preventDefault();
-  try {
-    await signInWithEmailAndPassword(firebaseAuth, viewState.email.value, viewState.password.value);
-    userStore.isAdmin = true;
-    router.push('/');
-  } catch (error) {
-    console.log(error);
-    // switch (error.code) {
-    //       case 'auth/invalid-email':
-    //           viewState.email.value = 'Invalid email'
-    //           break
-    //       case 'auth/user-not-found':
-    //           alert('No account with that email was found');
-    //           break
-    //       case 'auth/wrong-password':
-    //           viewState.password.value = 'Incorrect password';
-    //           break
-    //       default:
-    //           viewState.password.value = 'Email or password was incorrect';
-    //           viewState.email.value = 'Email or password was incorrect';
-    //           break
-    //     }
+  const thereIsNoError = validFilds();
+  if (thereIsNoError) {
+    try {
+      await signInWithEmailAndPassword(
+        firebaseAuth,
+        viewState.email.value,
+        viewState.password.value
+      );
+      loginErrorMessage.value = '';
+      router.push('/');
+    } catch (error) {
+      const userNotFound: string = 'auth/user-not-found';
+      const wrongPassword: string = 'auth/wrong-password';
+      const invalidEmail: string = 'auth/invalid-email';
+
+      const userNoHaveAccount: boolean = error.code === userNotFound;
+      const userHaveAccount: boolean = error.code === invalidEmail || error.code === wrongPassword;
+
+      if (userNoHaveAccount) {
+        loginErrorMessage.value = 'Nenhuma conta com esse email foi encontrada.';
+      }
+
+      if (userHaveAccount) {
+        loginErrorMessage.value = 'Email ou senha inválida.';
+      }
+    }
   }
 };
 
-watch(viewState, () => {
-  const isEmailEmpty = !!validateEmptyText(viewState.email.value);
-  const isPasswordEmpty = !!validateEmptyText(viewState.password.value);
-  buttonIsDisabled.value = isEmailEmpty || isPasswordEmpty;
-});
-
 const headerLinks: HeaderLinks[] = [{ id: 1, name: 'Voltar', link: '/' }];
+
+const togglePasswordVisibility = () => {
+  const visible: boolean = passwordInputType.value === 'text';
+  passwordInputType.value = visible ? 'password' : 'text';
+};
 </script>
 <template>
-  <Header :links="headerLinks" />
-  <form method="POST">
-    <h1>Login</h1>
-    <BaseInput
-      :label="'E-mail'"
-      :inputType="'email'"
-      :placeholder="'Digite seu e-mail'"
-      v-model="viewState.email.value"
-      :error-message="viewState.email.error"
-      @validate="viewState.email.validator"
-    />
-    <BaseInput
-      :label="'Senha'"
-      :inputType="'password'"
-      :placeholder="'Digite sua senha'"
-      v-model="viewState.password.value"
-      :error-message="viewState.password.error"
-      @validate="viewState.password.validator"
-    />
-    <Button
-      :type="'submit'"
-      :label="'Acessar'"
-      @click="(e) => submit(e)"
-      :is-disabled="buttonIsDisabled"
-    />
-  </form>
+  <div class="flex h-screen flex-col bg-qr-primary-orange">
+    <Header :links="headerLinks" />
+    <div class="mx-auto my-auto h-[800px] w-[800px] rounded-[10px] bg-white p-[40px]">
+      <form class="mt-[80px] flex flex-col" method="POST">
+        <h1 class="mb-[60px] text-center text-5xl font-bold text-qr-primary-orange">
+          Entre com sua conta
+        </h1>
+        <BaseInput
+          label="E-mail"
+          inputType="email"
+          placeholder="Digite seu e-mail"
+          v-model="viewState.email.value"
+          :error-message="viewState.email.error"
+          @validate="viewState.email.validator"
+        />
+        <PasswordInput
+          label="Senha"
+          :inputType="passwordInputType"
+          placeholder="Digite sua senha"
+          v-model="viewState.password.value"
+          :error-message="viewState.password.error"
+          @validate="viewState.password.validator"
+          @password-visible="togglePasswordVisibility()"
+        />
+        <div class="flex flex-col pb-[40px]">
+          <Button
+            class="mx-auto mt-[40px]"
+            type="submit"
+            label="Acessar"
+            @click="(e) => submit(e)"
+            variante="secundary"
+          />
+          <span
+            v-if="loginErrorMessage"
+            class="relative z-10 mx-auto mt-[6px] font-notosans font-bold text-qr-primary-orange"
+            >{{ loginErrorMessage }}</span
+          >
+        </div>
+      </form>
+      <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">Ou entre com</p>
+      <div
+        class="mx-auto flex h-[40px] max-w-[300px] cursor-pointer items-center justify-between rounded-[2px] border-2 bg-white px-[10px]"
+      >
+        <img src="../assets/img/google.png" width="24" />
+        <span class="text-right font-notosans text-xs font-bold text-black"
+          >Fazer login com o google</span
+        >
+      </div>
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped></style>

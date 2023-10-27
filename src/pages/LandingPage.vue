@@ -133,7 +133,7 @@ const headerLinks: HeaderLinks[] = [{ id: 1, name: 'Accesar', link: '/login' }];
           na sua experiência culinária, e é por isso que estamos aqui para ajudar.
         </p>
         <router-link to="/register">
-          <Button :label="'Cadastre-se Grátis'" />
+          <Button label="Cadastre-se Grátis" />
         </router-link>
       </div>
       <img class="absolute right-[-80px] top-[-50px]" src="@/assets/img/hero.png" />
