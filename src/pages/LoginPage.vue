@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import Header from '@/components/Header.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import Button from '@/components/Button.vue';
+import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateEmail } from '@/validators/email.ts';
@@ -126,14 +127,7 @@ const togglePasswordVisibility = () => {
         </div>
       </form>
       <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">Ou entre com</p>
-      <div
-        class="mx-auto flex h-[40px] max-w-[300px] cursor-pointer items-center justify-between rounded-[2px] border-2 bg-white px-[10px]"
-      >
-        <img src="../assets/img/google.png" width="24" />
-        <span class="text-right font-notosans text-xs font-bold text-black"
-          >Fazer login com o google</span
-        >
-      </div>
+      <LoginWithGoogle />
     </div>
   </div>
 </template>

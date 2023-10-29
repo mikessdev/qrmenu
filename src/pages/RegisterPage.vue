@@ -3,6 +3,7 @@ import Header from '@/components/Header.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import Button from '@/components/Button.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
+import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import { reactive, ref } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -10,6 +11,7 @@ import { firebaseAuth } from '@/firebase/config';
 import { useRouter } from 'vue-router';
 import { type HeaderLinks } from '../components/Header.vue';
 import { validateEmail } from '@/validators/email.ts';
+import { validateConfirmPassword, validatePassword } from '@/validators/password';
 
 const router = useRouter();
 
@@ -23,33 +25,27 @@ const viewState = reactive({
     value: '',
     error: '',
     validator: () => {
-      if (sendButtonIsClicked.value) {
-        viewState.name.error = validateEmptyText(viewState.name.value)
-          ? 'Você precisa preencher o campo do seu nome!'
-          : '';
-      }
+      viewState.name.error = validateEmptyText(viewState.name.value)
+        ? 'Você precisa preencher o campo do seu nome!'
+        : '';
     }
   },
   lastName: {
     value: '',
     error: '',
     validator: () => {
-      if (sendButtonIsClicked.value) {
-        viewState.lastName.error = validateEmptyText(viewState.lastName.value)
-          ? 'Você precisa preencher o campo do seu sobre nome!'
-          : '';
-      }
+      viewState.lastName.error = validateEmptyText(viewState.lastName.value)
+        ? 'Você precisa preencher o campo do seu sobre nome!'
+        : '';
     }
   },
   email: {
     value: '',
     error: '',
     validator: () => {
-      if (sendButtonIsClicked.value) {
-        viewState.email.error = validateEmptyText(viewState.email.value);
-        if (viewState.email.value) {
-          viewState.email.error = validateEmail(viewState.email.value);
-        }
+      viewState.email.error = validateEmptyText(viewState.email.value);
+      if (viewState.email.value) {
+        viewState.email.error = validateEmail(viewState.email.value);
       }
     }
   },
@@ -57,8 +53,9 @@ const viewState = reactive({
     value: '',
     error: '',
     validator: () => {
-      if (sendButtonIsClicked.value) {
-        viewState.password.error = validateEmptyText(viewState.password.value);
+      viewState.password.error = validateEmptyText(viewState.password.value);
+      if (!viewState.password.error) {
+        viewState.password.error = validatePassword(viewState.password.value);
       }
     }
   },
@@ -66,8 +63,12 @@ const viewState = reactive({
     value: '',
     error: '',
     validator: () => {
-      if (sendButtonIsClicked.value) {
-        viewState.confirmPassword.error = validateEmptyText(viewState.confirmPassword.value);
+      viewState.confirmPassword.error = validateEmptyText(viewState.confirmPassword.value);
+      if (!viewState.confirmPassword.error) {
+        viewState.confirmPassword.error = validateConfirmPassword(
+          viewState.password.value,
+          viewState.confirmPassword.value
+        );
       }
     }
   }
@@ -84,7 +85,7 @@ const validFilds = () => {
   const lastNameError = viewState.lastName.error;
   const emailError = viewState.email.error;
   const passwordError = viewState.password.error;
-  const confirmPasswordError = viewState.password.error;
+  const confirmPasswordError = viewState.confirmPassword.error;
 
   const thereIsNoError =
     !nameError && !emailError && !lastNameError && !passwordError && !confirmPasswordError;
@@ -94,8 +95,10 @@ const validFilds = () => {
 
 const submit = async (e: any) => {
   e.preventDefault();
+
   sendButtonIsClicked.value = true;
   const thereIsNoError = validFilds();
+
   if (thereIsNoError) {
     try {
       await createUserWithEmailAndPassword(
@@ -106,22 +109,11 @@ const submit = async (e: any) => {
       loginErrorMessage.value = '';
       router.push('/');
     } catch (error) {
-      console.log(error.code);
-      //   const userNotFound: string = 'auth/user-not-found';
-      //   const wrongPassword: string = 'auth/wrong-password';
-      //   const invalidEmail: string = 'auth/invalid-email';
-
-      //   const userNoHaveAccount: boolean = error.code === userNotFound;
-      //   const userHaveAccount: boolean = error.code === invalidEmail || error.code === wrongPassword;
-
-      //   if (userNoHaveAccount) {
-      //     loginErrorMessage.value = 'Nenhuma conta com esse email foi encontrada.';
-      //   }
-
-      //   if (userHaveAccount) {
-      //     loginErrorMessage.value = 'Email ou senha inválida.';
-      //   }
-      // }
+      const emailError: string = 'auth/email-already-in-use';
+      const emailAlreadyInUse: boolean = error.code === emailError;
+      if (emailAlreadyInUse) {
+        loginErrorMessage.value = 'Já existe uma conta cadastrada com esse email.';
+      }
     }
   }
 };
@@ -141,10 +133,10 @@ const toggleconfirmPasswordVisibility = () => {
 <template>
   <div class="flex h-screen flex-col bg-qr-primary-orange">
     <Header :links="headerLinks" />
-    <div class="mx-auto my-auto h-[800px] w-[800px] rounded-[10px] bg-white p-[40px]">
+    <div class="mx-auto my-auto w-[800px] rounded-[10px] bg-white p-[40px]">
       <form class="flex flex-col" method="POST">
         <h1 class="mb-[20px] text-center text-5xl font-bold text-qr-primary-orange">
-          Cria sua conta
+          Crie sua conta
         </h1>
         <BaseInput
           label="Nome"
@@ -206,14 +198,7 @@ const toggleconfirmPasswordVisibility = () => {
       <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">
         Ou crie uma conta com
       </p>
-      <div
-        class="mx-auto flex h-[40px] max-w-[300px] items-center justify-between rounded-[2px] border-2 bg-white px-[10px]"
-      >
-        <div>Icon</div>
-        <span class="text-right font-notosans text-xs font-bold text-black"
-          >Criar conta com o google</span
-        >
-      </div>
+      <LoginWithGoogle class="mb-[20px]" />
     </div>
   </div>
 </template>
