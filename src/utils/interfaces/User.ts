@@ -1,9 +1,9 @@
 export interface User {
-  accessToken: string;
+  accessToken?: string;
   uid: string;
-  displayName: string;
+  name: string;
+  lastName: string;
   email: string;
   emailVerified: boolean;
-  phoneNumber: string;
-  photoURL: string;
+  phoneNumber?: string;
 }

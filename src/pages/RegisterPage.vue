@@ -12,9 +12,11 @@ import { useRouter } from 'vue-router';
 import { type HeaderLinks } from '../components/Header.vue';
 import { validateEmail } from '@/validators/email.ts';
 import { validateConfirmPassword, validatePassword } from '@/validators/password';
+import { useUserStore } from '@/store/userStore';
+import type { User } from '@/utils/interfaces/User';
 
 const router = useRouter();
-
+const userStore = useUserStore();
 const loginErrorMessage = ref<string>('');
 const passwordInputType = ref<string>('password');
 const confirmPasswordInputType = ref<string>('password');
@@ -93,7 +95,7 @@ const validFilds = () => {
   return thereIsNoError;
 };
 
-const submit = async (e: any) => {
+const submit = async (e: Event) => {
   e.preventDefault();
 
   sendButtonIsClicked.value = true;
@@ -101,11 +103,22 @@ const submit = async (e: any) => {
 
   if (thereIsNoError) {
     try {
-      await createUserWithEmailAndPassword(
+      const UserCredentialImpl = await createUserWithEmailAndPassword(
         firebaseAuth,
         viewState.email.value,
         viewState.password.value
       );
+
+      const { uid } = UserCredentialImpl.user;
+
+      await userStore.createUser({
+        name: viewState.name.value,
+        lastName: viewState.lastName.value,
+        email: viewState.email.value,
+        emailVerified: false,
+        uid
+      } as User);
+
       loginErrorMessage.value = '';
       router.push('/');
     } catch (error) {
