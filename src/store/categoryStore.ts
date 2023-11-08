@@ -34,7 +34,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
         body: JSON.stringify(newProduct)
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -53,7 +53,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
         body: JSON.stringify(newProduct)
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -69,7 +69,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
         }
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -87,7 +87,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
         body: JSON.stringify(newCategory)
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -103,7 +103,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
         }
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -121,7 +121,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
         body: JSON.stringify(newCategory)
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

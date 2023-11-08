@@ -112,11 +112,11 @@ const submit = async (e: Event) => {
       const { uid } = UserCredentialImpl.user;
 
       await userStore.createUser({
+        id: uid,
         name: viewState.name.value,
         lastName: viewState.lastName.value,
         email: viewState.email.value,
-        emailVerified: false,
-        uid
+        emailVerified: false
       } as User);
 
       loginErrorMessage.value = '';

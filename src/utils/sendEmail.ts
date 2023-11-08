@@ -26,6 +26,6 @@ export const sendEmailWithBrevo = async (emailBody: BrevoEmailBody) => {
       body: JSON.stringify(emailBody)
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };

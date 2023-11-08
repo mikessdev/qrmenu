@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Header from '@/components/Header.vue';
 import BaseInput from '@/components/BaseInput.vue';
@@ -8,7 +8,7 @@ import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateEmail } from '@/validators/email.ts';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
 import { type HeaderLinks } from '../components/Header.vue';
 
@@ -16,6 +16,8 @@ const router = useRouter();
 
 const loginErrorMessage = ref<string>('');
 const passwordInputType = ref<string>('password');
+
+const headerLinks: HeaderLinks[] = [{ id: 1, name: 'Voltar', link: '/' }];
 
 const viewState = reactive({
   email: {
@@ -79,11 +81,17 @@ const submit = async (e: any) => {
   }
 };
 
-const headerLinks: HeaderLinks[] = [{ id: 1, name: 'Voltar', link: '/' }];
-
 const togglePasswordVisibility = () => {
   const visible: boolean = passwordInputType.value === 'text';
   passwordInputType.value = visible ? 'password' : 'text';
+};
+
+const signInWithGoogle = async () => {
+  try {
+    await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
+  } catch (error) {
+    console.error(error.code);
+  }
 };
 </script>
 <template>
@@ -127,7 +135,13 @@ const togglePasswordVisibility = () => {
         </div>
       </form>
       <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">Ou entre com</p>
-      <LoginWithGoogle />
+      <LoginWithGoogle @click="signInWithGoogle()" />
+      <p class="mt-[60px] text-center font-notosans text-sm">
+        Não tem uma conta?
+        <router-link to="/register">
+          <strong class="cursor-pointer text-qr-primary-orange">Registre-se</strong>
+        </router-link>
+      </p>
     </div>
   </div>
 </template>
