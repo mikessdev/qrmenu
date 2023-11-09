@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, toRefs, type PropType } from 'vue';
-import type { Product } from '@/utils/types/Product';
+import type { Product } from '../utils/interfaces/Product';
 import EditIcon from '@/components/icons/EditIcon.vue';
 import DeleteIcon from './icons/DeleteIcon.vue';
 import { useUserStore } from '@/store/userStore';
@@ -33,14 +33,14 @@ const toggleAlertDialog = () => {
 
 onMounted(async () => {
   imageUrl.value = await donwloadImage(`${AuthStore.user.uid}/products/${props.product.id}.jpg`);
-})
+});
 </script>
 
 <template>
   <div class="card bg-amber-600">
     <div class="card-information">
       <div class="img-food">
-        <img :src="imageUrl" alt="product image"  />
+        <img :src="imageUrl" alt="product image" />
       </div>
       <div class="card-data">
         <div>

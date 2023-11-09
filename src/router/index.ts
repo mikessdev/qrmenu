@@ -1,13 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import LandingPage from '@/pages/LandingPage.vue';
 import HomePage from '@/pages/HomePage.vue';
 import LoginPage from '@/pages/LoginPage.vue';
-import UserConfigPage from '@/pages/UserConfigPage.vue';
+import RegisterPage from '@/pages/RegisterPage.vue';
+import RegisterCompletePage from '@/pages/RegisterCompletePage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
+      name: 'landingPage',
+      component: LandingPage
+    },
+    {
+      path: '/restaurant',
       name: 'home',
       component: HomePage
     },
@@ -17,11 +24,16 @@ const router = createRouter({
       component: LoginPage
     },
     {
-      path: '/userconfig',
-      name: 'userconfig',
-      component: UserConfigPage
+      path: '/register',
+      name: 'register',
+      component: RegisterPage
     },
+    {
+      path: '/register-complete',
+      name: 'register-complete',
+      component: RegisterCompletePage
+    }
   ]
-})
+});
 
-export default router
+export default router;

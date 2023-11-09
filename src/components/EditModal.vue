@@ -135,13 +135,8 @@ watch(viewState, () => {
           :error-message="viewState.price.error"
         />
         <div class="buttons">
-          <Button @click="cancel" :label="'Cancelar'" :type="'button'" />
-          <Button
-            @click="save"
-            :label="'Salvar'"
-            :type="'button'"
-            :is-disabled="buttonIsDisabled"
-          />
+          <Button @click="cancel" label="Cancelar" type="button" />
+          <Button @click="save" label="Salvar" type="button" :is-disabled="buttonIsDisabled" />
         </div>
       </div>
     </div>

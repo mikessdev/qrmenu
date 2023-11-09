@@ -1,141 +1,155 @@
 <script setup lang="ts">
-import Header from '@/components/Header.vue'
-import BaseInput from '@/components/BaseInput.vue'
-import Button from '@/components/Button.vue'
-import { reactive, ref, watch } from 'vue'
-import { validateEmptyText } from '@/validators/emptyText'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { firebaseAuth } from '@/firebase/config'
-import router from '@/router'
-import { useUserStore } from '@/store/userStore'
+import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import Header from '@/components/Header.vue';
+import BaseInput from '@/components/BaseInput.vue';
+import Button from '@/components/Button.vue';
+import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
+import PasswordInput from '@/components/PasswordInput.vue';
+import { validateEmptyText } from '@/validators/emptyText';
+import { validateEmail } from '@/validators/email.ts';
+import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
+import { firebaseAuth } from '@/firebase/config';
+import { type HeaderLinks } from '../components/Header.vue';
+import { useUserStore } from '@/store/userStore';
 
-//TODO: Write validation for email and for password
-const userStore = useUserStore()
+const router = useRouter();
+const userStore = useUserStore();
 
-const buttonIsDisabled = ref(true)
+const loginErrorMessage = ref<string>('');
+const passwordInputType = ref<string>('password');
+
+const headerLinks: HeaderLinks[] = [{ id: 1, name: 'Voltar', link: '/' }];
 
 const viewState = reactive({
   email: {
     value: '',
     error: '',
     validator: () => {
-      viewState.email.error = validateEmptyText(viewState.email.value)
+      viewState.email.error = validateEmptyText(viewState.email.value);
+      if (viewState.email.value) {
+        viewState.email.error = validateEmail(viewState.email.value);
+      }
     }
   },
   password: {
     value: '',
     error: '',
     validator: () => {
-      viewState.password.error = validateEmptyText(viewState.password.value)
+      viewState.password.error = validateEmptyText(viewState.password.value);
     }
   }
-})
+});
 
-const submit = async (e: any) => {
-  e.preventDefault()
-  try {
-    await signInWithEmailAndPassword(firebaseAuth, viewState.email.value, viewState.password.value)
-    userStore.isAdmin = true
-    router.push('/')
-  } catch (error) {
-    console.log(error)
-    // switch (error.code) {
-    //       case 'auth/invalid-email':
-    //           viewState.email.value = 'Invalid email'
-    //           break
-    //       case 'auth/user-not-found':
-    //           alert('No account with that email was found');
-    //           break
-    //       case 'auth/wrong-password':
-    //           viewState.password.value = 'Incorrect password';
-    //           break
-    //       default:
-    //           viewState.password.value = 'Email or password was incorrect';
-    //           viewState.email.value = 'Email or password was incorrect';
-    //           break
-    //     }
-  }
-}
+const validFilds = () => {
+  viewState.email.validator();
+  viewState.password.validator();
 
-watch(viewState, () => {
-  const isEmailEmpty = !!validateEmptyText(viewState.email.value)
-  const isPasswordEmpty = !!validateEmptyText(viewState.password.value)
-  buttonIsDisabled.value = isEmailEmpty || isPasswordEmpty
-})
-</script>
-<template>
-  <div class="login-page">
-    <Header />
-    <form method="POST">
-      <h1>Login</h1>
-      <BaseInput
-        :label="'E-mail'"
-        :inputType="'email'"
-        :placeholder="'Digite seu e-mail'"
-        v-model="viewState.email.value"
-        :error-message="viewState.email.error"
-        @validate="viewState.email.validator"
-      />
-      <BaseInput
-        :label="'Senha'"
-        :inputType="'password'"
-        :placeholder="'Digite sua senha'"
-        v-model="viewState.password.value"
-        :error-message="viewState.password.error"
-        @validate="viewState.password.validator"
-      />
-      <Button
-        :type="'submit'"
-        :label="'Acessar'"
-        @click="(e) => submit(e)"
-        :is-disabled="buttonIsDisabled"
-      />
-    </form>
-  </div>
-</template>
+  const emailError = viewState.email.error;
+  const nameError = viewState.password.error;
+  const thereIsNoError = !nameError && !emailError;
 
-<style lang="scss" scoped>
-.login-page {
-  font-family: 'Noto Sans';
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  align-content: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: $qrmenu-gray;
+  return thereIsNoError;
+};
 
-  form {
-    width: 100%;
-    max-width: 800px;
-    display: flex;
-    flex-direction: column;
-    background-color: $qrmenu-white;
-    border-radius: 7px;
-    padding: 40px;
-    box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.4);
-    gap: 5px;
+const submit = async (e: Event) => {
+  e.preventDefault();
+  const thereIsNoError = validFilds();
+  if (thereIsNoError) {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        firebaseAuth,
+        viewState.email.value,
+        viewState.password.value
+      );
+      const { uid: userId, emailVerified } = userCredential.user;
+      await userStore.getUser(userId);
+      userStore.userCredential = userCredential.user;
 
-    h1 {
-      padding: 0;
-      margin: 0;
-      font-weight: 500;
-      font-size: 2.3em;
-    }
+      loginErrorMessage.value = '';
+      emailVerified ? router.push('/') : router.push('/register-complete');
+    } catch (error) {
+      const userNotFound: string = 'auth/user-not-found';
+      const wrongPassword: string = 'auth/wrong-password';
+      const invalidEmail: string = 'auth/invalid-email';
 
-    input {
-      padding: 15px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      margin-bottom: 20px;
-      margin-top: 5px;
-      border-radius: 4px;
-      transition: all linear 160ms;
-      outline: none;
-      &focus {
-        border: 1px solid $qrmenu-red;
+      const userNoHaveAccount: boolean = error.code === userNotFound;
+      const userHaveAccount: boolean = error.code === invalidEmail || error.code === wrongPassword;
+
+      if (userNoHaveAccount) {
+        loginErrorMessage.value = 'Nenhuma conta com esse email foi encontrada.';
+      }
+
+      if (userHaveAccount) {
+        loginErrorMessage.value = 'Email ou senha inválida.';
       }
     }
   }
-}
-</style>
+};
+
+const togglePasswordVisibility = () => {
+  const visible: boolean = passwordInputType.value === 'text';
+  passwordInputType.value = visible ? 'password' : 'text';
+};
+
+const signInWithGoogle = async () => {
+  try {
+    await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
+  } catch (error) {
+    console.error(error.code);
+  }
+};
+</script>
+<template>
+  <div class="flex h-screen flex-col bg-qr-primary-orange">
+    <Header :links="headerLinks" />
+    <div class="mx-auto my-auto h-[800px] w-[800px] rounded-[10px] bg-white p-[40px]">
+      <form class="mt-[80px] flex flex-col" method="POST">
+        <h1 class="mb-[60px] text-center text-5xl font-bold text-qr-primary-orange">
+          Entre com sua conta
+        </h1>
+        <BaseInput
+          label="E-mail"
+          inputType="email"
+          placeholder="Digite seu e-mail"
+          v-model="viewState.email.value"
+          :error-message="viewState.email.error"
+          @validate="viewState.email.validator"
+        />
+        <PasswordInput
+          label="Senha"
+          :inputType="passwordInputType"
+          placeholder="Digite sua senha"
+          v-model="viewState.password.value"
+          :error-message="viewState.password.error"
+          @validate="viewState.password.validator"
+          @password-visible="togglePasswordVisibility()"
+        />
+        <div class="flex flex-col pb-[40px]">
+          <Button
+            class="mx-auto mt-[40px]"
+            type="submit"
+            label="Acessar"
+            @click="(e) => submit(e)"
+            variante="secundary"
+          />
+          <span
+            v-if="loginErrorMessage"
+            class="relative z-10 mx-auto mt-[6px] font-notosans font-bold text-qr-primary-orange"
+            >{{ loginErrorMessage }}</span
+          >
+        </div>
+      </form>
+      <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">Ou entre com</p>
+      <LoginWithGoogle @click="signInWithGoogle()" />
+      <p class="mt-[60px] text-center font-notosans text-sm">
+        Não tem uma conta?
+        <router-link to="/register">
+          <strong class="cursor-pointer text-qr-primary-orange">Registre-se</strong>
+        </router-link>
+      </p>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped></style>

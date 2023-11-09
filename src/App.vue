@@ -3,6 +3,9 @@ import { onAuthStateChanged, type User } from 'firebase/auth';
 import { firebaseAuth } from './firebase/config';
 import { useAuthStore } from './store/useAuthStore';
 import { useUserStore } from './store/userStore';
+import { useRecaptchaProvider } from 'vue-recaptcha';
+
+useRecaptchaProvider();
 
 const authStore = useAuthStore();
 const userStore = useUserStore();

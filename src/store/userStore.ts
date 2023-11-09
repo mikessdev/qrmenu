@@ -1,13 +1,43 @@
+import type { User } from '@/utils/interfaces/User';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-//TODO Implement communication with the backend when the backend is available
+export const useUserStore = defineStore('userProfile', () => {
+  const user = ref<User>({} as User);
+  const userCredential = ref<any>({} as any);
 
-export const useUserStore = defineStore('userProfile', () => { 
-    const userName = "{{ Nome do Usuário }}";
-    const isAdmin = ref(false); 
-    return {
-        userName,
-        isAdmin
+  const createUser = async (user: User): Promise<void> => {
+    const url: string = import.meta.env.VITE_USER_URL;
+    try {
+      await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+      });
+    } catch (error) {
+      console.error(error);
     }
-})
+  };
+
+  const getUser = async (userId: string): Promise<void> => {
+    const url: string = import.meta.env.VITE_USER_URL;
+    try {
+      const response = await fetch(`${url}/${userId}`);
+      user.value = await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updateUser = async (): Promise<void> => {
+    //...
+  };
+  return {
+    user,
+    userCredential,
+    createUser,
+    getUser
+  };
+});

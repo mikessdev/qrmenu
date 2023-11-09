@@ -23,85 +23,106 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
   const addNewProduct = async (newProduct: Product, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_PRODUCT_URL;
     newProduct.id = uuidv4();
-    await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // prettier-ignore
-        "Authorization": 'Bearer ' + accessToken
-      },
-      body: JSON.stringify(newProduct)
-    });
+    try {
+      await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // prettier-ignore
+          "Authorization": 'Bearer ' + accessToken
+        },
+        body: JSON.stringify(newProduct)
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const updateProduct = async (newProduct: Product, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_PRODUCT_URL;
     const { id } = newProduct;
 
-    await fetch(url + id, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        // prettier-ignore
-        "Authorization": 'Bearer ' + accessToken
-      },
-      body: JSON.stringify(newProduct)
-    });
+    try {
+      await fetch(url + id, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          // prettier-ignore
+          "Authorization": 'Bearer ' + accessToken
+        },
+        body: JSON.stringify(newProduct)
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const deleteProductById = async (id: string, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_PRODUCT_URL;
-
-    await fetch(url + id, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        // prettier-ignore
-        "Authorization": 'Bearer ' + accessToken
-      }
-    });
+    try {
+      await fetch(url + id, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          // prettier-ignore
+          "Authorization": 'Bearer ' + accessToken
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const updateCategory = async (newCategory: Category, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
     const { id } = newCategory;
-
-    await fetch(url + id, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        // prettier-ignore
-        "Authorization": 'Bearer ' + accessToken
-      },
-      body: JSON.stringify(newCategory)
-    });
+    try {
+      await fetch(url + id, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          // prettier-ignore
+          "Authorization": 'Bearer ' + accessToken
+        },
+        body: JSON.stringify(newCategory)
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const deleteCategoryById = async (id: string, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
-
-    await fetch(url + id, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        // prettier-ignore
-        "Authorization": 'Bearer ' + accessToken
-      }
-    });
+    try {
+      await fetch(url + id, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          // prettier-ignore
+          "Authorization": 'Bearer ' + accessToken
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const addNewCategory = async (newCategory: Category, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
     newCategory.id = uuidv4();
-    await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // prettier-ignore
-        "Authorization": 'Bearer ' + accessToken
-      },
-      body: JSON.stringify(newCategory)
-    });
+    try {
+      await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // prettier-ignore
+          "Authorization": 'Bearer ' + accessToken
+        },
+        body: JSON.stringify(newCategory)
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return {
