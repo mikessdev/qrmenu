@@ -11,8 +11,10 @@ import { validateEmail } from '@/validators/email.ts';
 import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
 import { type HeaderLinks } from '../components/Header.vue';
+import { useUserStore } from '@/store/userStore';
 
 const router = useRouter();
+const userStore = useUserStore();
 
 const loginErrorMessage = ref<string>('');
 const passwordInputType = ref<string>('password');
@@ -50,18 +52,22 @@ const validFilds = () => {
   return thereIsNoError;
 };
 
-const submit = async (e: any) => {
+const submit = async (e: Event) => {
   e.preventDefault();
   const thereIsNoError = validFilds();
   if (thereIsNoError) {
     try {
-      await signInWithEmailAndPassword(
+      const userCredential = await signInWithEmailAndPassword(
         firebaseAuth,
         viewState.email.value,
         viewState.password.value
       );
+      const { uid: userId, emailVerified } = userCredential.user;
+      await userStore.getUser(userId);
+      userStore.userCredential = userCredential.user;
+
       loginErrorMessage.value = '';
-      router.push('/');
+      emailVerified ? router.push('/') : router.push('/register-complete');
     } catch (error) {
       const userNotFound: string = 'auth/user-not-found';
       const wrongPassword: string = 'auth/wrong-password';

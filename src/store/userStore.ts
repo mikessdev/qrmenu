@@ -4,6 +4,7 @@ import { ref } from 'vue';
 
 export const useUserStore = defineStore('userProfile', () => {
   const user = ref<User>({} as User);
+  const userCredential = ref<any>({} as any);
 
   const createUser = async (user: User): Promise<void> => {
     const url: string = import.meta.env.VITE_USER_URL;
@@ -20,8 +21,14 @@ export const useUserStore = defineStore('userProfile', () => {
     }
   };
 
-  const getUser = async (): Promise<User> => {
-    return {} as User;
+  const getUser = async (userId: string): Promise<void> => {
+    const url: string = import.meta.env.VITE_USER_URL;
+    try {
+      const response = await fetch(`${url}/${userId}`);
+      user.value = await response.json();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const updateUser = async (): Promise<void> => {
@@ -29,8 +36,8 @@ export const useUserStore = defineStore('userProfile', () => {
   };
   return {
     user,
+    userCredential,
     createUser,
-    getUser,
-    updateUser
+    getUser
   };
 });

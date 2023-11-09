@@ -27,7 +27,7 @@ export interface HeaderLinks {
     <div
       class="mx-auto my-0 flex h-full max-w-[1200px] items-center justify-between px-2.5 font-notosans font-bold text-white"
     >
-      <p>SEU CARDÁPIO</p>
+      <p>LOGO</p>
       <ul>
         <li v-for="link in props.links" :key="link.id">
           <router-link :to="link.link">

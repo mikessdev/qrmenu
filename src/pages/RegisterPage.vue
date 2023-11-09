@@ -108,7 +108,7 @@ const submit = async (e: Event) => {
         viewState.email.value,
         viewState.password.value
       );
-
+      userStore.userCredential = UserCredentialImpl.user;
       const { uid } = UserCredentialImpl.user;
 
       await userStore.createUser({
@@ -120,7 +120,7 @@ const submit = async (e: Event) => {
       } as User);
 
       loginErrorMessage.value = '';
-      router.push('/');
+      router.push('/register-complete');
     } catch (error) {
       const emailError: string = 'auth/email-already-in-use';
       const emailAlreadyInUse: boolean = error.code === emailError;
