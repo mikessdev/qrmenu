@@ -16,91 +16,112 @@ const props = defineProps({
   product: {
     type: Object,
     default: {} as PropType<Product | Category>
+  },
+  variant: {
+    type: String,
+    default: 'slot'
   }
 });
 
-const userStore = useUserStore();
+// const userStore = useUserStore();
 
-const buttonIsDisabled = ref(true);
-const selectedFile = ref();
-const imageUrl = ref();
-const fileInput = ref();
+// const buttonIsDisabled = ref(true);
+// const selectedFile = ref();
+// const imageUrl = ref();
+// const fileInput = ref();
 
-const { id, categoryId, title, description, value } = toRefs(props).product.value;
-const viewState = reactive({
-  title: {
-    value: title ?? '',
-    error: '',
-    validator: () => {
-      viewState.title.error = validateEmptyText(viewState.title.value);
-    }
-  },
-  description: {
-    value: description ?? '',
-    error: '',
-    validator: () => {
-      viewState.description.error = validateEmptyText(viewState.description.value);
-    }
-  },
-  price: {
-    value: value ?? 'R$ 00,00',
-    error: '',
-    validator: () => {
-      viewState.price.error = validateEmptyText(viewState.price.value);
-    }
-  }
-});
+// const { id, categoryId, title, description, value } = toRefs(props).product.value;
+// const viewState = reactive({
+//   title: {
+//     value: title ?? '',
+//     error: '',
+//     validator: () => {
+//       viewState.title.error = validateEmptyText(viewState.title.value);
+//     }
+//   },
+//   description: {
+//     value: description ?? '',
+//     error: '',
+//     validator: () => {
+//       viewState.description.error = validateEmptyText(viewState.description.value);
+//     }
+//   },
+//   price: {
+//     value: value ?? 'R$ 00,00',
+//     error: '',
+//     validator: () => {
+//       viewState.price.error = validateEmptyText(viewState.price.value);
+//     }
+//   }
+// });
 
-const emit = defineEmits(['closeEditModal', 'saveData']);
+const emit = defineEmits(['cancel', 'save', 'saveData']);
 
 const cancel = () => {
-  emit('closeEditModal');
+  emit('cancel');
 };
 
 const save = () => {
-  const { title, description, price } = viewState;
-  const isProduct = props.isProduct;
-  const buttonEnabled = !buttonIsDisabled.value;
-
-  if (buttonEnabled) {
-    const newData = isProduct
-      ? { id, categoryId, title: title.value, description: description.value, price: price.value }
-      : { id, title: title.value };
-    emit('saveData', newData);
-  }
+  emit('save');
 };
+// const save = () => {
+//   const { title, description, price } = viewState;
+//   const isProduct = props.isProduct;
+//   const buttonEnabled = !buttonIsDisabled.value;
 
-const openFileInput = () => {
-  fileInput.value.click();
-};
+//   if (buttonEnabled) {
+//     const newData = isProduct
+//       ? { id, categoryId, title: title.value, description: description.value, price: price.value }
+//       : { id, title: title.value };
+//     emit('saveData', newData);
+//   }
+// };
 
-const handleFileChange = (event: any) => {
-  const file = event.target.files[0];
-  if (file) {
-    selectedFile.value = file;
-    uploadImage(file, userStore.user.id, props.product.id);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      imageUrl.value = e.target?.result;
-    };
-    reader.readAsDataURL(file);
-  }
-};
+// const openFileInput = () => {
+//   fileInput.value.click();
+// };
 
-watch(viewState, () => {
-  const { title, description, price } = viewState;
-  const isTitleEmpty = !!validateEmptyText(title.value);
-  const isDescriptionEmpty = !!validateEmptyText(description.value);
-  const isValueEmpty = !!validateEmptyText(price.value);
-  const isProduct = props.isProduct;
+// const handleFileChange = (event: any) => {
+//   const file = event.target.files[0];
+//   if (file) {
+//     selectedFile.value = file;
+//     uploadImage(file, userStore.user.id, props.product.id);
+//     const reader = new FileReader();
+//     reader.onload = (e) => {
+//       imageUrl.value = e.target?.result;
+//     };
+//     reader.readAsDataURL(file);
+//   }
+// };
 
-  buttonIsDisabled.value = isProduct
-    ? isTitleEmpty || isDescriptionEmpty || isValueEmpty
-    : isTitleEmpty;
-});
+// watch(viewState, () => {
+//   const { title, description, price } = viewState;
+//   const isTitleEmpty = !!validateEmptyText(title.value);
+//   const isDescriptionEmpty = !!validateEmptyText(description.value);
+//   const isValueEmpty = !!validateEmptyText(price.value);
+//   const isProduct = props.isProduct;
+
+//   buttonIsDisabled.value = isProduct
+//     ? isTitleEmpty || isDescriptionEmpty || isValueEmpty
+//     : isTitleEmpty;
+// });
 </script>
 <template>
-  <div class="modal-background">
+  <div
+    v-if="variant === 'slot'"
+    class="fixed top-0 z-50 flex h-[100vh] w-[100vw] backdrop-blur-[30px]"
+  >
+    <div
+      class="mx-auto my-auto flex w-[400px] flex-col rounded-lg bg-white p-[30px] shadow-[0_10px_30px_rgb(65,72,86,0.5)]"
+    >
+      <slot></slot>
+      <div class="mt-[30px] flex justify-evenly">
+        <Button @click="cancel" variante="secundary" label="Cancelar" type="button" />
+        <Button @click="save" variante="secundary" label="Salvar" type="button" />
+      </div>
+    </div>
+  </div>
+  <!-- <div class="modal-background">
     <div class="modal" :class="[isProduct ? 'tall-modal' : 'short-modal']">
       <div class="img-food">
         <input class="input-img" type="file" @change="handleFileChange" ref="fileInput" />
@@ -140,7 +161,7 @@ watch(viewState, () => {
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 <style scoped lang="scss">
 .modal-background {
