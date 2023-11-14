@@ -1,6 +1,9 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-import { isGetAccessorDeclaration } from 'typescript';
+export interface HeaderLinks {
+  id: number;
+  name: string;
+  link: string;
+}
 
 const props = defineProps({
   fixed: {
@@ -10,21 +13,32 @@ const props = defineProps({
   links: {
     type: Array<HeaderLinks>,
     default: []
+  },
+  center: {
+    type: Boolean,
+    default: false
+  },
+  color: {
+    type: String,
+    default: '#f85d3a'
   }
 });
-
-export interface HeaderLinks {
-  id: number;
-  name: string;
-  link: string;
-}
 </script>
+
 <template>
   <header
+    :style="`background-color: ${props.color}`"
     :class="props.fixed ? 'fixed z-20' : ''"
-    class="h-[60px] w-full bg-qr-primary-orange shadow-md"
+    class="h-[60px] w-full shadow-md"
   >
     <div
+      v-if="props.center"
+      class="mx-auto my-0 flex h-full max-w-[1200px] items-center px-2.5 font-notosans font-bold text-white"
+    >
+      <p class="mx-auto">LOGO</p>
+    </div>
+    <div
+      v-if="!props.center"
       class="mx-auto my-0 flex h-full max-w-[1200px] items-center justify-between px-2.5 font-notosans font-bold text-white"
     >
       <p>LOGO</p>

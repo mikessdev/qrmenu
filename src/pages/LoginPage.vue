@@ -8,7 +8,7 @@ import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateEmail } from '@/validators/email.ts';
-import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
 import { type HeaderLinks } from '../components/Header.vue';
 import { useUserStore } from '@/store/userStore';
@@ -67,7 +67,7 @@ const submit = async (e: Event) => {
       userStore.userCredential = userCredential.user;
 
       loginErrorMessage.value = '';
-      emailVerified ? router.push('/') : router.push('/register-complete');
+      emailVerified ? router.push('/create-menu') : router.push('/register-complete');
     } catch (error) {
       const userNotFound: string = 'auth/user-not-found';
       const wrongPassword: string = 'auth/wrong-password';
@@ -87,17 +87,16 @@ const submit = async (e: Event) => {
   }
 };
 
+const signInWithGoogle = async (userCredential: any) => {
+  const { uid: userId } = userCredential.user;
+  await userStore.getUser(userId);
+  userStore.userCredential = userCredential.user;
+  return router.push('/create-menu');
+};
+
 const togglePasswordVisibility = () => {
   const visible: boolean = passwordInputType.value === 'text';
   passwordInputType.value = visible ? 'password' : 'text';
-};
-
-const signInWithGoogle = async () => {
-  try {
-    await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
-  } catch (error) {
-    console.error(error.code);
-  }
 };
 </script>
 <template>
@@ -141,7 +140,9 @@ const signInWithGoogle = async () => {
         </div>
       </form>
       <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">Ou entre com</p>
-      <LoginWithGoogle @click="signInWithGoogle()" />
+      <LoginWithGoogle
+        @sign-in-with-google="(userCredential) => signInWithGoogle(userCredential)"
+      />
       <p class="mt-[60px] text-center font-notosans text-sm">
         Não tem uma conta?
         <router-link to="/register">

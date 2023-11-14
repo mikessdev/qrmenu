@@ -2,24 +2,17 @@
 import Header from '@/components/Header.vue';
 import Hero from '@/components/Hero.vue';
 import HorizontalMenu from '@/components/HorizontalMenu.vue';
+import { ref } from 'vue';
+
+const background = ref('bg-[#67177b]');
 </script>
 
 <template>
-  <Header />
+  <Header :center="true" color="#67177b" />
   <main>
     <Hero />
     <HorizontalMenu />
   </main>
 </template>
 
-<style lang="scss" scoped>
-main {
-  background: $qrmenu-grayish-white;
-  margin-top: 60px;
-  padding-top: 20px;
-  .button-wrapper {
-    position: absolute;
-    right: 10px;
-  }
-}
-</style>
+<style lang="scss" scoped></style>
