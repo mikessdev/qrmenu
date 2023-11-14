@@ -10,10 +10,8 @@ import PlusIcon from '@/components/icons/PlusIcon.vue';
 import EditIcon from '@/components/icons/EditIcon.vue';
 import DeleteIcon from '@/components/icons/DeleteIcon.vue';
 import EditModal from '@/components/EditModal.vue';
-import { useAuthStore } from '@/store/useAuthStore';
 
 const categoryStore = useCategoryStore();
-const authStore = useAuthStore();
 const userStore = useUserStore();
 
 let menu = ref<Product[]>([] as Product[]);
@@ -115,21 +113,21 @@ const saveData = (newData: Product | Category) => {
 };
 
 const updateCategory = async (newData: Category) => {
-  const { accessToken } = authStore.user;
+  const { accessToken } = userStore.user;
   await categoryStore.updateCategory(newData, accessToken);
   await categoryStore.getCategories();
   return toggleEditModal();
 };
 
 const addNewCategory = async (NewCategoryData: Category) => {
-  const { accessToken } = authStore.user;
+  const { accessToken } = userStore.user;
   await categoryStore.addNewCategory(NewCategoryData, accessToken);
   await categoryStore.getCategories();
   return toggleEditModal();
 };
 
 const deleteProduct = async (id: string, categoryId: string) => {
-  const { accessToken } = authStore.user;
+  const { accessToken } = userStore.user;
 
   await categoryStore.deleteProductById(id, accessToken);
   await categoryStore.getCategoryWithProducts(categoryId);
@@ -137,7 +135,7 @@ const deleteProduct = async (id: string, categoryId: string) => {
 };
 
 const deleteCategory = async (id: string) => {
-  const { accessToken } = authStore.user;
+  const { accessToken } = userStore.user;
   await categoryStore.deleteCategoryById(id, accessToken);
   await categoryStore.getCategories();
 };
@@ -157,7 +155,7 @@ const deleteItem = async () => {
 };
 
 const addNewProduct = async (NewProduct: Product) => {
-  const { accessToken } = authStore.user;
+  const { accessToken } = userStore.user;
   const categoryId = currentCategory.value.id;
 
   NewProduct.categoryId = categoryId;
@@ -170,7 +168,7 @@ const addNewProduct = async (NewProduct: Product) => {
 };
 
 const updateProduct = async (product: Product) => {
-  const { accessToken } = authStore.user;
+  const { accessToken } = userStore.user;
   const { categoryId } = product;
 
   await categoryStore.updateProduct(product, accessToken);

@@ -5,10 +5,8 @@ import EditIcon from '@/components/icons/EditIcon.vue';
 import DeleteIcon from './icons/DeleteIcon.vue';
 import { useUserStore } from '@/store/userStore';
 import { donwloadImage } from '../firebase/cloud.storage';
-import { useAuthStore } from '../store/useAuthStore';
 
 const userStore = useUserStore();
-const AuthStore = useAuthStore();
 
 const imageUrl = ref();
 
@@ -32,7 +30,7 @@ const toggleAlertDialog = () => {
 };
 
 onMounted(async () => {
-  imageUrl.value = await donwloadImage(`${AuthStore.user.uid}/products/${props.product.id}.jpg`);
+  imageUrl.value = await donwloadImage(`${userStore.user.id}/products/${props.product.id}.jpg`);
 });
 </script>
 

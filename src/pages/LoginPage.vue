@@ -67,7 +67,7 @@ const submit = async (e: Event) => {
       userStore.userCredential = userCredential.user;
 
       loginErrorMessage.value = '';
-      emailVerified ? router.push('/create-menu') : router.push('/register-complete');
+      emailVerified ? router.push('/select-menu') : router.push('/register-complete');
     } catch (error) {
       const userNotFound: string = 'auth/user-not-found';
       const wrongPassword: string = 'auth/wrong-password';
@@ -91,7 +91,7 @@ const signInWithGoogle = async (userCredential: any) => {
   const { uid: userId } = userCredential.user;
   await userStore.getUser(userId);
   userStore.userCredential = userCredential.user;
-  return router.push('/create-menu');
+  return router.push('/select-menu');
 };
 
 const togglePasswordVisibility = () => {

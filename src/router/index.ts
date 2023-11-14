@@ -4,7 +4,7 @@ import HomePage from '@/pages/HomePage.vue';
 import LoginPage from '@/pages/LoginPage.vue';
 import RegisterPage from '@/pages/RegisterPage.vue';
 import RegisterCompletePage from '@/pages/RegisterCompletePage.vue';
-import CreateMenuPage from '@/pages/CreateMenuPage.vue';
+import SelectMenuPage from '@/pages/SelectMenuPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -35,9 +35,9 @@ const router = createRouter({
       component: RegisterCompletePage
     },
     {
-      path: '/create-menu',
-      name: 'create-menu',
-      component: CreateMenuPage
+      path: '/select-menu',
+      name: 'select-menu',
+      component: SelectMenuPage
     }
   ]
 });

@@ -6,7 +6,7 @@ import { validateEmptyText } from '@/validators/emptyText';
 import type { Product } from '@/utils/interfaces/Product';
 import type { Category } from '@/utils/interfaces/Category';
 import { uploadImage } from '../firebase/cloud.storage';
-import { userStore } from '../store/userStore';
+import { useUserStore } from '../store/userStore';
 
 const props = defineProps({
   isProduct: {
@@ -19,7 +19,7 @@ const props = defineProps({
   }
 });
 
-const useUserStore = userStore();
+const userStore = useUserStore();
 
 const buttonIsDisabled = ref(true);
 const selectedFile = ref();
@@ -78,7 +78,7 @@ const handleFileChange = (event: any) => {
   const file = event.target.files[0];
   if (file) {
     selectedFile.value = file;
-    uploadImage(file, useUserStore.user.id, props.product.id);
+    uploadImage(file, userStore.user.id, props.product.id);
     const reader = new FileReader();
     reader.onload = (e) => {
       imageUrl.value = e.target?.result;
