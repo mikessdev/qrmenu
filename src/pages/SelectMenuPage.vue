@@ -3,7 +3,7 @@ import Header from '@/components/Header.vue';
 import PlusIcon from '@/components/icons/PlusIcon.vue';
 import EditModal from '@/components/EditModal.vue';
 import BaseInput from '@/components/BaseInput.vue';
-import { reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateSlug } from '@/validators/slug';
 import { useMenuStore } from '@/store/menuStore';
@@ -14,6 +14,7 @@ const menuStore = useMenuStore();
 const userStore = useUserStore();
 
 const showEditModal = ref<boolean>(false);
+const menus = ref<Menu[]>([]);
 
 const viewState = reactive({
   menuName: {
@@ -44,7 +45,9 @@ const save = async () => {
   if (!viewState.menuName.error) {
     const { id: userId, accessToken } = userStore.user;
     const { value: url } = viewState.menuName;
-    return await menuStore.createMenu({ userId, url } as Menu, accessToken);
+    await menuStore.createMenu({ userId, url } as Menu, accessToken);
+    await menuStore.getMenus(userId, accessToken);
+    toggleEditModal();
   }
 };
 
@@ -53,20 +56,38 @@ watch(viewState, () => {
     viewState.menuName.error = validateSlug(viewState.menuName.value);
   }
 });
+
+onMounted(async () => {
+  const { id: userId, accessToken } = userStore.user;
+  await menuStore.getMenus(userId, accessToken);
+  menus.value = menuStore.menus;
+  console.log(menus.value);
+});
 </script>
 
 <template>
   <Header :center="true" />
   <main class="flex flex-col items-center pt-[60px]">
-    <p class="mb-[60px] font-notosans text-xl text-[#4E4E4E]">
-      Selecione o botão abaixo para criar um novo cardápio.
-    </p>
-    <div
-      @click="createMenu()"
-      class="flex h-[100px] w-[100px] cursor-pointer items-center justify-center rounded-full border-[4px] border-[#DCDCDC] bg-qr-medium-gray"
-    >
-      <PlusIcon variante="02" :width="26" :height="26" color="#DCDCDC" />
-    </div>
+    <ul class="flex flex-wrap justify-evenly gap-8">
+      <li
+        class="flex cursor-pointer flex-col items-center"
+        v-for="menu in menuStore.menus"
+        :key="menu.id"
+      >
+        <div
+          class="flex h-[100px] w-[100px] items-center justify-center rounded-full border-[4px] border-[#DCDCDC] bg-qr-primary-orange"
+        ></div>
+        <span class="font-notosans text-[#4E4E4E]">{{ menu.url }}</span>
+      </li>
+      <li class="flex cursor-pointer flex-col items-center" @click="createMenu()">
+        <div
+          class="flex h-[100px] w-[100px] items-center justify-center rounded-full border-[4px] border-[#DCDCDC] bg-qr-medium-gray"
+        >
+          <PlusIcon variante="02" :width="26" :height="26" color="#DCDCDC" />
+        </div>
+        <span class="font-notosans text-[#4E4E4E]"> Criar Novo cardápio</span>
+      </li>
+    </ul>
   </main>
   <EditModal v-if="showEditModal" @cancel="cancel()" @save="save()">
     <p class="font-notosans text-[#4E4E4E]">Escolha um nome para a URL do Cardápio.</p>

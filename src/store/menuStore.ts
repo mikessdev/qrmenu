@@ -23,8 +23,26 @@ export const useMenuStore = defineStore('menuManagement', () => {
       console.error(error);
     }
   };
+
+  const getMenus = async (userId: string, accessToken: string): Promise<void> => {
+    const url: string = import.meta.env.VITE_MENU_URL;
+    try {
+      const response = await fetch(`${url}/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          // prettier-ignore
+          "Authorization": 'Bearer ' + accessToken
+        }
+      });
+      menus.value = await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return {
     menus,
-    createMenu
+    createMenu,
+    getMenus
   };
 });

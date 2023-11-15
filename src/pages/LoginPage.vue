@@ -89,8 +89,9 @@ const submit = async (e: Event) => {
 };
 
 const signInWithGoogle = async (userCredential: any) => {
-  const { uid: userId } = userCredential.user;
+  const { uid: userId, accessToken } = userCredential.user;
   await userStore.getUser(userId);
+  userStore.user.accessToken = accessToken;
   userStore.userCredential = userCredential.user;
   return router.push('/select-menu');
 };
