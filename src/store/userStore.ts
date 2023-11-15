@@ -6,16 +6,17 @@ export const useUserStore = defineStore('userProfile', () => {
   const user = ref<User>({} as User);
   const userCredential = ref<any>({} as any);
 
-  const createUser = async (user: User): Promise<void> => {
+  const createUser = async (userData: User): Promise<void> => {
     const url: string = import.meta.env.VITE_USER_URL;
     try {
-      await fetch(url, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(user)
+        body: JSON.stringify(userData)
       });
+      user.value = await response.json();
     } catch (error) {
       console.error(error);
     }
