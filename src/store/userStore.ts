@@ -1,10 +1,11 @@
 import type { User } from '@/utils/interfaces/User';
+import type { User as UserFirebase } from 'firebase/auth';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useUserStore = defineStore('userProfile', () => {
   const user = ref<User>({} as User);
-  const userCredential = ref<any>({} as any);
+  const userCredential = ref<UserFirebase>({} as UserFirebase);
 
   const createUser = async (userData: User): Promise<void> => {
     const url: string = import.meta.env.VITE_USER_URL;

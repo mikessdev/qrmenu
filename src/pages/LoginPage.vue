@@ -8,7 +8,7 @@ import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateEmail } from '@/validators/email.ts';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
 import { type HeaderLinks } from '../components/Header.vue';
 import { useUserStore } from '@/store/userStore';
@@ -57,13 +57,14 @@ const submit = async (e: Event) => {
   const thereIsNoError = validFilds();
   if (thereIsNoError) {
     try {
-      const userCredential = await signInWithEmailAndPassword(
+      const userCredential = (await signInWithEmailAndPassword(
         firebaseAuth,
         viewState.email.value,
         viewState.password.value
-      );
-      const { uid: userId, emailVerified } = userCredential.user;
+      )) as UserCredential;
+      const { uid: userId, emailVerified, accessToken } = userCredential.user;
       await userStore.getUser(userId);
+      userStore.user.accessToken = accessToken;
       userStore.userCredential = userCredential.user;
 
       loginErrorMessage.value = '';

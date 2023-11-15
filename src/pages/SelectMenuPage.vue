@@ -6,6 +6,12 @@ import BaseInput from '@/components/BaseInput.vue';
 import { reactive, ref, watch } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateSlug } from '@/validators/slug';
+import { useMenuStore } from '@/store/menuStore';
+import { useUserStore } from '@/store/userStore';
+import type { Menu } from '@/utils/interfaces/Menu';
+
+const menuStore = useMenuStore();
+const userStore = useUserStore();
 
 const showEditModal = ref<boolean>(false);
 
@@ -31,12 +37,14 @@ const cancel = () => {
   toggleEditModal();
 };
 
-const save = () => {
+const save = async () => {
   if (!viewState.menuName.value) {
     viewState.menuName.validator();
   }
   if (!viewState.menuName.error) {
-    console.log('salvando...');
+    const { id: userId, accessToken } = userStore.user;
+    const { value: url } = viewState.menuName;
+    return await menuStore.createMenu({ userId, url } as Menu, accessToken);
   }
 };
 
