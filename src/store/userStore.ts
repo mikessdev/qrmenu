@@ -33,13 +33,29 @@ export const useUserStore = defineStore('userProfile', () => {
     }
   };
 
-  const updateUser = async (): Promise<void> => {
-    //...
+  const updateUser = async (userData: User, accessToken: string): Promise<void> => {
+    const url: string = import.meta.env.VITE_USER_URL;
+    const { id } = userData;
+
+    try {
+      await fetch(`${url}/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          // prettier-ignore
+          "Authorization": 'Bearer ' + accessToken
+        },
+        body: JSON.stringify(userData)
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
   return {
     user,
     userCredential,
     createUser,
-    getUser
+    getUser,
+    updateUser
   };
 });

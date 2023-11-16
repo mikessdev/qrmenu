@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import InstagramIcon from '@/components/icons/InstagramIcon.vue';
 import YoutubeIcon from '@/components/icons/YoutubeIcon.vue';
@@ -18,3 +17,8 @@ import YoutubeIcon from '@/components/icons/YoutubeIcon.vue';
   </div>
 </template>
 <style scoped lang="scss"></style>
+<script lang="ts">
+export default {
+  name: 'FooterItem'
+};
+</script>

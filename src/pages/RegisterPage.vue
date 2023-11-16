@@ -10,7 +10,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
 import { useRouter } from 'vue-router';
 import { type HeaderLinks } from '../components/Header.vue';
-import { validateEmail } from '@/validators/email.ts';
+import { validateEmail } from '@/validators/email';
 import { validateConfirmPassword, validatePassword } from '@/validators/password';
 import { useUserStore } from '@/store/userStore';
 import type { User } from '@/utils/interfaces/User';

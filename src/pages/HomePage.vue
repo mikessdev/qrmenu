@@ -2,10 +2,15 @@
 import Header from '@/components/Header.vue';
 import Hero from '@/components/Hero.vue';
 import HorizontalMenu from '@/components/HorizontalMenu.vue';
+import { onMounted } from 'vue';
+import { useMenuStore } from '@/store/menuStore';
+import { Folder, type DownloadRef, donwloadImage } from '@/firebase/cloud.storage';
+
+const menuStore = useMenuStore();
 </script>
 
 <template>
-  <Header />
+  <Header :center="true" />
   <main>
     <Hero />
     <HorizontalMenu />

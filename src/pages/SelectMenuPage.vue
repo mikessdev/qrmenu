@@ -9,6 +9,7 @@ import { validateSlug } from '@/validators/slug';
 import { useMenuStore } from '@/store/menuStore';
 import { useUserStore } from '@/store/userStore';
 import type { Menu } from '@/utils/interfaces/Menu';
+import router from '@/router';
 
 const menuStore = useMenuStore();
 const userStore = useUserStore();
@@ -51,6 +52,10 @@ const save = async () => {
   }
 };
 
+const navigateTo = (url: string) => {
+  return router.push(`/${url}`);
+};
+
 watch(viewState, () => {
   if (validateSlug(viewState.menuName.value)) {
     viewState.menuName.error = validateSlug(viewState.menuName.value);
@@ -61,7 +66,6 @@ onMounted(async () => {
   const { id: userId, accessToken } = userStore.user;
   await menuStore.getMenus(userId, accessToken);
   menus.value = menuStore.menus;
-  console.log(menus.value);
 });
 </script>
 
@@ -73,6 +77,7 @@ onMounted(async () => {
         class="flex cursor-pointer flex-col items-center"
         v-for="menu in menuStore.menus"
         :key="menu.id"
+        @click="navigateTo(menu.url)"
       >
         <div
           class="flex h-[100px] w-[100px] items-center justify-center rounded-full border-[4px] border-[#DCDCDC] bg-qr-primary-orange"

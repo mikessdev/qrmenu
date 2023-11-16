@@ -7,10 +7,10 @@ import Button from '@/components/Button.vue';
 import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { validateEmptyText } from '@/validators/emptyText';
-import { validateEmail } from '@/validators/email.ts';
-import { signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
+import { validateEmail } from '@/validators/email';
+import { signInWithEmailAndPassword, type UserCredential } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
-import { type HeaderLinks } from '../components/Header.vue';
+import { type HeaderLinks } from '@/components/Header.vue';
 import { useUserStore } from '@/store/userStore';
 
 const router = useRouter();
@@ -62,13 +62,21 @@ const submit = async (e: Event) => {
         viewState.email.value,
         viewState.password.value
       )) as UserCredential;
-      const { uid: userId, emailVerified, accessToken } = userCredential.user;
-      await userStore.getUser(userId);
-      userStore.user.accessToken = accessToken;
-      userStore.userCredential = userCredential.user;
 
-      loginErrorMessage.value = '';
-      emailVerified ? router.push('/select-menu') : router.push('/register-complete');
+      const { uid: userId, emailVerified } = userCredential.user;
+
+      if (emailVerified) {
+        await userStore.getUser(userId);
+        userStore.user.accessToken = await userCredential.user.getIdToken();
+        userStore.userCredential = userCredential.user;
+        loginErrorMessage.value = '';
+        return router.push('/select-menu');
+      }
+
+      if (!emailVerified) {
+        loginErrorMessage.value = '';
+        return router.push('/register-complete');
+      }
     } catch (error) {
       const userNotFound: string = 'auth/user-not-found';
       const wrongPassword: string = 'auth/wrong-password';
@@ -88,11 +96,17 @@ const submit = async (e: Event) => {
   }
 };
 
-const signInWithGoogle = async (userCredential: any) => {
-  const { uid: userId, accessToken } = userCredential.user;
+const signInWithGoogle = async (userCredential: UserCredential) => {
+  const { uid: userId, emailVerified } = userCredential.user;
   await userStore.getUser(userId);
-  userStore.user.accessToken = accessToken;
+  userStore.user.accessToken = await userCredential.user.getIdToken();
   userStore.userCredential = userCredential.user;
+
+  if (!userStore.user.emailVerified) {
+    userStore.user.emailVerified = emailVerified;
+    await userStore.updateUser(userStore.user, userStore.user.accessToken);
+  }
+
   return router.push('/select-menu');
 };
 

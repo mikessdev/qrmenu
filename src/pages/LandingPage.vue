@@ -8,7 +8,7 @@ import { validateEmptyText } from '@/validators/emptyText';
 import { validateEmail } from '@/validators/email';
 import { sendEmailWithBrevo, type BrevoEmailBody } from '@/utils/sendEmail';
 import { useChallengeV2 } from 'vue-recaptcha';
-import { HeaderLinks } from '../components/Header.vue';
+import { type HeaderLinks } from '../components/Header.vue';
 
 const reCAPTCHAChecked = ref<Boolean>(false);
 const sendButtonIsClicked = ref<Boolean>(false);
@@ -120,7 +120,7 @@ const headerLinks: HeaderLinks[] = [{ id: 1, name: 'Accesar', link: '/login' }];
 </script>
 
 <template>
-  <Header :fixed="fixedHeader" :links="headerLinks" />
+  <Header :fixed="fixedHeader as boolean" :links="headerLinks" />
   <section
     :class="fixedHeader ? 'h-[660px] pt-[60px]' : 'h-[600px]'"
     class="w-full overflow-hidden bg-qr-primary-orange px-[20px]"
