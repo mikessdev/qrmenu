@@ -80,9 +80,11 @@ onMounted(async () => {
         @click="navigateTo(menu.url)"
       >
         <div
-          class="flex h-[100px] w-[100px] items-center justify-center rounded-full border-[4px] border-[#DCDCDC] bg-qr-primary-orange"
-        ></div>
-        <span class="font-notosans text-[#4E4E4E]">{{ menu.url }}</span>
+          class="flex h-[100px] w-[100px] items-center justify-center overflow-hidden rounded-full border-[4px] border-[#DCDCDC]"
+        >
+          <img :src="menu.profileImg" alt="Banner image" />
+        </div>
+        <span class="font-notosans text-[#4E4E4E]">{{ menu.name }}</span>
       </li>
       <li class="flex cursor-pointer flex-col items-center" @click="createMenu()">
         <div

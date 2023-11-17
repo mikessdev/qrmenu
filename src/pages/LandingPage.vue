@@ -13,6 +13,7 @@ import { type HeaderLinks } from '../components/Header.vue';
 const reCAPTCHAChecked = ref<Boolean>(false);
 const sendButtonIsClicked = ref<Boolean>(false);
 const fixedHeader = ref<Boolean>(true);
+const headerLinks = ref<HeaderLinks[]>([{ id: 1, name: 'Accesar', link: '/login' }]);
 
 const sendEmail = async (e: Event) => {
   e.preventDefault();
@@ -115,8 +116,6 @@ onVerify(() => {
   reCAPTCHAChecked.value = true;
   viewState.recaptcha.validator();
 });
-
-const headerLinks: HeaderLinks[] = [{ id: 1, name: 'Accesar', link: '/login' }];
 </script>
 
 <template>

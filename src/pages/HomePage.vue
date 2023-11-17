@@ -1,30 +1,16 @@
 <script setup lang="ts">
-import Header from '@/components/Header.vue';
+import Header, { type HeaderLinks } from '@/components/Header.vue';
 import Hero from '@/components/Hero.vue';
-import HorizontalMenu from '@/components/HorizontalMenu.vue';
-import { onMounted } from 'vue';
-import { useMenuStore } from '@/store/menuStore';
-import { Folder, type DownloadRef, donwloadImage } from '@/firebase/cloud.storage';
+import { ref } from 'vue';
 
-const menuStore = useMenuStore();
+const headerLinks = ref<HeaderLinks[]>([{ id: 1, name: 'Accesar', link: '/login' }]);
 </script>
 
 <template>
-  <Header :center="true" />
+  <Header :center="false" color="#67177b" :links="headerLinks" />
   <main>
     <Hero />
-    <HorizontalMenu />
   </main>
 </template>
 
-<style lang="scss" scoped>
-main {
-  background: $qrmenu-grayish-white;
-  margin-top: 60px;
-  padding-top: 20px;
-  .button-wrapper {
-    position: absolute;
-    right: 10px;
-  }
-}
-</style>
+<style lang="scss" scoped></style>
