@@ -4,12 +4,11 @@ import { useUserStore } from '@/store/userStore';
 export default function authMiddleware(): void | boolean {
   const userStore = useUserStore();
 
-  const user = userStore.user;
-  if (!user.id) {
-    router.push('/login');
+  if (userStore.isAuthenticated()) {
+    return true;
   }
 
-  if (user.id) {
-    return true;
+  if (!userStore.isAuthenticated()) {
+    router.push('/login');
   }
 }

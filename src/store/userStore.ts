@@ -7,6 +7,10 @@ export const useUserStore = defineStore('userProfile', () => {
   const user = ref<User>({} as User);
   const userCredential = ref<UserFirebase>({} as UserFirebase);
 
+  const isAuthenticated = (): boolean => {
+    return user.value.id ? true : false;
+  };
+
   const createUser = async (userData: User): Promise<void> => {
     const url: string = import.meta.env.VITE_USER_URL;
     try {
@@ -53,6 +57,7 @@ export const useUserStore = defineStore('userProfile', () => {
   return {
     user,
     userCredential,
+    isAuthenticated,
     createUser,
     getUser,
     updateUser
