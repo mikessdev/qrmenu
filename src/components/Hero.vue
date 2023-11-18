@@ -14,6 +14,7 @@ import SocialIcon from '@/components/icons/SocialIcon.vue';
 import ClockIcon from '@/components/icons/ClockIcon.vue';
 import ArrowIcon from '@/components/icons/ArrowIcon.vue';
 import SpotIcon from '@/components/icons/SpotIcon.vue';
+import SettingsIcon from './icons/SettingsIcon.vue';
 
 const userStore = useUserStore();
 const menuStore = useMenuStore();
@@ -109,13 +110,13 @@ const formatWhastappNumber = (phoneNumber: string): string => {
 </script>
 <template>
   <div class="flex w-[100%]">
-    <div class="mx-auto my-auto max-h-[400px] max-w-[1200px] rounded-b-lg">
-      <div class="overflow-hidden">
+    <div class="mx-auto my-auto max-w-[1200px] rounded-b-lg">
+      <div class="max-h-[400px] overflow-hidden">
         <img :src="menuStore.menu.headerImg" @click="openFileInput" alt="Banner image" />
       </div>
-      <div class="px-[12px]">
+      <div class="px-[12px] pt-[12px]">
         <div class="flex md:items-center lg:items-center">
-          <div class="mt-[6px] max-h-[30%] max-w-[30%] overflow-hidden rounded-[10px]">
+          <div class="max-h-[30%] max-w-[30%] overflow-hidden rounded-[10px]">
             <img :src="menuStore.menu.profileImg" @click="openFileInput" alt="Profile image" />
           </div>
           <h1
@@ -166,23 +167,19 @@ const formatWhastappNumber = (phoneNumber: string): string => {
           </div>
         </div>
       </div>
-      <input v-if="props.editMode" type="file" @change="changeBannerImage" ref="fileInput" />
-      <input v-if="props.editMode" type="file" @change="changeProfileImage" ref="fileInput" />
     </div>
+    <button
+      v-if="props.editMode"
+      class="absolute right-[12px] z-50 mb-[12px] mt-[12px] flex h-[40px] cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-qr-primary-orange px-[16px] font-notosans text-xl font-bold text-white drop-shadow-lg"
+      @click="toggleEditModal()"
+    >
+      <SettingsIcon />
+      <span>Editar página</span>
+    </button>
   </div>
   <EditModal v-if="showEditModal" @cancel="cancel()" @save="() => {}">
-    <p class="font-notosans text-[#4E4E4E]">Escolha um nome para a URL do Cardápio.</p>
-    <p class="mt-[20px] font-notosans text-xs text-[#4E4E4E]">
-      <strong>Obs:</strong> O nome escolhido precisa ser em letras minúscula, não deve conter
-      caracteres especiais
-      <strong>(ex: ç, letras acentuadas e todos os outros caracteres com exceção do hífen)</strong>
-      e as palavras devem ser separadas por hífen.
-    </p>
-    <p class="mt-[20px] font-notosans text-xs text-[#4E4E4E]">
-      <strong>Ex:</strong> <br />
-      <strong class="text-[#00c65e]">Permitido:</strong> acaiteria-da-maite. <br />
-      <strong class="text-[#e81f43]">Não permitido:</strong> açaiteria-da-Maitê.
-    </p>
+    <input type="file" @change="changeBannerImage" ref="fileInput" />
+    <input type="file" @change="changeProfileImage" ref="fileInput" />
   </EditModal>
 </template>
 

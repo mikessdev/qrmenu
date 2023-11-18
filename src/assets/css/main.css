@@ -18,3 +18,19 @@
     --qr-dark-gray: #737373;
     --qr-bit-light-gray: #8A8A8A;
 }
+
+@layer utilities {
+    @variants responsive {
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+    }
+}
