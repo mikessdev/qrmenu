@@ -274,6 +274,11 @@ const setCategoryFocus = (categoryId: string, currentCategoryId: string) => {
   const onFocus = categoryId === currentCategoryId;
   return onFocus ? 'border-[#67177b] text-[#67177b]' : '';
 };
+
+const sertCategorySeparatorFocus = (categoryId: string, currentCategoryId: string) => {
+  const onFocus = categoryId === currentCategoryId;
+  return onFocus ? 'bg-[#67177b] text-white' : 'bg-[#E0E0E0] text-[#67177B]';
+};
 </script>
 
 <template>
@@ -322,8 +327,11 @@ const setCategoryFocus = (categoryId: string, currentCategoryId: string) => {
       </div>
     </div>
     <div v-for="category in categoryStore.categories" :key="category.id">
-      <div class="my-[30px] rounded-lg bg-[#67177b] pl-[5%]">
-        <p class="p-[12px] font-notosans font-bold uppercase text-white">
+      <div
+        :class="sertCategorySeparatorFocus(category.id, currentCategory.id)"
+        class="my-[30px] rounded-lg pl-[5%]"
+      >
+        <p class="p-[12px] font-notosans font-bold uppercase">
           {{ category.title }}
         </p>
       </div>
