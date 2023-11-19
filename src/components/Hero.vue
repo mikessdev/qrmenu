@@ -112,12 +112,12 @@ const formatWhastappNumber = (phoneNumber: string): string => {
   <div class="flex w-[100%]">
     <div class="mx-auto my-auto max-w-[1200px] rounded-b-lg">
       <div class="max-h-[400px] overflow-hidden">
-        <img :src="menuStore.menu.headerImg" @click="openFileInput" alt="Banner image" />
+        <img :src="menuStore.menu.headerImg" alt="Banner image" />
       </div>
       <div class="px-[12px] pt-[12px]">
         <div class="flex md:items-center lg:items-center">
           <div class="max-h-[30%] max-w-[30%] overflow-hidden rounded-[10px]">
-            <img :src="menuStore.menu.profileImg" @click="openFileInput" alt="Profile image" />
+            <img :src="menuStore.menu.profileImg" alt="Profile image" />
           </div>
           <h1
             class="text-center font-notosans text-[2rem] font-bold uppercase text-[#5F5F5F] md:mx-auto md:px-[20px] lg:mx-auto lg:px-[20px] xl:ml-[6px]"

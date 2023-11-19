@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUpdated } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useCategoryStore } from '@/store/categoryStore';
 import { useUserStore } from '@/store/userStore';
 import PlusIcon from '@/components/icons/PlusIcon.vue';
@@ -11,6 +11,7 @@ import EditIcon from '@/components/icons/EditIcon.vue';
 import DeleteIcon from '@/components/icons/DeleteIcon.vue';
 import AlertDialog from '@/components/AlertDialog.vue';
 import { useMenuStore } from '@/store/menuStore';
+
 // const editModalData = ref<Product>({
 //   id: '',
 //   categoryId: '',
@@ -264,12 +265,15 @@ const deleteCategory = async (category: Category) => {
 onMounted(async () => {
   const { id: menuId } = menuStore.menu;
   await categoryStore.getCategories(menuId);
-  console.table(categoryStore.categories);
+  const firstCategory: Category = categoryStore.categories[0];
+  currentCategory.value = firstCategory;
+  setCategoryFocus(firstCategory.id, firstCategory.id);
 });
 
-onUpdated(() => {
-  console.table(categoryStore.categories);
-});
+const setCategoryFocus = (categoryId: string, currentCategoryId: string) => {
+  const onFocus = categoryId === currentCategoryId;
+  return onFocus ? 'border-[#67177b] text-[#67177b]' : '';
+};
 </script>
 
 <template>
@@ -280,7 +284,8 @@ onUpdated(() => {
       </div>
       <div class="flex" v-for="category in categoryStore.categories" :key="category.id">
         <button
-          class="min-w-max border-b-4 p-[12px] font-notosans font-bold text-[#5F5F5F] focus:border-[#67177b] focus:text-[#67177b] focus-visible:outline-none"
+          :class="setCategoryFocus(category.id, currentCategory.id)"
+          class="min-w-max border-b-4 p-[12px] font-notosans font-bold text-[#5F5F5F] focus-visible:outline-none"
           @click="currentCategory = category"
           autofocus
         >
@@ -316,13 +321,14 @@ onUpdated(() => {
         </div>
       </div>
     </div>
-    <div>
+    <div v-for="category in categoryStore.categories" :key="category.id">
       <div class="my-[30px] rounded-lg bg-[#67177b] pl-[5%]">
         <p class="p-[12px] font-notosans font-bold uppercase text-white">
-          {{ currentCategory.title }}
+          {{ category.title }}
         </p>
       </div>
-
+    </div>
+    <div>
       <EditModal
         v-if="showEditCategoryModal"
         @cancel="
