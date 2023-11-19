@@ -14,9 +14,9 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     categoryWithProducts.value.push(await response.json());
   };
 
-  const getCategories = async (): Promise<void> => {
+  const getCategories = async (menuId: string): Promise<void> => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
-    const response = await fetch(url);
+    const response = await fetch(url + menuId);
     categories.value = await response.json();
   };
 
@@ -107,7 +107,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     }
   };
 
-  const addNewCategory = async (newCategory: Category, accessToken: string): Promise<void> => {
+  const createCategory = async (newCategory: Category, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
     newCategory.id = uuidv4();
     try {
@@ -131,7 +131,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     getCategories,
     getCategoryWithProducts,
     addNewProduct,
-    addNewCategory,
+    createCategory,
     updateProduct,
     updateCategory,
     deleteProductById,

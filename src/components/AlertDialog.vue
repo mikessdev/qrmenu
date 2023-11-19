@@ -19,14 +19,14 @@ const props = defineProps({
 
 const { name, type } = toRefs(props);
 
-const emit = defineEmits(['Allow', 'NotAllow']);
+const emit = defineEmits(['allow', 'notAllow']);
 
 const NotAllow = () => {
-  emit('NotAllow');
+  emit('notAllow');
 };
 
 const Allow = () => {
-  emit('Allow');
+  emit('allow');
 };
 </script>
 <template>
@@ -39,8 +39,8 @@ const Allow = () => {
         {{ message }}
       </span>
       <div class="buttons">
-        <Button @click="NotAllow" label="Não" type="button" />
-        <Button @click="Allow" label="Sim" type="button" />
+        <Button @click="NotAllow" label="Não" type="button" variante="secundary" />
+        <Button @click="Allow" label="Sim" type="button" variante="secundary" />
       </div>
     </div>
   </div>

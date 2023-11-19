@@ -1,61 +1,22 @@
 <script setup lang="ts">
-import { reactive, ref, watch, toRefs, type PropType } from 'vue';
 import Button from '@/components/Button.vue';
-import BaseInput from '@/components/BaseInput.vue';
-import { validateEmptyText } from '@/validators/emptyText';
-import type { Product } from '@/utils/interfaces/Product';
-import type { Category } from '@/utils/interfaces/Category';
-import { uploadImage } from '../firebase/cloud.storage';
-import { useUserStore } from '../store/userStore';
 
 const props = defineProps({
   isProduct: {
     type: Boolean,
     default: true
   },
-  product: {
-    type: Object,
-    default: {} as PropType<Product | Category>
-  },
   variant: {
     type: String,
     default: 'slot'
+  },
+  buttonIsDisabled: {
+    type: Boolean,
+    default: false
   }
 });
 
-// const userStore = useUserStore();
-
-// const buttonIsDisabled = ref(true);
-// const selectedFile = ref();
-// const imageUrl = ref();
-// const fileInput = ref();
-
-// const { id, categoryId, title, description, value } = toRefs(props).product.value;
-// const viewState = reactive({
-//   title: {
-//     value: title ?? '',
-//     error: '',
-//     validator: () => {
-//       viewState.title.error = validateEmptyText(viewState.title.value);
-//     }
-//   },
-//   description: {
-//     value: description ?? '',
-//     error: '',
-//     validator: () => {
-//       viewState.description.error = validateEmptyText(viewState.description.value);
-//     }
-//   },
-//   price: {
-//     value: value ?? 'R$ 00,00',
-//     error: '',
-//     validator: () => {
-//       viewState.price.error = validateEmptyText(viewState.price.value);
-//     }
-//   }
-// });
-
-const emit = defineEmits(['cancel', 'save', 'saveData']);
+const emit = defineEmits(['cancel', 'save']);
 
 const cancel = () => {
   emit('cancel');
@@ -64,52 +25,11 @@ const cancel = () => {
 const save = () => {
   emit('save');
 };
-// const save = () => {
-//   const { title, description, price } = viewState;
-//   const isProduct = props.isProduct;
-//   const buttonEnabled = !buttonIsDisabled.value;
-
-//   if (buttonEnabled) {
-//     const newData = isProduct
-//       ? { id, categoryId, title: title.value, description: description.value, price: price.value }
-//       : { id, title: title.value };
-//     emit('saveData', newData);
-//   }
-// };
-
-// const openFileInput = () => {
-//   fileInput.value.click();
-// };
-
-// const handleFileChange = (event: any) => {
-//   const file = event.target.files[0];
-//   if (file) {
-//     selectedFile.value = file;
-//     uploadImage(file, userStore.user.id, props.product.id);
-//     const reader = new FileReader();
-//     reader.onload = (e) => {
-//       imageUrl.value = e.target?.result;
-//     };
-//     reader.readAsDataURL(file);
-//   }
-// };
-
-// watch(viewState, () => {
-//   const { title, description, price } = viewState;
-//   const isTitleEmpty = !!validateEmptyText(title.value);
-//   const isDescriptionEmpty = !!validateEmptyText(description.value);
-//   const isValueEmpty = !!validateEmptyText(price.value);
-//   const isProduct = props.isProduct;
-
-//   buttonIsDisabled.value = isProduct
-//     ? isTitleEmpty || isDescriptionEmpty || isValueEmpty
-//     : isTitleEmpty;
-// });
 </script>
 <template>
   <div
     v-if="variant === 'slot'"
-    class="fixed top-0 z-50 flex h-[100vh] w-[100vw] backdrop-blur-[30px]"
+    class="fixed left-0 top-0 z-50 flex h-[100vh] w-[100vw] backdrop-blur-[30px]"
   >
     <div
       class="mx-auto my-auto flex w-[400px] flex-col rounded-lg bg-white p-[30px] shadow-[0_10px_30px_rgb(65,72,86,0.5)]"
@@ -117,118 +37,15 @@ const save = () => {
       <slot></slot>
       <div class="mt-[30px] flex justify-evenly">
         <Button @click="cancel" variante="secundary" label="Cancelar" type="button" />
-        <Button @click="save" variante="secundary" label="Salvar" type="button" />
+        <Button
+          @click="save"
+          variante="secundary"
+          label="Salvar"
+          type="button"
+          :is-disabled="props.buttonIsDisabled"
+        />
       </div>
     </div>
   </div>
-  <!-- <div class="modal-background">
-    <div class="modal" :class="[isProduct ? 'tall-modal' : 'short-modal']">
-      <div class="img-food">
-        <input class="input-img" type="file" @change="handleFileChange" ref="fileInput" />
-        <img :src="imageUrl" @click="openFileInput" alt="product image" />
-      </div>
-      <div class="card-data">
-        <BaseInput
-          type="text"
-          maxlength="40"
-          @validate="viewState.title.validator"
-          label="Título"
-          v-model="viewState.title.value"
-          :error-message="viewState.title.error"
-        />
-        <BaseInput
-          v-if="isProduct"
-          type="text"
-          maxlength="100"
-          @validate="viewState.description.validator"
-          label="Descrição"
-          v-model="viewState.description.value"
-          :error-message="viewState.description.error"
-          :text-area="true"
-        />
-        <BaseInput
-          v-if="isProduct"
-          maxlength="10"
-          type="text"
-          @validate="viewState.price.validator"
-          label="Valor"
-          v-model="viewState.price.value"
-          :error-message="viewState.price.error"
-        />
-        <div class="buttons">
-          <Button @click="cancel" label="Cancelar" type="button" />
-          <Button @click="save" label="Salvar" type="button" :is-disabled="buttonIsDisabled" />
-        </div>
-      </div>
-    </div>
-  </div> -->
 </template>
-<style scoped lang="scss">
-.modal-background {
-  font-family: 'Noto Sans';
-  width: 100vw;
-  height: 100vh;
-  backdrop-filter: blur(30px);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  z-index: 9999;
-
-  .modal {
-    background-color: $qrmenu-white;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(65, 72, 86, 0.05);
-    display: flex;
-    flex-direction: column;
-    width: 400px;
-    margin: auto auto;
-
-    .img-food {
-      display: flex;
-      align-items: center;
-
-      .input-img {
-        display: none;
-      }
-
-      img {
-        border: 2px solid $qrmenu-gray;
-        border-radius: 100%;
-        width: 80px;
-        margin: 16px auto 0 auto;
-      }
-    }
-    .card-data {
-      display: flex;
-      flex-direction: column;
-      display: flex;
-      width: 90%;
-      margin: 0 auto;
-    }
-
-    .buttons {
-      display: flex;
-      justify-content: space-evenly;
-      width: 80%;
-      margin: 16px auto 0 auto;
-    }
-  }
-
-  .tall-modal {
-    height: 560px;
-  }
-
-  .short-modal {
-    height: 280px;
-  }
-
-  @media (max-width: 300px) {
-    .dialog {
-      height: 550px;
-    }
-  }
-}
-</style>
+<style scoped lang="scss"></style>

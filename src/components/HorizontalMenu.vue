@@ -1,28 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, reactive, onMounted, onUpdated } from 'vue';
 import { useCategoryStore } from '@/store/categoryStore';
 import { useUserStore } from '@/store/userStore';
-import { type Category } from '@/utils/interfaces/Category';
-import type { Product } from '@/utils/interfaces/Product';
-import CardProducts from '@/components/CardProducts.vue';
-import AlertDialog from '@/components/AlertDialog.vue';
 import PlusIcon from '@/components/icons/PlusIcon.vue';
+import EditModal from '@/components/EditModal.vue';
+import { validateEmptyText } from '@/validators/emptyText';
+import BaseInput from '@/components/BaseInput.vue';
+import type { Category } from '@/utils/interfaces/Category';
 import EditIcon from '@/components/icons/EditIcon.vue';
 import DeleteIcon from '@/components/icons/DeleteIcon.vue';
-import EditModal from '@/components/EditModal.vue';
-
-const categoryStore = useCategoryStore();
-const userStore = useUserStore();
-
-let menu = ref<Product[]>([] as Product[]);
-
-const props = defineProps({
-  editMode: {
-    type: Boolean,
-    default: false
-  }
-});
-
+import AlertDialog from '@/components/AlertDialog.vue';
+import { useMenuStore } from '@/store/menuStore';
 // const editModalData = ref<Product>({
 //   id: '',
 //   categoryId: '',
@@ -38,7 +26,6 @@ const props = defineProps({
 //   description: ''
 // });
 
-const currentCategory = ref<string>('');
 // const warningMessage = ref<string>('');
 // const showEditModal = ref<boolean>(false);
 // const showAlertDialog = ref<boolean>(false);
@@ -193,36 +180,176 @@ const currentCategory = ref<string>('');
 //   });
 // };
 
-const categories = ref([
-  'Pratos Principais',
-  'Bebidas',
-  'Pasteis',
-  'Açais',
-  'Pratos Principais',
-  'Pratos Principais',
-  'Pratos Principais',
-  'Pratos Principais',
-  'Pratos Principais',
-  'Pratos Principais',
-  'Pratos Principais'
-]);
+const props = defineProps({
+  editMode: {
+    type: Boolean,
+    default: false
+  }
+});
+
+const categoryStore = useCategoryStore();
+const menuStore = useMenuStore();
+const userStore = useUserStore();
+
+const showEditCategoryModal = ref<Boolean>(false);
+const showAlertDialog = ref<Boolean>(false);
+const currentCategory = ref<Category>({} as Category);
+const categorieWillBeDeleted = ref<Category>({} as Category);
+const categorieWillBeEdited = ref<Category>({} as Category);
+
+const toggleCategoryEditModal = () => {
+  showEditCategoryModal.value = !showEditCategoryModal.value;
+};
+
+const toggleAlertDialog = () => {
+  showAlertDialog.value = !showAlertDialog.value;
+};
+
+const updateCategory = async (category: Category, accessToken: string) => {
+  const { id: menuId } = menuStore.menu;
+  await categoryStore.updateCategory(category, accessToken);
+  await categoryStore.getCategories(menuId);
+  categorieWillBeEdited.value = {} as Category;
+  categoryState.title.value = '';
+  toggleCategoryEditModal();
+};
+
+const createCategory = async (category: Category, accessToken: string) => {
+  const hasError = !!categoryState.title.error;
+  if (!hasError) {
+    const { id: menuId } = menuStore.menu;
+    await categoryStore.createCategory(category, accessToken);
+    await categoryStore.getCategories(menuId);
+    categoryState.title.value = '';
+    toggleCategoryEditModal();
+  }
+};
+const functionCategory = async () => {
+  const { accessToken } = userStore.user;
+
+  const isToBeEdited = !!categorieWillBeEdited.value.id;
+
+  if (isToBeEdited) {
+    const { value: title } = categoryState.title;
+    const { id, menuId } = categorieWillBeEdited.value;
+    await updateCategory({ id, menuId, title } as Category, accessToken);
+    categorieWillBeEdited.value = {} as Category;
+  }
+
+  if (!isToBeEdited) {
+    const { id: menuId } = menuStore.menu;
+    const { value: title } = categoryState.title;
+    await createCategory({ menuId, title } as Category, accessToken);
+  }
+};
+
+const categoryState = reactive({
+  title: {
+    value: '',
+    error: '',
+    validator: () => {
+      categoryState.title.error = validateEmptyText(categoryState.title.value);
+    }
+  }
+});
+
+const deleteCategory = async (category: Category) => {
+  const { accessToken } = userStore.user;
+  const { id: menuId } = menuStore.menu;
+  await categoryStore.deleteCategoryById(category.id, accessToken);
+  await categoryStore.getCategories(menuId);
+  toggleAlertDialog();
+};
+
+onMounted(async () => {
+  const { id: menuId } = menuStore.menu;
+  await categoryStore.getCategories(menuId);
+  console.table(categoryStore.categories);
+});
+
+onUpdated(() => {
+  console.table(categoryStore.categories);
+});
 </script>
 
 <template>
-  <div class="no-scrollbar mx-auto flex w-[90%] overflow-auto">
-    <div class="" v-for="(category, index) in categories" :key="index">
-      <button
-        class="min-w-max border-b-4 p-[12px] font-notosans font-bold text-[#5F5F5F] focus:border-[#67177b] focus:text-[#67177b] focus-visible:outline-none"
-        @click="currentCategory = category"
-        autofocus
-      >
-        {{ category }}
-      </button>
+  <div class="flex flex-col">
+    <div class="no-scrollbar mx-auto flex w-[max-content] max-w-[90%] items-center overflow-auto">
+      <div class="cursor-pointer p-[12px]" v-if="props.editMode" @click="toggleCategoryEditModal()">
+        <PlusIcon color="#FF393A" :width="24" :height="24" />
+      </div>
+      <div class="flex" v-for="category in categoryStore.categories" :key="category.id">
+        <button
+          class="min-w-max border-b-4 p-[12px] font-notosans font-bold text-[#5F5F5F] focus:border-[#67177b] focus:text-[#67177b] focus-visible:outline-none"
+          @click="currentCategory = category"
+          autofocus
+        >
+          {{ category.title }}
+        </button>
+        <div class="flex">
+          <EditIcon
+            class="mr-[6px]"
+            v-if="props.editMode"
+            @click="
+              () => {
+                categorieWillBeEdited = category;
+                categoryState.title.value = category.title;
+                toggleCategoryEditModal();
+              }
+            "
+            color="#FF393A"
+            :width="20"
+            :height="20"
+          />
+          <DeleteIcon
+            v-if="props.editMode"
+            color="#FF393A"
+            @click="
+              () => {
+                categorieWillBeDeleted = category;
+                toggleAlertDialog();
+              }
+            "
+            :width="20"
+            :height="20"
+          />
+        </div>
+      </div>
     </div>
-  </div>
+    <div>
+      <div class="my-[30px] rounded-lg bg-[#67177b] pl-[5%]">
+        <p class="p-[12px] font-notosans font-bold uppercase text-white">
+          {{ currentCategory.title }}
+        </p>
+      </div>
 
-  <div class="my-[30px] rounded-lg bg-[#67177b] pl-[5%]">
-    <p class="p-[12px] font-notosans font-bold uppercase text-white">{{ currentCategory }}</p>
+      <EditModal
+        v-if="showEditCategoryModal"
+        @cancel="
+          () => {
+            categoryState.title.value = '';
+            toggleCategoryEditModal();
+          }
+        "
+        @save="functionCategory()"
+        :button-is-disabled="!!validateEmptyText(categoryState.title.value)"
+      >
+        <BaseInput
+          type="text"
+          maxlength="30"
+          @validate="categoryState.title.validator"
+          label="Nome da Categoria"
+          v-model="categoryState.title.value"
+          :error-message="categoryState.title.error"
+        />
+      </EditModal>
+      <AlertDialog
+        v-if="showAlertDialog"
+        :name="categorieWillBeDeleted.title"
+        @allow="deleteCategory(categorieWillBeDeleted)"
+        @not-allow="toggleAlertDialog()"
+      />
+    </div>
   </div>
 
   <!-- <div class="menu-horizontal">
