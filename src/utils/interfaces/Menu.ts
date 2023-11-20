@@ -4,6 +4,7 @@ export interface Menu {
   headerImg: string;
   profileImg: string;
   name: string;
+  primaryColor: string;
   url: string;
   phoneNumber: string;
   instagram: string;

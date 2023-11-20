@@ -11,6 +11,7 @@ import EditIcon from '@/components/icons/EditIcon.vue';
 import DeleteIcon from '@/components/icons/DeleteIcon.vue';
 import AlertDialog from '@/components/AlertDialog.vue';
 import { useMenuStore } from '@/store/menuStore';
+import type { Product } from '@/utils/interfaces/Product';
 
 // const editModalData = ref<Product>({
 //   id: '',
@@ -193,6 +194,7 @@ const menuStore = useMenuStore();
 const userStore = useUserStore();
 
 const showEditCategoryModal = ref<Boolean>(false);
+const showEditProductModal = ref<Boolean>(false);
 const showAlertDialog = ref<Boolean>(false);
 const currentCategory = ref<Category>({} as Category);
 const categorieWillBeDeleted = ref<Category>({} as Category);
@@ -254,6 +256,54 @@ const categoryState = reactive({
   }
 });
 
+const productState = reactive({
+  title: {
+    value: '',
+    error: '',
+    validator: () => {
+      productState.title.error = validateEmptyText(productState.title.value);
+    }
+  },
+  description: {
+    value: '',
+    error: '',
+    validator: () => {
+      productState.description.error = validateEmptyText(productState.description.value);
+    }
+  },
+  price: {
+    value: '',
+    error: '',
+    validator: () => {
+      productState.price.error = validateEmptyText(productState.price.value);
+    }
+  },
+  unit: {
+    value: '',
+    error: '',
+    validator: () => {
+      productState.unit.error = validateEmptyText(productState.unit.value);
+    }
+  }
+});
+
+const cleanCategoryState = () => {
+  categoryState.title.value = '';
+  categoryState.title.error = '';
+};
+
+const cleanProductState = () => {
+  productState.title.error = '';
+  productState.description.error = '';
+  productState.price.error = '';
+  productState.unit.error = '';
+
+  productState.title.value = '';
+  productState.description.value = '';
+  productState.price.value = '';
+  productState.unit.value = '';
+};
+
 const deleteCategory = async (category: Category) => {
   const { accessToken } = userStore.user;
   const { id: menuId } = menuStore.menu;
@@ -261,14 +311,6 @@ const deleteCategory = async (category: Category) => {
   await categoryStore.getCategories(menuId);
   toggleAlertDialog();
 };
-
-onMounted(async () => {
-  const { id: menuId } = menuStore.menu;
-  await categoryStore.getCategories(menuId);
-  const firstCategory: Category = categoryStore.categories[0];
-  currentCategory.value = firstCategory;
-  setCategoryFocus(firstCategory.id, firstCategory.id);
-});
 
 const setCategoryFocus = (categoryId: string, currentCategoryId: string) => {
   const onFocus = categoryId === currentCategoryId;
@@ -279,6 +321,39 @@ const sertCategorySeparatorFocus = (categoryId: string, currentCategoryId: strin
   const onFocus = categoryId === currentCategoryId;
   return onFocus ? 'bg-[#67177b] text-white' : 'bg-[#E0E0E0] text-[#67177B]';
 };
+
+const toggleProductEditModal = () => {
+  showEditProductModal.value = !showEditProductModal.value;
+};
+
+const productButtonIsDisabled = (): boolean => {
+  const titleIsEmpty = !!validateEmptyText(productState.title.value);
+  const descriptionIsEmpty = !!validateEmptyText(productState.description.value);
+  const priceIsEmpty = !!validateEmptyText(productState.price.value);
+  const unitIsEmpty = !!validateEmptyText(productState.unit.value);
+
+  const titleHasError = !!productState.title.error;
+  const descriptionHasError = !!productState.description.error;
+  const priceHasError = !!productState.price.error;
+  const unitHasError = !!productState.unit.error;
+
+  const anyFieldEmpyt = titleIsEmpty || descriptionIsEmpty || priceIsEmpty || unitIsEmpty;
+  const anyFieldHasError = titleHasError || descriptionHasError || priceHasError || unitHasError;
+
+  return anyFieldEmpyt || anyFieldHasError ? true : false;
+};
+
+const functionProduct = () => {
+  const product = {} as Product;
+};
+
+onMounted(async () => {
+  const { id: menuId } = menuStore.menu;
+  await categoryStore.getCategories(menuId);
+  const firstCategory: Category = categoryStore.categories[0];
+  currentCategory.value = firstCategory;
+  setCategoryFocus(firstCategory.id, firstCategory.id);
+});
 </script>
 
 <template>
@@ -335,13 +410,62 @@ const sertCategorySeparatorFocus = (categoryId: string, currentCategoryId: strin
           {{ category.title }}
         </p>
       </div>
+      <div class="cursor-pointer p-[12px]" v-if="props.editMode" @click="toggleProductEditModal()">
+        <PlusIcon color="#FF393A" :width="30" :height="30" />
+      </div>
     </div>
     <div>
+      <EditModal
+        v-if="showEditProductModal"
+        @cancel="
+          () => {
+            cleanProductState();
+            toggleProductEditModal();
+          }
+        "
+        @save="functionProduct()"
+        :button-is-disabled="productButtonIsDisabled()"
+      >
+        <BaseInput
+          type="text"
+          maxlength="30"
+          @validate="productState.title.validator"
+          label="Nome do Produto"
+          v-model="productState.title.value"
+          :error-message="productState.title.error"
+        />
+        <BaseInput
+          type="text"
+          maxlength="30"
+          @validate="productState.description.validator"
+          label="Descrição do Produto"
+          v-model="productState.description.value"
+          :error-message="productState.description.error"
+        />
+        <BaseInput
+          type="text"
+          maxlength="30"
+          @validate="productState.price.validator"
+          label="Valor do Produto"
+          v-model="productState.price.value"
+          :error-message="productState.price.error"
+        />
+        <BaseInput
+          type="text"
+          maxlength="30"
+          @validate="productState.unit.validator"
+          label="O valor se refere a qual quantidade?"
+          placeholder="Ex: 1 unidade ou 500g"
+          v-model="productState.unit.value"
+          :error-message="productState.unit.error"
+        />
+      </EditModal>
+
       <EditModal
         v-if="showEditCategoryModal"
         @cancel="
           () => {
-            categoryState.title.value = '';
+            cleanCategoryState();
             toggleCategoryEditModal();
           }
         "

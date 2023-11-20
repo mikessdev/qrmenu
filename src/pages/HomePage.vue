@@ -5,6 +5,7 @@ import { ref } from 'vue';
 import { useUserStore } from '@/store/userStore';
 import { useMenuStore } from '@/store/menuStore';
 import HorizontalMenu from '@/components/HorizontalMenu.vue';
+import Footer from '@/components/Footer.vue';
 
 const userStore = useUserStore();
 const menuStore = useMenuStore();
@@ -23,7 +24,7 @@ const userHavePermissionToEdit = (): boolean => {
 </script>
 
 <template>
-  <Header :center="false" color="#67177b" :links="headerLinks" />
+  <Header :center="false" :color="menuStore.menu.primaryColor" :links="headerLinks" />
   <main>
     <Hero :edit-mode="userHavePermissionToEdit()" />
 
@@ -32,6 +33,7 @@ const userHavePermissionToEdit = (): boolean => {
       <HorizontalMenu class="mx-auto mt-[30px]" :edit-mode="userHavePermissionToEdit()" />
     </div>
   </main>
+  <Footer />
 </template>
 
 <style lang="scss" scoped></style>

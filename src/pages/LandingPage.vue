@@ -125,9 +125,9 @@ onVerify(() => {
     class="w-full overflow-hidden bg-qr-primary-orange px-[20px]"
   >
     <div class="relative mx-auto my-0 flex max-w-[1200px]">
-      <div class="absolute left-0 z-10 mt-[60px] max-w-[600px] font-notosans text-white">
+      <div class="absolute left-0 z-10 mt-[60px] max-w-[600px] text-white">
         <h1 class="text-5xl font-bold">Crie seu cardápio personalizado de forma gratuita</h1>
-        <p class="mb-[60px] mt-[40px] max-w-[380px] text-xl">
+        <p class="mb-[60px] mt-[40px] max-w-[380px] font-notosans text-xl">
           Nós entendemos o quanto um cardápio bem elaborado pode fazer a diferença no seu negócio ou
           na sua experiência culinária, e é por isso que estamos aqui para ajudar.
         </p>
@@ -180,20 +180,22 @@ onVerify(() => {
         comece agora mesmo no <strong class="text-qr-primary-orange">Seu Cardápio.</strong>
       </p>
       <div class="flex w-full justify-between">
-        <div class="max-w-[300px] text-center font-notosans">
+        <div class="max-w-[300px] text-center">
           <p class="text-5xl font-bold text-qr-primary-orange">Grátis</p>
           <br />
-          <p class="text-xl text-black">Pode usar a vontade sem custos necessários.</p>
+          <p class="font-notosans text-xl text-black">
+            Pode usar a vontade sem custos necessários.
+          </p>
         </div>
-        <div class="max-w-[300px] text-center font-notosans">
+        <div class="max-w-[300px] text-center">
           <p class="text-5xl font-bold text-qr-primary-orange">Rápido</p>
           <br />
-          <p class="text-xl text-black">
+          <p class="font-notosans text-xl text-black">
             Em pouco minutos seu cardápio está pronto para ser compartilhado para seus clientes.
           </p>
         </div>
-        <div class="max-w-[300px] text-center font-notosans">
-          <p class="text-5xl font-bold text-qr-primary-orange">Fácil</p>
+        <div class="max-w-[300px] text-center">
+          <p class="font-notosans text-5xl font-bold text-qr-primary-orange">Fácil</p>
           <br />
           <p class="text-xl text-black">
             Qualquer pessoa consegue criar um cardápio sem conhecimento em design ou em criação de

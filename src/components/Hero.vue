@@ -110,14 +110,20 @@ const formatWhastappNumber = (phoneNumber: string): string => {
 </script>
 <template>
   <div class="flex w-[100%]">
-    <div class="mx-auto my-auto max-w-[1200px] rounded-b-lg">
-      <div class="max-h-[400px] overflow-hidden">
-        <img :src="menuStore.menu.headerImg" alt="Banner image" />
+    <div class="mx-auto my-auto max-w-[1200px]">
+      <div class="max-h-[400px] overflow-hidden rounded-b-lg">
+        <img v-if="menuStore.menu.headerImg" :src="menuStore.menu.headerImg" alt="Banner image" />
+        <img v-else src="@/assets/img/withoutBanner.png" alt="Banner image" />
       </div>
       <div class="px-[12px] pt-[12px]">
         <div class="flex md:items-center lg:items-center">
           <div class="max-h-[30%] max-w-[30%] overflow-hidden rounded-[10px]">
-            <img :src="menuStore.menu.profileImg" alt="Profile image" />
+            <img
+              v-if="menuStore.menu.profileImg"
+              :src="menuStore.menu.profileImg"
+              alt="Banner image"
+            />
+            <img v-else src="@/assets/img/withoutProfile.png" alt="Banner image" />
           </div>
           <h1
             class="text-center font-notosans text-[2rem] font-bold uppercase text-[#5F5F5F] md:mx-auto md:px-[20px] lg:mx-auto lg:px-[20px] xl:ml-[6px]"
@@ -177,7 +183,7 @@ const formatWhastappNumber = (phoneNumber: string): string => {
       <span>Editar página</span>
     </button>
   </div>
-  <EditModal v-if="showEditModal" @cancel="cancel()" @save="() => {}">
+  <EditModal v-if="showEditModal" @cancel="cancel()" @save="cancel()">
     <input type="file" @change="changeBannerImage" ref="fileInput" />
     <input type="file" @change="changeProfileImage" ref="fileInput" />
   </EditModal>

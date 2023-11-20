@@ -9,20 +9,53 @@ import { validateSlug } from '@/validators/slug';
 import { useMenuStore } from '@/store/menuStore';
 import { useUserStore } from '@/store/userStore';
 import type { Menu } from '@/utils/interfaces/Menu';
-import router from '@/router';
+import { useRouter } from 'vue-router';
+import { useCategoryStore } from '@/store/categoryStore';
+import type { Category } from '@/utils/interfaces/Category';
+
+const router = useRouter();
 
 const menuStore = useMenuStore();
 const userStore = useUserStore();
+const categoryStore = useCategoryStore();
 
 const showEditModal = ref<boolean>(false);
 const menus = ref<Menu[]>([]);
 
-const viewState = reactive({
-  menuName: {
+const menuState = reactive({
+  name: {
     value: '',
     error: '',
     validator: () => {
-      viewState.menuName.error = validateEmptyText(viewState.menuName.value);
+      menuState.name.error = validateEmptyText(menuState.name.value);
+    }
+  },
+  primaryColor: {
+    value: '',
+    error: '',
+    validator: () => {
+      menuState.primaryColor.error = validateEmptyText(menuState.primaryColor.value);
+    }
+  },
+  url: {
+    value: '',
+    error: '',
+    validator: () => {
+      menuState.url.error = validateEmptyText(menuState.url.value);
+    }
+  },
+  phoneNumber: {
+    value: '',
+    error: '',
+    validator: () => {
+      menuState.phoneNumber.error = validateEmptyText(menuState.phoneNumber.value);
+    }
+  },
+  instagram: {
+    value: '',
+    error: '',
+    validator: () => {
+      menuState.instagram.error = validateEmptyText(menuState.instagram.value);
     }
   }
 });
@@ -40,25 +73,56 @@ const cancel = () => {
 };
 
 const save = async () => {
-  if (!viewState.menuName.value) {
-    viewState.menuName.validator();
-  }
-  if (!viewState.menuName.error) {
-    const { id: userId, accessToken } = userStore.user;
-    const { value: url } = viewState.menuName;
-    await menuStore.createMenu({ userId, url } as Menu, accessToken);
-    await menuStore.getMenus(userId, accessToken);
-    toggleEditModal();
-  }
+  const { id: userId, accessToken } = userStore.user;
+  const { name, url, primaryColor, instagram, phoneNumber } = menuState;
+  const newMenu: Menu = {
+    userId,
+    name: name.value,
+    url: url.value,
+    primaryColor: primaryColor.value,
+    instagram: instagram.value,
+    phoneNumber: phoneNumber.value
+  } as Menu;
+
+  await menuStore.createMenu(newMenu as Menu, accessToken);
+  await menuStore.getMenus(userId, accessToken);
+
+  await menuStore.getMenuByURL(url.value);
+  await categoryStore.createCategory(
+    { title: 'Pratos Principais', menuId: menuStore.menu.id } as Category,
+    accessToken
+  );
+  toggleEditModal();
 };
 
 const navigateTo = (url: string) => {
   return router.push(`/${url}`);
 };
 
-watch(viewState, () => {
-  if (validateSlug(viewState.menuName.value)) {
-    viewState.menuName.error = validateSlug(viewState.menuName.value);
+const createMenuButtonIsDisabled = () => {
+  const nameIsEmpty = !!validateEmptyText(menuState.name.value);
+  const urlIsEmpty = !!validateEmptyText(menuState.url.value);
+  const primaryColorIsEmpty = !!validateEmptyText(menuState.primaryColor.value);
+  const phoneNumberIsEmpty = !!validateEmptyText(menuState.phoneNumber.value);
+  const instagramIsEmpty = !!validateEmptyText(menuState.instagram.value);
+
+  const nameHasError = !!menuState.name.error;
+  const urlHasError = !!menuState.url.error;
+  const primaryColorHasError = !!menuState.primaryColor.error;
+  const phoneNumberHasError = !!menuState.phoneNumber.error;
+  const instagramHasError = !!menuState.instagram.error;
+
+  const anyFieldEmpyt =
+    nameIsEmpty || urlIsEmpty || primaryColorIsEmpty || phoneNumberIsEmpty || instagramIsEmpty;
+  const anyFieldHasError =
+    nameHasError || urlHasError || primaryColorHasError || phoneNumberHasError || instagramHasError;
+
+  return anyFieldEmpyt || anyFieldHasError ? true : false;
+};
+
+watch(menuState, () => {
+  if (validateSlug(menuState.url.value)) {
+    menuState.url.error = validateSlug(menuState.url.value);
   }
 });
 
@@ -82,7 +146,8 @@ onMounted(async () => {
         <div
           class="flex h-[100px] w-[100px] items-center justify-center overflow-hidden rounded-full border-[4px] border-[#DCDCDC]"
         >
-          <img :src="menu.profileImg" alt="Banner image" />
+          <img v-if="menu.profileImg" :src="menu.profileImg" alt="Menu image" />
+          <img v-else src="@/assets/img/withoutProfile.png" alt="Menu image" />
         </div>
         <span class="font-notosans text-[#4E4E4E]">{{ menu.name }}</span>
       </li>
@@ -96,8 +161,50 @@ onMounted(async () => {
       </li>
     </ul>
   </main>
-  <EditModal v-if="showEditModal" @cancel="cancel()" @save="save()">
-    <p class="font-notosans text-[#4E4E4E]">Escolha um nome para a URL do Cardápio.</p>
+  <EditModal
+    v-if="showEditModal"
+    @cancel="cancel()"
+    @save="save()"
+    :button-is-disabled="createMenuButtonIsDisabled()"
+  >
+    <h1 class="font-notosans text-base font-bold text-[#4E4E4E]">
+      Vamos precisar de algumas informações para montarmos o seu cardápio.
+    </h1>
+    <BaseInput
+      maxlength="30"
+      v-model="menuState.name.value"
+      label="Nome de Exibição"
+      :error-message="menuState.name.error"
+      @validate="menuState.name.validator()"
+    />
+
+    <BaseInput
+      maxlength="30"
+      v-model="menuState.primaryColor.value"
+      label="Cor de destaque no formato HEX"
+      placeholder="#531459"
+      :error-message="menuState.primaryColor.error"
+      @validate="menuState.primaryColor.validator()"
+    />
+
+    <BaseInput
+      maxlength="30"
+      v-model="menuState.phoneNumber.value"
+      label="Número de telefone"
+      :error-message="menuState.phoneNumber.error"
+      @validate="menuState.phoneNumber.validator()"
+    />
+
+    <BaseInput
+      maxlength="30"
+      v-model="menuState.instagram.value"
+      label="@ do instagram"
+      placeholder="@restaurant"
+      :error-message="menuState.instagram.error"
+      @validate="menuState.instagram.validator()"
+    />
+
+    <p class="mt-[30px] font-notosans text-[#4E4E4E]">Escolha um nome para a URL do Cardápio.</p>
     <p class="mt-[20px] font-notosans text-xs text-[#4E4E4E]">
       <strong>Obs:</strong> O nome escolhido precisa ser em letras minúscula, não deve conter
       caracteres especiais
@@ -112,9 +219,9 @@ onMounted(async () => {
     <BaseInput
       maxlength="30"
       placeholder="acaiteria-da-borcelle"
-      v-model="viewState.menuName.value"
-      :error-message="viewState.menuName.error"
-      @validate="viewState.menuName.validator()"
+      v-model="menuState.url.value"
+      :error-message="menuState.url.error"
+      @validate="menuState.url.validator()"
     />
   </EditModal>
 </template>

@@ -4,6 +4,7 @@ export interface Product {
   title: string;
   description: string;
   price: string;
+  unit: string;
   createdAt?: Date | undefined;
   updatedAt?: Date | undefined;
 }
