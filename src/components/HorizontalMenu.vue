@@ -1,17 +1,26 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
+import { validateEmptyText } from '@/validators/emptyText';
+import type { Category } from '@/utils/interfaces/Category';
+import type { Product } from '@/utils/interfaces/Product';
 import { useCategoryStore } from '@/store/categoryStore';
 import { useUserStore } from '@/store/userStore';
-import PlusIcon from '@/components/icons/PlusIcon.vue';
-import EditModal from '@/components/EditModal.vue';
-import { validateEmptyText } from '@/validators/emptyText';
-import BaseInput from '@/components/BaseInput.vue';
-import type { Category } from '@/utils/interfaces/Category';
+import { useMenuStore } from '@/store/menuStore';
 import EditIcon from '@/components/icons/EditIcon.vue';
+import { useProductStore } from '@/store/productStore';
 import DeleteIcon from '@/components/icons/DeleteIcon.vue';
 import AlertDialog from '@/components/AlertDialog.vue';
-import { useMenuStore } from '@/store/menuStore';
-import type { Product } from '@/utils/interfaces/Product';
+import BaseInput from '@/components/BaseInput.vue';
+import PlusIcon from '@/components/icons/PlusIcon.vue';
+import EditModal from '@/components/EditModal.vue';
+import CardProduct from '@/components/CardProduct.vue';
+import {
+  uploadImage,
+  type UploadData,
+  donwloadImage,
+  type DownloadRef,
+  Folder
+} from '@/firebase/cloud.storage';
 
 // const editModalData = ref<Product>({
 //   id: '',
@@ -189,14 +198,16 @@ const props = defineProps({
   }
 });
 
-const categoryStore = useCategoryStore();
 const menuStore = useMenuStore();
 const userStore = useUserStore();
+const categoryStore = useCategoryStore();
+const productStore = useProductStore();
 
 const showEditCategoryModal = ref<Boolean>(false);
 const showEditProductModal = ref<Boolean>(false);
 const showAlertDialog = ref<Boolean>(false);
 const currentCategory = ref<Category>({} as Category);
+const currentProduct = ref<Product>({} as Product);
 const categorieWillBeDeleted = ref<Category>({} as Category);
 const categorieWillBeEdited = ref<Category>({} as Category);
 
@@ -319,7 +330,9 @@ const setCategoryFocus = (categoryId: string, currentCategoryId: string) => {
 
 const sertCategorySeparatorFocus = (categoryId: string, currentCategoryId: string) => {
   const onFocus = categoryId === currentCategoryId;
-  return onFocus ? 'bg-[#67177b] text-white' : 'bg-[#E0E0E0] text-[#67177B]';
+  return onFocus
+    ? `background-color: ${menuStore.menu.primaryColor}; color: #FFF`
+    : `background-color: #E0E0E0; color: ${menuStore.menu.primaryColor};`;
 };
 
 const toggleProductEditModal = () => {
@@ -343,8 +356,60 @@ const productButtonIsDisabled = (): boolean => {
   return anyFieldEmpyt || anyFieldHasError ? true : false;
 };
 
-const functionProduct = () => {
-  const product = {} as Product;
+const functionProduct = async () => {
+  const { id: menuId } = menuStore.menu;
+
+  await createProduct();
+  await categoryStore.getCategories(menuId);
+  toggleProductEditModal();
+};
+
+const createProduct = async () => {
+  const { accessToken } = userStore.user;
+  const { id: categoryId } = currentCategory.value;
+  const { title, description, price, unit } = productState;
+
+  const product: Product = {
+    categoryId,
+    title: title.value,
+    productImg: '',
+    description: description.value,
+    price: price.value,
+    unit: unit.value,
+    likes: 0
+  } as Product;
+
+  await productStore.createProduct(product, accessToken);
+};
+
+const setImage = async (event: any) => {
+  const { id: userId } = userStore.user;
+  const { id: menuId } = menuStore.menu;
+  const { id: categorId } = currentCategory.value;
+
+  const file = event.target.files[0];
+
+  if (file) {
+    await uploadImage({
+      file,
+      userId,
+      menuId,
+      categorId,
+      folder: Folder.Products,
+      fileName: Folder.Products
+    } as UploadData);
+
+    currentProduct.value.productImg = await donwloadImage({
+      userId,
+      menuId,
+      categorId,
+      folder: Folder.Products,
+      fileName: Folder.Products
+    } as DownloadRef);
+  }
+
+  const { accessToken } = userStore.user;
+  menuStore.updateMenu(menuStore.menu, accessToken);
 };
 
 onMounted(async () => {
@@ -353,6 +418,7 @@ onMounted(async () => {
   const firstCategory: Category = categoryStore.categories[0];
   currentCategory.value = firstCategory;
   setCategoryFocus(firstCategory.id, firstCategory.id);
+  console.table(categoryStore.categories);
 });
 </script>
 
@@ -363,14 +429,15 @@ onMounted(async () => {
         <PlusIcon color="#FF393A" :width="24" :height="24" />
       </div>
       <div class="flex" v-for="category in categoryStore.categories" :key="category.id">
-        <button
-          :class="setCategoryFocus(category.id, currentCategory.id)"
-          class="min-w-max border-b-4 p-[12px] font-notosans font-bold text-[#5F5F5F] focus-visible:outline-none"
-          @click="currentCategory = category"
-          autofocus
-        >
-          {{ category.title }}
-        </button>
+        <a :href="`#${category.id}`">
+          <button
+            :style="setCategoryFocus(category.id, currentCategory.id)"
+            class="min-w-max border-b-4 p-[12px] font-notosans font-bold text-[#5F5F5F] focus-visible:outline-none"
+            @click="currentCategory = category"
+          >
+            {{ category.title }}
+          </button>
+        </a>
         <div class="flex">
           <EditIcon
             class="mr-[6px]"
@@ -402,16 +469,33 @@ onMounted(async () => {
       </div>
     </div>
     <div v-for="category in categoryStore.categories" :key="category.id">
+      <a :name="category.id">
+        <div
+          :style="sertCategorySeparatorFocus(category.id, currentCategory.id)"
+          class="my-[30px] rounded-lg pl-[5%]"
+        >
+          <p class="p-[12px] font-notosans font-bold uppercase">
+            {{ category.title }}
+          </p>
+        </div>
+      </a>
       <div
-        :class="sertCategorySeparatorFocus(category.id, currentCategory.id)"
-        class="my-[30px] rounded-lg pl-[5%]"
+        class="cursor-pointer p-[12px]"
+        v-if="props.editMode"
+        @click="
+          () => {
+            currentCategory = category;
+            toggleProductEditModal();
+          }
+        "
       >
-        <p class="p-[12px] font-notosans font-bold uppercase">
-          {{ category.title }}
-        </p>
-      </div>
-      <div class="cursor-pointer p-[12px]" v-if="props.editMode" @click="toggleProductEditModal()">
         <PlusIcon color="#FF393A" :width="30" :height="30" />
+      </div>
+
+      <div v-for="product in category.products" :key="product.id">
+        <div>
+          <CardProduct :product="product" />
+        </div>
       </div>
     </div>
     <div>
@@ -426,6 +510,7 @@ onMounted(async () => {
         @save="functionProduct()"
         :button-is-disabled="productButtonIsDisabled()"
       >
+        <input type="file" @change="setImage" ref="fileInput" />
         <BaseInput
           type="text"
           maxlength="30"

@@ -1,4 +1,3 @@
-import router from '@/router';
 import { useMenuStore } from '@/store/menuStore';
 import type { RouteLocationNormalized } from 'vue-router';
 

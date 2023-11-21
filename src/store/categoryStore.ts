@@ -1,76 +1,15 @@
-import type { Category, CategoryWithProducts } from '@/utils/interfaces/Category';
-import type { Product } from '@/utils/interfaces/Product';
+import type { Category } from '@/utils/interfaces/Category';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useCategoryStore = defineStore('categoryManagement', () => {
   const categories = ref<Category[]>([] as Category[]);
-  const categoryWithProducts = ref<CategoryWithProducts[]>([] as CategoryWithProducts[]);
-
-  const getCategoryWithProducts = async (categoryId: string): Promise<void> => {
-    const url: string = import.meta.env.VITE_CATEGORY_URL;
-    const response = await fetch(url + categoryId);
-    categoryWithProducts.value.push(await response.json());
-  };
 
   const getCategories = async (menuId: string): Promise<void> => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
     const response = await fetch(url + menuId);
     categories.value = await response.json();
-  };
-
-  const addNewProduct = async (newProduct: Product, accessToken: string): Promise<void> => {
-    const url: string = import.meta.env.VITE_PRODUCT_URL;
-    newProduct.id = uuidv4();
-    try {
-      await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // prettier-ignore
-          "Authorization": 'Bearer ' + accessToken
-        },
-        body: JSON.stringify(newProduct)
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const updateProduct = async (newProduct: Product, accessToken: string): Promise<void> => {
-    const url: string = import.meta.env.VITE_PRODUCT_URL;
-    const { id } = newProduct;
-
-    try {
-      await fetch(url + id, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          // prettier-ignore
-          "Authorization": 'Bearer ' + accessToken
-        },
-        body: JSON.stringify(newProduct)
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const deleteProductById = async (id: string, accessToken: string): Promise<void> => {
-    const url: string = import.meta.env.VITE_PRODUCT_URL;
-    try {
-      await fetch(url + id, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          // prettier-ignore
-          "Authorization": 'Bearer ' + accessToken
-        }
-      });
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   const updateCategory = async (newCategory: Category, accessToken: string): Promise<void> => {
@@ -127,14 +66,9 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
 
   return {
     categories,
-    categoryWithProducts,
     getCategories,
-    getCategoryWithProducts,
-    addNewProduct,
     createCategory,
-    updateProduct,
     updateCategory,
-    deleteProductById,
     deleteCategoryById
   };
 });

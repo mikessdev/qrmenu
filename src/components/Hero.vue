@@ -29,60 +29,49 @@ const props = defineProps({
   }
 });
 
-const changeBannerImage = async (event: any) => {
+const changeImage = async (event: any, folder: string) => {
   const { id: userId } = userStore.user;
   const { id: menuId } = menuStore.menu;
   const file = event.target.files[0];
 
   if (file) {
-    await uploadImage({
-      file,
-      userId,
-      menuId,
-      folder: Folder.Banner,
-      fileName: 'banner'
-    } as UploadData);
+    if (folder === Folder.Banner) {
+      await uploadImage({
+        file,
+        userId,
+        menuId,
+        folder: Folder.Banner,
+        fileName: Folder.Banner
+      } as UploadData);
 
-    menuStore.menu.headerImg = await donwloadImage({
-      userId,
-      menuId,
-      folder: Folder.Banner,
-      fileName: 'banner'
-    } as DownloadRef);
+      menuStore.menu.headerImg = await donwloadImage({
+        userId,
+        menuId,
+        folder: Folder.Banner,
+        fileName: Folder.Banner
+      } as DownloadRef);
+    }
 
-    const { accessToken } = userStore.user;
-    menuStore.updateMenu(menuStore.menu, accessToken);
-  }
-};
+    if (folder === Folder.Profile) {
+      await uploadImage({
+        file,
+        userId,
+        menuId,
+        folder: Folder.Profile,
+        fileName: Folder.Profile
+      } as UploadData);
 
-const changeProfileImage = async (event: any) => {
-  const { id: userId } = userStore.user;
-  const { id: menuId } = menuStore.menu;
-  const file = event.target.files[0];
-
-  if (file) {
-    await uploadImage({
-      file,
-      userId,
-      menuId,
-      folder: Folder.Profile,
-      fileName: 'profile'
-    } as UploadData);
-
-    menuStore.menu.profileImg = await donwloadImage({
-      userId,
-      menuId,
-      folder: Folder.Profile,
-      fileName: 'profile'
-    } as DownloadRef);
+      menuStore.menu.profileImg = await donwloadImage({
+        userId,
+        menuId,
+        folder: Folder.Profile,
+        fileName: Folder.Profile
+      } as DownloadRef);
+    }
 
     const { accessToken } = userStore.user;
     menuStore.updateMenu(menuStore.menu, accessToken);
   }
-};
-
-const openFileInput = () => {
-  fileInput.value.click();
 };
 
 const toggleEditModal = () => {
@@ -184,8 +173,8 @@ const formatWhastappNumber = (phoneNumber: string): string => {
     </button>
   </div>
   <EditModal v-if="showEditModal" @cancel="cancel()" @save="cancel()">
-    <input type="file" @change="changeBannerImage" ref="fileInput" />
-    <input type="file" @change="changeProfileImage" ref="fileInput" />
+    <input type="file" @change="(e) => changeImage(e, Folder.Banner)" ref="fileInput" />
+    <input type="file" @change="(e) => changeImage(e, Folder.Profile)" ref="fileInput" />
   </EditModal>
 </template>
 
