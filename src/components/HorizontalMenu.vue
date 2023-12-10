@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
+import {
+  uploadImage,
+  type UploadData,
+  donwloadImage,
+  type DownloadRef,
+  Folder
+} from '@/firebase/cloud.storage';
 import type { Category } from '@/utils/interfaces/Category';
 import type { Product } from '@/utils/interfaces/Product';
 import { useCategoryStore } from '@/store/categoryStore';
@@ -14,13 +21,8 @@ import BaseInput from '@/components/BaseInput.vue';
 import PlusIcon from '@/components/icons/PlusIcon.vue';
 import EditModal from '@/components/EditModal.vue';
 import CardProduct from '@/components/CardProduct.vue';
-import {
-  uploadImage,
-  type UploadData,
-  donwloadImage,
-  type DownloadRef,
-  Folder
-} from '@/firebase/cloud.storage';
+import FileInput from '@/components/FileInput.vue';
+import { checkImageSize } from '@/validators/imageLimit';
 
 // const editModalData = ref<Product>({
 //   id: '',
@@ -198,6 +200,8 @@ const props = defineProps({
   }
 });
 
+const MAX_IMAGE_SIZE_BYTES = 500000; //0.5Mb;
+
 const menuStore = useMenuStore();
 const userStore = useUserStore();
 const categoryStore = useCategoryStore();
@@ -206,10 +210,15 @@ const productStore = useProductStore();
 const showEditCategoryModal = ref<Boolean>(false);
 const showEditProductModal = ref<Boolean>(false);
 const showAlertDialog = ref<Boolean>(false);
+
 const currentCategory = ref<Category>({} as Category);
 const currentProduct = ref<Product>({} as Product);
+
 const categorieWillBeDeleted = ref<Category>({} as Category);
 const categorieWillBeEdited = ref<Category>({} as Category);
+
+const productWillBeDeleted = ref<Product>({} as Product);
+const productWillBeEdited = ref<Product>({} as Product);
 
 const toggleCategoryEditModal = () => {
   showEditCategoryModal.value = !showEditCategoryModal.value;
@@ -268,6 +277,16 @@ const categoryState = reactive({
 });
 
 const productState = reactive({
+  image: {
+    value: {} as File,
+    error: '',
+    validator: () => {
+      productState.image.error = checkImageSize(
+        productState.image.value.size,
+        MAX_IMAGE_SIZE_BYTES
+      );
+    }
+  },
   title: {
     value: '',
     error: '',
@@ -324,8 +343,9 @@ const deleteCategory = async (category: Category) => {
 };
 
 const setCategoryFocus = (categoryId: string, currentCategoryId: string) => {
+  const { primaryColor: color } = menuStore.menu;
   const onFocus = categoryId === currentCategoryId;
-  return onFocus ? 'border-[#67177b] text-[#67177b]' : '';
+  return onFocus ? `border-color: ${color}; color: ${color};` : '';
 };
 
 const sertCategorySeparatorFocus = (categoryId: string, currentCategoryId: string) => {
@@ -345,13 +365,15 @@ const productButtonIsDisabled = (): boolean => {
   const priceIsEmpty = !!validateEmptyText(productState.price.value);
   const unitIsEmpty = !!validateEmptyText(productState.unit.value);
 
+  const ImageHasError = !!productState.image.error;
   const titleHasError = !!productState.title.error;
   const descriptionHasError = !!productState.description.error;
   const priceHasError = !!productState.price.error;
   const unitHasError = !!productState.unit.error;
 
   const anyFieldEmpyt = titleIsEmpty || descriptionIsEmpty || priceIsEmpty || unitIsEmpty;
-  const anyFieldHasError = titleHasError || descriptionHasError || priceHasError || unitHasError;
+  const anyFieldHasError =
+    ImageHasError || titleHasError || descriptionHasError || priceHasError || unitHasError;
 
   return anyFieldEmpyt || anyFieldHasError ? true : false;
 };
@@ -367,12 +389,12 @@ const functionProduct = async () => {
 const createProduct = async () => {
   const { accessToken } = userStore.user;
   const { id: categoryId } = currentCategory.value;
-  const { title, description, price, unit } = productState;
+  const { title, description, price, unit, image } = productState;
 
   const product: Product = {
     categoryId,
     title: title.value,
-    productImg: '',
+    productImg: await setImage(image.value),
     description: description.value,
     price: price.value,
     unit: unit.value,
@@ -380,36 +402,30 @@ const createProduct = async () => {
   } as Product;
 
   await productStore.createProduct(product, accessToken);
+  await menuStore.updateMenu(menuStore.menu, accessToken);
 };
 
-const setImage = async (event: any) => {
+const setImage = async (file: File): Promise<string> => {
   const { id: userId } = userStore.user;
   const { id: menuId } = menuStore.menu;
   const { id: categorId } = currentCategory.value;
 
-  const file = event.target.files[0];
+  await uploadImage({
+    file,
+    userId,
+    menuId,
+    categorId,
+    folder: Folder.Products,
+    fileName: Folder.Products
+  } as UploadData);
 
-  if (file) {
-    await uploadImage({
-      file,
-      userId,
-      menuId,
-      categorId,
-      folder: Folder.Products,
-      fileName: Folder.Products
-    } as UploadData);
-
-    currentProduct.value.productImg = await donwloadImage({
-      userId,
-      menuId,
-      categorId,
-      folder: Folder.Products,
-      fileName: Folder.Products
-    } as DownloadRef);
-  }
-
-  const { accessToken } = userStore.user;
-  menuStore.updateMenu(menuStore.menu, accessToken);
+  return await donwloadImage({
+    userId,
+    menuId,
+    categorId,
+    folder: Folder.Products,
+    fileName: Folder.Products
+  } as DownloadRef);
 };
 
 onMounted(async () => {
@@ -418,7 +434,6 @@ onMounted(async () => {
   const firstCategory: Category = categoryStore.categories[0];
   currentCategory.value = firstCategory;
   setCategoryFocus(firstCategory.id, firstCategory.id);
-  console.table(categoryStore.categories);
 });
 </script>
 
@@ -479,22 +494,53 @@ onMounted(async () => {
           </p>
         </div>
       </a>
-      <div
-        class="cursor-pointer p-[12px]"
-        v-if="props.editMode"
-        @click="
-          () => {
-            currentCategory = category;
-            toggleProductEditModal();
-          }
-        "
-      >
-        <PlusIcon color="#FF393A" :width="30" :height="30" />
-      </div>
 
-      <div v-for="product in category.products" :key="product.id">
-        <div>
-          <CardProduct :product="product" />
+      <div class="flex">
+        <div
+          class="my-auto cursor-pointer p-[12px]"
+          v-if="props.editMode"
+          @click="
+            () => {
+              currentCategory = category;
+              toggleProductEditModal();
+            }
+          "
+        >
+          <PlusIcon color="#FF393A" :width="30" :height="30" />
+        </div>
+
+        <div v-for="product in category.products" :key="product.id">
+          <div class="flex">
+            <CardProduct :product="product" />
+            <div class="ml-[6px] flex">
+              <EditIcon
+                class="mr-[6px]"
+                v-if="props.editMode"
+                @click="
+                  () => {
+                    productWillBeEdited = product;
+                    categoryState.title.value = category.title;
+                    toggleProductEditModal();
+                  }
+                "
+                color="#FF393A"
+                :width="20"
+                :height="20"
+              />
+              <DeleteIcon
+                v-if="props.editMode"
+                color="#FF393A"
+                @click="
+                  () => {
+                    productWillBeDeleted = product;
+                    toggleAlertDialog();
+                  }
+                "
+                :width="20"
+                :height="20"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -507,10 +553,16 @@ onMounted(async () => {
             toggleProductEditModal();
           }
         "
-        @save="functionProduct()"
+        @save="functionProduct"
         :button-is-disabled="productButtonIsDisabled()"
       >
-        <input type="file" @change="setImage" ref="fileInput" />
+        <!-- <input type="file" @change="(e) => setImage(e)" ref="fileInput" /> -->
+        <FileInput
+          label="Imagem do produto"
+          @validate="productState.image.validator"
+          v-model="productState.image.value"
+          :error-message="productState.image.error"
+        />
         <BaseInput
           type="text"
           maxlength="30"
