@@ -144,9 +144,9 @@ const toggleconfirmPasswordVisibility = () => {
 };
 </script>
 <template>
-  <div class="flex h-screen flex-col bg-qr-primary-orange">
-    <Header :links="headerLinks" />
-    <div class="mx-auto my-auto w-[800px] rounded-[10px] bg-white p-[40px]">
+  <Header :fixed="true" :links="headerLinks" />
+  <div class="min-h-screen bg-qr-primary-orange px-[20px] pb-[20px] pt-[80px]">
+    <div class="mx-auto max-w-[800px] rounded-[10px] bg-white px-[40px] py-[80px]">
       <form class="flex flex-col" method="POST">
         <h1 class="mb-[20px] text-center text-5xl font-bold text-qr-primary-orange">
           Crie sua conta
