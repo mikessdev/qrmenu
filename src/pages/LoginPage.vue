@@ -12,6 +12,8 @@ import { signInWithEmailAndPassword, type UserCredential } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
 import { type HeaderLinks } from '@/components/Header.vue';
 import { useUserStore } from '@/store/userStore';
+import { AuthError } from '@/utils/enuns/firebase';
+import type { User } from '@/utils/interfaces/User';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -62,7 +64,6 @@ const submit = async (e: Event) => {
         viewState.email.value,
         viewState.password.value
       )) as UserCredential;
-
       const { uid: userId, emailVerified } = userCredential.user;
 
       if (emailVerified) {
@@ -78,36 +79,22 @@ const submit = async (e: Event) => {
         return router.push('/register-complete');
       }
     } catch (error) {
-      const userNotFound: string = 'auth/user-not-found';
-      const wrongPassword: string = 'auth/wrong-password';
-      const invalidEmail: string = 'auth/invalid-email';
+      const userNotFound: string = AuthError.userNotFound;
+      const wrongPassword: string = AuthError.wrongPassword;
+      const invalidEmail: string = AuthError.invalidEmail;
 
       const userNoHaveAccount: boolean = error.code === userNotFound;
       const userHaveAccount: boolean = error.code === invalidEmail || error.code === wrongPassword;
 
       if (userNoHaveAccount) {
-        loginErrorMessage.value = 'Nenhuma conta com esse email foi encontrada.';
+        loginErrorMessage.value = 'Nenhuma conta com esse email foi encontrada!';
       }
 
       if (userHaveAccount) {
-        loginErrorMessage.value = 'Email ou senha inválida.';
+        loginErrorMessage.value = 'Email ou senha inválida!';
       }
     }
   }
-};
-
-const signInWithGoogle = async (userCredential: UserCredential) => {
-  const { uid: userId, emailVerified } = userCredential.user;
-  await userStore.getUser(userId);
-  userStore.user.accessToken = await userCredential.user.getIdToken();
-  userStore.userCredential = userCredential.user;
-
-  if (!userStore.user.emailVerified) {
-    userStore.user.emailVerified = emailVerified;
-    await userStore.updateUser(userStore.user, userStore.user.accessToken);
-  }
-
-  return router.push('/select-menu');
 };
 
 const togglePasswordVisibility = () => {
@@ -156,9 +143,7 @@ const togglePasswordVisibility = () => {
         </div>
       </form>
       <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">Ou entre com</p>
-      <LoginWithGoogle
-        @sign-in-with-google="(userCredential) => signInWithGoogle(userCredential)"
-      />
+      <LoginWithGoogle />
       <p class="mt-[60px] text-center font-notosans text-sm">
         Não tem uma conta?
         <router-link to="/register">

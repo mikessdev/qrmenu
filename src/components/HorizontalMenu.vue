@@ -5,9 +5,9 @@ import {
   uploadImage,
   type UploadData,
   donwloadImage,
-  type DownloadRef,
-  Folder
+  type DownloadRef
 } from '@/firebase/cloud.storage';
+import { StorageFolder } from '@/utils/enuns/firebase';
 import type { Category } from '@/utils/interfaces/Category';
 import type { Product } from '@/utils/interfaces/Product';
 import { useCategoryStore } from '@/store/categoryStore';
@@ -415,16 +415,16 @@ const setImage = async (file: File): Promise<string> => {
     userId,
     menuId,
     categorId,
-    folder: Folder.Products,
-    fileName: Folder.Products
+    folder: StorageFolder.Products,
+    fileName: StorageFolder.Products
   } as UploadData);
 
   return await donwloadImage({
     userId,
     menuId,
     categorId,
-    folder: Folder.Products,
-    fileName: Folder.Products
+    folder: StorageFolder.Products,
+    fileName: StorageFolder.Products
   } as DownloadRef);
 };
 

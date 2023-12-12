@@ -1,15 +1,51 @@
 <script setup lang="ts">
 import { firebaseAuth } from '@/firebase/config';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { useUserStore } from '@/store/userStore';
+import type { User } from '@/utils/interfaces/User';
+import { signInWithPopup, GoogleAuthProvider, type UserCredential } from 'firebase/auth';
+import { useRouter } from 'vue-router';
 
-const emit = defineEmits(['signInWithGoogle']);
+const router = useRouter();
+const userStore = useUserStore();
 
 const signInWithGoogle = async () => {
-  try {
-    const userCredential = await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
-    emit('signInWithGoogle', userCredential);
-  } catch (error) {
-    console.error(error.code);
+  const userCredential: UserCredential = await signInWithPopup(
+    firebaseAuth,
+    new GoogleAuthProvider()
+  );
+  const { uid: userId, emailVerified } = userCredential.user;
+
+  await userStore.getUser(userId);
+  const useAlreadyExists = !!userStore.user.id;
+
+  if (useAlreadyExists) {
+    userStore.user.accessToken = await userCredential.user.getIdToken();
+    userStore.userCredential = userCredential.user;
+
+    if (!userStore.user.emailVerified) {
+      userStore.user.emailVerified = emailVerified;
+      await userStore.updateUser(userStore.user, userStore.user.accessToken);
+    }
+
+    return router.push('/select-menu');
+  }
+
+  if (!useAlreadyExists) {
+    const { displayName, email, emailVerified, phoneNumber, uid: id } = userCredential.user;
+    const name = displayName?.split(' ')[0];
+    const lastName = displayName?.split(' ')[1];
+
+    await userStore.createUser({
+      id,
+      name,
+      lastName,
+      email,
+      emailVerified,
+      phoneNumber
+    } as User);
+
+    userStore.user.accessToken = await userCredential.user.getIdToken();
+    return router.push('/select-menu');
   }
 };
 </script>
@@ -19,9 +55,7 @@ const signInWithGoogle = async () => {
     @click="signInWithGoogle()"
   >
     <img src="../assets/img/google.png" width="24" />
-    <span class="text-right font-notosans text-xs font-bold text-black"
-      >Criar conta com o google</span
-    >
+    <span class="text-right font-notosans text-xs font-bold text-black">Entrar com o google</span>
   </div>
 </template>
 

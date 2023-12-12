@@ -2,17 +2,27 @@
 import Button from '@/components/Button.vue';
 import { sendEmailVerification, type User as UserFirebase } from 'firebase/auth';
 import { useUserStore } from '@/store/userStore';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const userStore = useUserStore();
+const showInformation = ref<Boolean>(false);
 
 const submit = async (e: Event) => {
   e.preventDefault();
   try {
     await sendEmailVerification(userStore.userCredential as UserFirebase);
     userStore.userCredential = {} as UserFirebase;
+    showInformation.value = true;
   } catch (error) {
     console.error(error);
   }
+};
+
+const redirect = () => {
+  return router.push('/login');
 };
 </script>
 <template>
@@ -27,10 +37,25 @@ const submit = async (e: Event) => {
     <Button
       class="ml-[10%] mt-[30px]"
       type="submit"
-      label="Confirmar email"
+      label="Enviar email de confirmação"
       @click="(e) => submit(e)"
       variante="secundary"
     />
+
+    <div v-if="showInformation" class="mt-[60px]">
+      <p class="ml-[10%] text-xl">
+        Um email de confirmação foi enviado para o seu endereço de email!
+      </p>
+
+      <p class="ml-[10%] mt-[60px] text-xl">Já confirmou seu email?</p>
+      <Button
+        class="ml-[10%] mt-[30px]"
+        type="submit"
+        label="Entrar"
+        @click="redirect()"
+        variante="secundary"
+      />
+    </div>
   </main>
 </template>
 

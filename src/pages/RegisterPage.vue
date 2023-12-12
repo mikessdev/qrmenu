@@ -6,7 +6,7 @@ import PasswordInput from '@/components/PasswordInput.vue';
 import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import { reactive, ref } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, type UserCredential } from 'firebase/auth';
 import { firebaseAuth } from '@/firebase/config';
 import { useRouter } from 'vue-router';
 import { type HeaderLinks } from '../components/Header.vue';

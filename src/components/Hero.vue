@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import {
   uploadImage,
-  Folder,
   type UploadData,
   type DownloadRef,
   donwloadImage
 } from '@/firebase/cloud.storage';
+import { StorageFolder } from '@/utils/enuns/firebase';
 import { ref } from 'vue';
 import { useUserStore } from '@/store/userStore';
 import { useMenuStore } from '@/store/menuStore';
@@ -35,37 +35,37 @@ const changeImage = async (event: any, folder: string) => {
   const file = event.target.files[0];
 
   if (file) {
-    if (folder === Folder.Banner) {
+    if (folder === StorageFolder.Banner) {
       await uploadImage({
         file,
         userId,
         menuId,
-        folder: Folder.Banner,
-        fileName: Folder.Banner
+        folder: StorageFolder.Banner,
+        fileName: StorageFolder.Banner
       } as UploadData);
 
       menuStore.menu.headerImg = await donwloadImage({
         userId,
         menuId,
-        folder: Folder.Banner,
-        fileName: Folder.Banner
+        folder: StorageFolder.Banner,
+        fileName: StorageFolder.Banner
       } as DownloadRef);
     }
 
-    if (folder === Folder.Profile) {
+    if (folder === StorageFolder.Profile) {
       await uploadImage({
         file,
         userId,
         menuId,
-        folder: Folder.Profile,
-        fileName: Folder.Profile
+        folder: StorageFolder.Profile,
+        fileName: StorageFolder.Profile
       } as UploadData);
 
       menuStore.menu.profileImg = await donwloadImage({
         userId,
         menuId,
-        folder: Folder.Profile,
-        fileName: Folder.Profile
+        folder: StorageFolder.Profile,
+        fileName: StorageFolder.Profile
       } as DownloadRef);
     }
 
@@ -173,8 +173,8 @@ const formatWhastappNumber = (phoneNumber: string): string => {
     </button>
   </div>
   <EditModal v-if="showEditModal" @cancel="cancel()" @save="cancel()">
-    <input type="file" @change="(e) => changeImage(e, Folder.Banner)" ref="fileInput" />
-    <input type="file" @change="(e) => changeImage(e, Folder.Profile)" ref="fileInput" />
+    <input type="file" @change="(e) => changeImage(e, StorageFolder.Banner)" ref="fileInput" />
+    <input type="file" @change="(e) => changeImage(e, StorageFolder.Profile)" ref="fileInput" />
   </EditModal>
 </template>
 

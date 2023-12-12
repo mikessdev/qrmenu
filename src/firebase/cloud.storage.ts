@@ -5,12 +5,7 @@ import {
   getDownloadURL,
   type StorageReference
 } from 'firebase/storage';
-
-export enum Folder {
-  Banner = 'banner',
-  Profile = 'profile',
-  Products = 'products'
-}
+import { StorageFolder } from '@/utils/enuns/firebase';
 
 export interface DownloadRef {
   userId: string;
@@ -28,11 +23,11 @@ export const uploadImage = async (uploadData: UploadData) => {
   const { userId, menuId, categorId, fileName, file, folder } = uploadData;
   let URL: string = '';
 
-  if (folder === Folder.Banner || folder === Folder.Profile) {
+  if (folder === StorageFolder.Banner || folder === StorageFolder.Profile) {
     URL = `${userId}/${menuId}/${folder}/${fileName}.jpg`;
   }
 
-  if (folder === Folder.Products) {
+  if (folder === StorageFolder.Products) {
     URL = `${userId}/${menuId}/${categorId}/${folder}/${fileName}.jpg`;
   }
 
@@ -45,11 +40,11 @@ export const donwloadImage = async (downloadRef: DownloadRef) => {
   const { userId, menuId, categorId, fileName, folder } = downloadRef;
   let URL: string = '';
 
-  if (folder === Folder.Banner || folder === Folder.Profile) {
+  if (folder === StorageFolder.Banner || folder === StorageFolder.Profile) {
     URL = `${userId}/${menuId}/${folder}/${fileName}.jpg`;
   }
 
-  if (folder === Folder.Products) {
+  if (folder === StorageFolder.Products) {
     URL = `${userId}/${menuId}/${categorId}/${folder}/${fileName}.jpg`;
   }
 
