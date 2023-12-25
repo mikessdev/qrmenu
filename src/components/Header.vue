@@ -1,74 +1,60 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-import SettingsIcon from '@/components/icons/SettingsIcon.vue';
-import LogoutIcon from '@/components/icons/LogoutIcon.vue';
-import ArrowBackIcon from './icons/ArrowBackIcon.vue';
-import { useUserStore } from '@/store/userStore';
-import router from '@/router';
-import { signOut } from 'firebase/auth';
-import { firebaseAuth } from '@/firebase/config';
+export interface HeaderLinks {
+  id: number;
+  name: string;
+  link: string;
+}
 
-defineProps({
-  hideBackButton: {
+const props = defineProps({
+  fixed: {
     type: Boolean,
     default: false
+  },
+  links: {
+    type: Array<HeaderLinks>,
+    default: []
+  },
+  center: {
+    type: Boolean,
+    default: false
+  },
+  color: {
+    type: String,
+    default: '#f85d3a'
   }
-})
-
-const userStore = useUserStore();
-
-const settings = () => {
-     return userStore.isAdmin ? router.push('/userconfig') : router.push('/login');
-}
-
-const logOut = () => {
-      signOut(firebaseAuth);
-      return userStore.isAdmin = false;
-}
-
+});
 </script>
-<template>
-    <header>
-        <p>Boteco Peace</p>    
-        <div v-if="!hideBackButton" class="arrow-back-icon">
-            <router-link to="/">
-                <ArrowBackIcon :color="'white'"/>
-            </router-link>
-        </div>
-        <div v-else class="settings-wrapper">
-            <SettingsIcon @click="settings()" :color="'white'"/>
-            <LogoutIcon v-if="userStore.isAdmin" class="logout-icon" @click="logOut()" :color="'white'"/>
-        </div>
-    </header>
-</template>
-<style lang="scss" scoped>
-    header {
-        width: 100%;
-        height: 60px;
-        position: absolute;
-        top: 0;
-        background: $qrmenu-red;
-        color: $qrmenu-white;
-        font-family: 'Noto Sans';
-        font-weight: bold;
-        text-align: center;
-        padding: 1rem 1rem;
-            .arrow-back-icon{
-                position: absolute;
-                left: 10px;
-                top: 12px;
-            }
-            .settings-wrapper{
-                position: absolute;
-                display: flex;  
-                right: 10px;
-                top: 0px; 
-                align-items: center;
-                height: 60px;
-                .logout-icon{
-                    margin-left: 20px;  
-                }           
-            }
-    }
-</style>
 
+<template>
+  <header
+    :style="`background-color: ${props.color}`"
+    :class="props.fixed ? 'fixed z-20' : ''"
+    class="h-[60px] w-full shadow-md"
+  >
+    <div
+      v-if="props.center"
+      class="mx-auto my-0 flex h-full max-w-[1200px] items-center px-2.5 font-notosans font-bold text-white"
+    >
+      <p class="mx-auto">LOGO</p>
+    </div>
+    <div
+      v-if="!props.center"
+      class="mx-auto my-0 flex h-full max-w-[1200px] items-center justify-between px-2.5 font-notosans font-bold text-white"
+    >
+      <p>LOGO</p>
+      <ul>
+        <li v-for="link in props.links" :key="link.id">
+          <router-link :to="link.link">
+            <a class="cursor-pointer hover:text-qr-medium-gray">{{ link.name }}</a>
+          </router-link>
+        </li>
+      </ul>
+    </div>
+  </header>
+</template>
+
+<script lang="ts">
+export default {
+  name: 'HeaderItem'
+};
+</script>
