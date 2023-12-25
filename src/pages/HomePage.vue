@@ -33,7 +33,7 @@ const userHavePermissionToEdit = (): boolean => {
       <HorizontalMenu class="mx-auto mt-[30px]" :edit-mode="userHavePermissionToEdit()" />
     </div>
   </main>
-  <Footer />
+  <Footer class="mt-[60px]" />
 </template>
 
 <style lang="scss" scoped></style>

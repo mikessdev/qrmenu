@@ -17,7 +17,7 @@ const props = defineProps({
     <div class="p-[16px] font-notosans">
       <div class="flex justify-between">
         <span class="text-base font-bold">{{ props.product.title }}</span>
-        <div class="flex flex-col text-center">
+        <div class="relative right-[-108px] flex flex-col text-center">
           <HeartIcon class="mx-auto" />
           <span class="text-sm">{{ props.product.likes }}</span>
         </div>
