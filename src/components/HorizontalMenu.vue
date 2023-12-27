@@ -307,7 +307,7 @@ const reassembleMenuNavigation = (scrollY: number) => {
     <div
       :class="[
         reassembleMenu
-          ? 'no-scrollbar fixed left-0 top-0 z-50 flex h-[60px] w-[100%] items-center justify-center overflow-auto shadow-sm backdrop-blur-xl'
+          ? 'no-scrollbar fixed left-0 top-0 z-50 flex min-h-[60px] w-[100%] items-center justify-center overflow-auto shadow-sm backdrop-blur-xl'
           : 'no-scrollbar mx-auto flex w-[max-content] max-w-[90%] items-center overflow-auto '
       ]"
     >
@@ -316,23 +316,24 @@ const reassembleMenuNavigation = (scrollY: number) => {
       </div>
       <nav class="flex">
         <ul v-for="category in categoryStore.categories" :key="category.id">
-          <li>
+          <li
+            :style="setCategoryFocus(category.id, currentCategory.id)"
+            class="flex min-w-max gap-4 border-b-4 p-[12px] font-notosans font-bold text-[#5F5F5F] focus-visible:outline-none"
+          >
             <a
               :href="`#${category.title.replace(' ', '')}`"
-              @click="(e) => scrollCategoryAnimation(e, `#${category.title.replace(' ', '')}`)"
+              @click="
+                (e) => {
+                  scrollCategoryAnimation(e, `#${category.title.replace(' ', '')}`);
+                  currentCategory = category;
+                }
+              "
             >
-              <button
-                :style="setCategoryFocus(category.id, currentCategory.id)"
-                class="min-w-max border-b-4 p-[12px] font-notosans font-bold text-[#5F5F5F] focus-visible:outline-none"
-                @click="currentCategory = category"
-              >
-                {{ category.title }}
-              </button>
+              {{ category.title }}
             </a>
-            <div class="flex">
+            <div v-if="props.editMode" class="flex items-center">
               <EditIcon
                 class="mr-[6px]"
-                v-if="props.editMode"
                 @click="
                   () => {
                     categorieWillBeEdited = category;
@@ -345,7 +346,6 @@ const reassembleMenuNavigation = (scrollY: number) => {
                 :height="20"
               />
               <DeleteIcon
-                v-if="props.editMode"
                 color="#FF393A"
                 @click="
                   () => {

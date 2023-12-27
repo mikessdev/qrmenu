@@ -28,9 +28,9 @@ const userHavePermissionToEdit = (): boolean => {
   <main>
     <Hero :edit-mode="userHavePermissionToEdit()" />
 
-    <div class="mx-auto max-w-[1200px] px-[12px]">
+    <div class="mx-auto max-w-[1200px]">
       <div class="mx-auto my-[30px] h-[3px] bg-[#D9D9D9] xl:mt-[-106px]"></div>
-      <HorizontalMenu class="mx-auto mt-[30px]" :edit-mode="userHavePermissionToEdit()" />
+      <HorizontalMenu class="mx-auto mt-[30px] px-[12px]" :edit-mode="userHavePermissionToEdit()" />
     </div>
   </main>
   <Footer class="mt-[60px]" />
