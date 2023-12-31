@@ -104,7 +104,7 @@ const formatWhastappNumber = (phoneNumber: string): string => {
         <img v-if="menuStore.menu.headerImg" :src="menuStore.menu.headerImg" alt="Banner image" />
         <img v-else src="@/assets/img/withoutBanner.png" alt="Banner image" />
       </div>
-      <div class="px-[12px] pt-[12px]">
+      <div class="pt-[12px]">
         <div class="flex md:items-center lg:items-center">
           <div class="max-h-[30%] max-w-[30%] overflow-hidden rounded-[10px]">
             <img

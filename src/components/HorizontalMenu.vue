@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onBeforeMount } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import {
   uploadImage,
@@ -41,6 +41,8 @@ const productStore = useProductStore();
 const showEditCategoryModal = ref<Boolean>(false);
 const showEditProductModal = ref<Boolean>(false);
 const showAlertDialog = ref<Boolean>(false);
+
+const reassembleMenu = ref<Boolean>(false);
 
 const currentCategory = ref<Category>({} as Category);
 
@@ -262,50 +264,76 @@ const setImage = async (file: File): Promise<string> => {
 const scrollCategoryAnimation = (e: Event, selector: string) => {
   e.preventDefault();
   const element = document.querySelector(selector);
+  let headerHeight: number = 60;
   if (element instanceof HTMLElement) {
-    console.log(element.offsetTop);
+    if (!reassembleMenu.value) headerHeight = 120;
+
     window.scrollTo({
-      top: element.offsetTop,
+      top: element.offsetTop - headerHeight,
       behavior: 'smooth'
     });
   }
 };
 
-onMounted(async () => {
+const setupHorizontalMenu = async () => {
   const { id: menuId } = menuStore.menu;
   await categoryStore.getCategories(menuId);
   const firstCategory: Category = categoryStore.categories[0];
   currentCategory.value = firstCategory;
   setCategoryFocus(firstCategory.id, firstCategory.id);
+};
+
+onMounted(async () => {
+  await setupHorizontalMenu();
+  window.addEventListener('scroll', handleScroll);
 });
+
+onBeforeMount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
+
+const handleScroll = () => {
+  reassembleMenuNavigation(window.scrollY);
+};
+
+const reassembleMenuNavigation = (scrollY: number) => {
+  const yLimit = 680;
+  return (reassembleMenu.value = scrollY >= yLimit);
+};
 </script>
 
 <template>
   <div class="flex flex-col">
-    <div class="no-scrollbar mx-auto flex w-[max-content] max-w-[90%] items-center overflow-auto">
+    <div
+      :class="[
+        reassembleMenu
+          ? 'no-scrollbar fixed left-0 top-0 z-50 flex min-h-[60px] w-[100%] items-center justify-center overflow-auto shadow-sm backdrop-blur-xl'
+          : 'no-scrollbar mx-auto flex w-[max-content] max-w-[90%] items-center overflow-auto '
+      ]"
+    >
       <div class="cursor-pointer p-[12px]" v-if="props.editMode" @click="toggleCategoryEditModal()">
         <PlusIcon color="#FF393A" :width="24" :height="24" />
       </div>
       <nav class="flex">
         <ul v-for="category in categoryStore.categories" :key="category.id">
-          <li>
+          <li
+            :style="setCategoryFocus(category.id, currentCategory.id)"
+            class="flex min-w-max gap-4 border-b-4 p-[12px] font-notosans font-bold text-[#5F5F5F] focus-visible:outline-none"
+          >
             <a
-              :id="category.title.replace(' ', '')"
               :href="`#${category.title.replace(' ', '')}`"
-              @click="(e) => scrollCategoryAnimation(e, `#${category.title.replace(' ', '')}`)"
+              @click="
+                (e) => {
+                  scrollCategoryAnimation(e, `#${category.title.replace(' ', '')}`);
+                  currentCategory = category;
+                }
+              "
             >
-              <button
-                :style="setCategoryFocus(category.id, currentCategory.id)"
-                class="min-w-max border-b-4 p-[12px] font-notosans font-bold text-[#5F5F5F] focus-visible:outline-none"
-                @click="currentCategory = category"
-              >
-                {{ category.title }}
-              </button>
+              {{ category.title }}
             </a>
-            <div class="flex">
+            <div v-if="props.editMode" class="flex items-center">
               <EditIcon
                 class="mr-[6px]"
-                v-if="props.editMode"
                 @click="
                   () => {
                     categorieWillBeEdited = category;
@@ -318,7 +346,6 @@ onMounted(async () => {
                 :height="20"
               />
               <DeleteIcon
-                v-if="props.editMode"
                 color="#FF393A"
                 @click="
                   () => {
@@ -335,7 +362,7 @@ onMounted(async () => {
       </nav>
     </div>
     <div v-for="category in categoryStore.categories" :key="category.id">
-      <a :name="category.title.replace(' ', '')">
+      <a :id="category.title.replace(' ', '')" :name="category.title.replace(' ', '')">
         <div
           :style="sertCategorySeparatorFocus(category.id, currentCategory.id)"
           class="my-[30px] rounded-lg pl-[5%]"

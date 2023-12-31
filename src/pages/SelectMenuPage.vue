@@ -136,30 +136,32 @@ onMounted(async () => {
 <template>
   <Header :center="true" />
   <main class="flex flex-col items-center pt-[60px]">
-    <ul class="flex flex-wrap justify-evenly gap-8">
-      <li
+    <div class="flex flex-wrap justify-evenly gap-8">
+      <ul
         class="flex cursor-pointer flex-col items-center"
         v-for="menu in menuStore.menus"
         :key="menu.id"
         @click="navigateTo(menu.url)"
       >
-        <div
-          class="flex h-[100px] w-[100px] items-center justify-center overflow-hidden rounded-full border-[4px] border-[#DCDCDC]"
-        >
-          <img v-if="menu.profileImg" :src="menu.profileImg" alt="Menu image" />
-          <img v-else src="@/assets/img/withoutProfile.png" alt="Menu image" />
-        </div>
-        <span class="font-notosans text-[#4E4E4E]">{{ menu.name }}</span>
-      </li>
-      <li class="flex cursor-pointer flex-col items-center" @click="createMenu()">
+        <li class="flex flex-col items-center">
+          <div
+            class="h-[100px] w-[100px] overflow-hidden rounded-full border-[4px] border-[#DCDCDC]"
+          >
+            <img v-if="menu.profileImg" :src="menu.profileImg" alt="Menu image" />
+            <img v-else src="@/assets/img/withoutProfile.png" alt="Menu image" />
+          </div>
+          <span class="relative font-notosans text-[#4E4E4E]">{{ menu.name }}</span>
+        </li>
+      </ul>
+      <div class="flex cursor-pointer flex-col items-center" @click="createMenu()">
         <div
           class="flex h-[100px] w-[100px] items-center justify-center rounded-full border-[4px] border-[#DCDCDC] bg-qr-medium-gray"
         >
           <PlusIcon variante="02" :width="26" :height="26" color="#DCDCDC" />
         </div>
         <span class="font-notosans text-[#4E4E4E]"> Criar Novo cardápio</span>
-      </li>
-    </ul>
+      </div>
+    </div>
   </main>
   <EditModal
     v-if="showEditModal"
