@@ -4,6 +4,9 @@ describe('signin', () => {
   });
 
   it('Should do login with email and password', () => {
+    cy.intercept('GET', 'https://#', { fixture: '' }).as('loginPage');
+    cy.wait('@loginPage');
+
     cy.get('input[type="email"]').type(Cypress.env('email'));
     cy.get('input[type="password"]').type(Cypress.env('password'));
     cy.get('button[type="submit"]').click();
