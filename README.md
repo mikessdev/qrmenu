@@ -19,4 +19,11 @@ npm install
 
 # serve with hot reload at localhost:5173
 npm run dev
+
+
+
+
+# running test with cypress
+
+npx cypress run --env EMAIL=${{ EMAIL }} , PASSWORD=${{ PASSWORD }}'
 ```
