@@ -5,7 +5,6 @@ import { ref } from 'vue';
 
 export const useUserStore = defineStore('userProfile', () => {
   const user = ref<User>({} as User);
-  const userCredential = ref<UserFirebase>({} as UserFirebase);
 
   const isAuthenticated = (): boolean => {
     return user.value.id ? true : false;
@@ -56,7 +55,6 @@ export const useUserStore = defineStore('userProfile', () => {
   };
   return {
     user,
-    userCredential,
     isAuthenticated,
     createUser,
     getUser,

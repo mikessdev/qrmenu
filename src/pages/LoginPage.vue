@@ -8,13 +8,13 @@ import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateEmail } from '@/validators/email';
-import { signInWithEmailAndPassword, type UserCredential } from 'firebase/auth';
-import { firebaseAuth } from '@/firebase/config';
 import { type HeaderLinks } from '@/components/Header.vue';
 import { useUserStore } from '@/store/userStore';
 import { AuthError } from '@/utils/enuns/firebase';
+import { useAuthStore } from '@/store/authStore';
 
 const router = useRouter();
+const authStore = useAuthStore();
 const userStore = useUserStore();
 
 const loginErrorMessage = ref<string>('');
@@ -55,20 +55,19 @@ const validFilds = () => {
 
 const submit = async (e: Event) => {
   e.preventDefault();
+
+  const email: string = viewState.email.value;
+  const password: string = viewState.password.value;
+
   const thereIsNoError = validFilds();
   if (thereIsNoError) {
     try {
-      const userCredential = (await signInWithEmailAndPassword(
-        firebaseAuth,
-        viewState.email.value,
-        viewState.password.value
-      )) as UserCredential;
-      const { uid: userId, emailVerified } = userCredential.user;
+      await authStore.signinWithFirebase(email, password);
+      const { uid: id, emailVerified } = authStore.userCredential.user;
 
       if (emailVerified) {
-        await userStore.getUser(userId);
-        userStore.user.accessToken = await userCredential.user.getIdToken();
-        userStore.userCredential = userCredential.user;
+        await userStore.getUser(id);
+        userStore.user.accessToken = await authStore.userCredential.user.getIdToken();
         loginErrorMessage.value = '';
         return router.push('/select-menu');
       }

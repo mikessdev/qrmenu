@@ -1,23 +1,48 @@
-import { signInWithEmailAndPassword, type Auth, type UserCredential } from 'firebase/auth';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  type UserCredential
+} from 'firebase/auth';
 import { defineStore } from 'pinia';
-import type { User as UserFirebase } from 'firebase/auth';
 import { ref } from 'vue';
+import { firebaseAuth } from '@/firebase/config';
 
 export const useAuthStore = defineStore('authManagement', () => {
-  const user = ref<UserFirebase>({} as UserFirebase);
+  const userCredential = ref<UserCredential>({} as UserCredential);
 
-  const signinWithFirebase = async (auth: Auth, email: string, password: string): Promise<void> => {
-    const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
-    user.value = userCredential.user;
+  const signinWithFirebase = async (email: string, password: string): Promise<void> => {
+    try {
+      userCredential.value = await signInWithEmailAndPassword(firebaseAuth, email, password);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const getAccessToken = async (): Promise<string> => {
-    return user.value.getIdToken();
+  const signUpWithFirebase = async (email: string, password: string) => {
+    try {
+      userCredential.value = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  const signInWithGoogle = async () => {
+    try {
+      userCredential.value = await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const signUpWithGoogle = async () => {};
 
   return {
-    user,
+    userCredential,
     signinWithFirebase,
-    getAccessToken
+    signUpWithFirebase,
+    signInWithGoogle,
+    signUpWithGoogle
   };
 });

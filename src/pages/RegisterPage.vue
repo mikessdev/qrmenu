@@ -6,17 +6,19 @@ import PasswordInput from '@/components/PasswordInput.vue';
 import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import { reactive, ref } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
-import { createUserWithEmailAndPassword, type UserCredential } from 'firebase/auth';
-import { firebaseAuth } from '@/firebase/config';
 import { useRouter } from 'vue-router';
 import { type HeaderLinks } from '../components/Header.vue';
 import { validateEmail } from '@/validators/email';
 import { validateConfirmPassword, validatePassword } from '@/validators/password';
 import { useUserStore } from '@/store/userStore';
 import type { User } from '@/utils/interfaces/User';
+import { useAuthStore } from '@/store/authStore';
 
 const router = useRouter();
+
 const userStore = useUserStore();
+const authStore = useAuthStore();
+
 const loginErrorMessage = ref<string>('');
 const passwordInputType = ref<string>('password');
 const confirmPasswordInputType = ref<string>('password');
@@ -97,19 +99,16 @@ const validFilds = () => {
 
 const submit = async (e: Event) => {
   e.preventDefault();
+  const email: string = viewState.email.value;
+  const password: string = viewState.password.value;
 
   sendButtonIsClicked.value = true;
   const thereIsNoError = validFilds();
 
   if (thereIsNoError) {
     try {
-      const UserCredentialImpl = await createUserWithEmailAndPassword(
-        firebaseAuth,
-        viewState.email.value,
-        viewState.password.value
-      );
-      userStore.userCredential = UserCredentialImpl.user;
-      const { uid } = UserCredentialImpl.user;
+      authStore.signUpWithFirebase(email, password);
+      const { uid } = authStore.userCredential.user;
 
       await userStore.createUser({
         id: uid,

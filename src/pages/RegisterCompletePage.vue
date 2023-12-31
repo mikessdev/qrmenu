@@ -1,20 +1,24 @@
 <script setup lang="ts">
 import Button from '@/components/Button.vue';
-import { sendEmailVerification, type User as UserFirebase } from 'firebase/auth';
+import { useAuthStore } from '@/store/authStore';
 import { useUserStore } from '@/store/userStore';
+import { sendEmailVerification, type UserCredential, type User } from 'firebase/auth';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
+const authStore = useAuthStore();
 const userStore = useUserStore();
+
 const showInformation = ref<Boolean>(false);
 
 const submit = async (e: Event) => {
   e.preventDefault();
+  const user: User = authStore.userCredential.user;
   try {
-    await sendEmailVerification(userStore.userCredential as UserFirebase);
-    userStore.userCredential = {} as UserFirebase;
+    await sendEmailVerification(user);
+    authStore.userCredential = {} as UserCredential;
     showInformation.value = true;
   } catch (error) {
     console.error(error);

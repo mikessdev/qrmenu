@@ -1,26 +1,24 @@
 <script setup lang="ts">
-import { firebaseAuth } from '@/firebase/config';
+import { useAuthStore } from '@/store/authStore';
 import { useUserStore } from '@/store/userStore';
 import type { User } from '@/utils/interfaces/User';
-import { signInWithPopup, GoogleAuthProvider, type UserCredential } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+
 const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const signInWithGoogle = async () => {
-  const userCredential: UserCredential = await signInWithPopup(
-    firebaseAuth,
-    new GoogleAuthProvider()
-  );
-  const { uid: userId, emailVerified } = userCredential.user;
+  await authStore.signInWithGoogle();
+
+  const { uid: userId, emailVerified } = authStore.userCredential.user;
 
   await userStore.getUser(userId);
   const useAlreadyExists = !!userStore.user.id;
 
   if (useAlreadyExists) {
-    userStore.user.accessToken = await userCredential.user.getIdToken();
-    userStore.userCredential = userCredential.user;
+    userStore.user.accessToken = await authStore.userCredential.user.getIdToken();
 
     if (!userStore.user.emailVerified) {
       userStore.user.emailVerified = emailVerified;
@@ -31,7 +29,13 @@ const signInWithGoogle = async () => {
   }
 
   if (!useAlreadyExists) {
-    const { displayName, email, emailVerified, phoneNumber, uid: id } = userCredential.user;
+    const {
+      displayName,
+      email,
+      emailVerified,
+      phoneNumber,
+      uid: id
+    } = authStore.userCredential.user;
     const name = displayName?.split(' ')[0];
     const lastName = displayName?.split(' ')[1];
 
@@ -44,7 +48,7 @@ const signInWithGoogle = async () => {
       phoneNumber
     } as User);
 
-    userStore.user.accessToken = await userCredential.user.getIdToken();
+    userStore.user.accessToken = await authStore.userCredential.user.getIdToken();
     return router.push('/select-menu');
   }
 };
