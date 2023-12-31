@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import type { User as UserFirebase } from 'firebase/auth';
 import { ref } from 'vue';
 
-export const useUserStore = defineStore('userProfile', () => {
+export const useAuthStore = defineStore('authManagement', () => {
   const user = ref<UserFirebase>({} as UserFirebase);
 
   const ISignInWithEmailAndPassword = async (

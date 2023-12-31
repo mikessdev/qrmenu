@@ -36,13 +36,13 @@ const router = createRouter({
       path: '/register-complete',
       name: 'register-complete',
       component: RegisterCompletePage,
-      beforeEnter: () => authMiddleware()
+      beforeEnter: async () => await authMiddleware()
     },
     {
       path: '/select-menu',
       name: 'select-menu',
       component: SelectMenuPage,
-      beforeEnter: () => authMiddleware()
+      beforeEnter: async () => await authMiddleware()
     }
   ]
 });

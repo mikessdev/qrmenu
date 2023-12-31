@@ -14,22 +14,3 @@ app.use(VueRecaptchaPlugin, {
 app.use(router);
 app.use(pinia);
 app.mount('#app');
-
-import { useUserStore } from './store/userStore';
-
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-const auth = getAuth();
-const userStore = useUserStore();
-
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    await userStore.getUser(user.uid);
-    userStore.user.accessToken = await user.getIdToken();
-  }
-
-  if (!user) {
-    // router.push('/login');
-  }
-
-  console.log(userStore.user);
-});
