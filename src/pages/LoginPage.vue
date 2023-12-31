@@ -13,7 +13,6 @@ import { firebaseAuth } from '@/firebase/config';
 import { type HeaderLinks } from '@/components/Header.vue';
 import { useUserStore } from '@/store/userStore';
 import { AuthError } from '@/utils/enuns/firebase';
-import type { User } from '@/utils/interfaces/User';
 
 const router = useRouter();
 const userStore = useUserStore();
