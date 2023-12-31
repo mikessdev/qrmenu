@@ -5,8 +5,8 @@ import LoginPage from '@/pages/LoginPage.vue';
 import RegisterPage from '@/pages/RegisterPage.vue';
 import RegisterCompletePage from '@/pages/RegisterCompletePage.vue';
 import SelectMenuPage from '@/pages/SelectMenuPage.vue';
-import authMiddleware from '@/middleware/auth';
-import menuRoutesMiddleware from '@/middleware/menuRoutes';
+import authMiddleware from '@/middleware/authMiddleware';
+import menuRoutesMiddleware from '@/middleware/menuRoutesMiddleware';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

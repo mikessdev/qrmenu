@@ -6,11 +6,7 @@ import { ref } from 'vue';
 export const useAuthStore = defineStore('authManagement', () => {
   const user = ref<UserFirebase>({} as UserFirebase);
 
-  const ISignInWithEmailAndPassword = async (
-    auth: Auth,
-    email: string,
-    password: string
-  ): Promise<void> => {
+  const signinWithFirebase = async (auth: Auth, email: string, password: string): Promise<void> => {
     const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
     user.value = userCredential.user;
   };
@@ -21,7 +17,7 @@ export const useAuthStore = defineStore('authManagement', () => {
 
   return {
     user,
-    ISignInWithEmailAndPassword,
+    signinWithFirebase,
     getAccessToken
   };
 });
