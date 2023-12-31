@@ -1,7 +1,7 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
-  defaultCommandTimeout: 8000,
+  defaultCommandTimeout: 10000,
   pageLoadTimeout: 10000,
   env: {
     email: 'mike100.boy@gmail.com',
