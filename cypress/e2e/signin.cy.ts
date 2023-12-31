@@ -4,7 +4,6 @@ describe('signin', () => {
   });
 
   it('Should do login with email and password', () => {
-    cy.wait(15000);
     cy.get('input[type="email"]').type(Cypress.env('email'));
     cy.get('input[type="password"]').type(Cypress.env('password'));
     cy.get('button[type="submit"]').click();
