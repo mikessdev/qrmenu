@@ -1,14 +1,9 @@
 import type { User } from '@/utils/interfaces/User';
-import type { User as UserFirebase } from 'firebase/auth';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useUserStore = defineStore('userProfile', () => {
   const user = ref<User>({} as User);
-
-  const isAuthenticated = (): boolean => {
-    return user.value.id ? true : false;
-  };
 
   const createUser = async (userData: User): Promise<void> => {
     const url: string = import.meta.env.VITE_USER_URL;
@@ -55,7 +50,6 @@ export const useUserStore = defineStore('userProfile', () => {
   };
   return {
     user,
-    isAuthenticated,
     createUser,
     getUser,
     updateUser

@@ -1,6 +1,6 @@
-import router from '@/router';
-import { useUserStore } from '@/store/userStore';
 import { getAuth, onAuthStateChanged, type User } from 'firebase/auth';
+import { useUserStore } from '@/store/userStore';
+import router from '@/router';
 
 export default async function authMiddleware(): Promise<boolean | void> {
   const auth = getAuth();
@@ -12,7 +12,6 @@ export default async function authMiddleware(): Promise<boolean | void> {
       if (isAuthenticated) {
         userStore.user.accessToken = await user.getIdToken();
         userStore.user.id = user.uid;
-
         resolve(true);
       }
       if (!isAuthenticated) {

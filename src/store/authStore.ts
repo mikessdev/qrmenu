@@ -36,13 +36,10 @@ export const useAuthStore = defineStore('authManagement', () => {
     }
   };
 
-  const signUpWithGoogle = async () => {};
-
   return {
     userCredential,
     signinWithFirebase,
     signUpWithFirebase,
-    signInWithGoogle,
-    signUpWithGoogle
+    signInWithGoogle
   };
 });
