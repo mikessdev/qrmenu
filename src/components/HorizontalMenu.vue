@@ -166,12 +166,9 @@ const cleanProductState = () => {
   productState.unit.value = '';
 };
 
-const deleteCategory = async (category: Category) => {
+const deleteCategory = async (id: string) => {
   const { accessToken } = userStore.user;
-  const { id: menuId } = menuStore.menu;
-  await categoryStore.deleteCategoryById(category.id, accessToken);
-  await categoryStore.getCategories(menuId);
-  toggleAlertDialog();
+  await categoryStore.deleteCategoryById(id, accessToken);
 };
 
 const setCategoryFocus = (categoryId: string, currentCategoryId: string) => {
@@ -217,6 +214,30 @@ const actionProduct = async () => {
   await categoryStore.getCategories(menuId);
   toggleProductEditModal();
   cleanProductState();
+};
+
+const deleteProduct = async (id: string) => {
+  const { accessToken } = userStore.user;
+  await productStore.deleteProductById(id, accessToken);
+};
+
+const allowAlertDialog = async () => {
+  const categoryId = categorieWillBeDeleted.value.id;
+  const isCategory = !!categoryId;
+
+  const productId = productWillBeDeleted.value.id;
+  const isProduct = !!productId;
+
+  if (isCategory) {
+    await deleteCategory(categoryId);
+  }
+
+  if (isProduct) {
+    await deleteProduct(productId);
+  }
+  const { id: menuId } = menuStore.menu;
+  await categoryStore.getCategories(menuId);
+  toggleAlertDialog();
 };
 
 const createProduct = async () => {
@@ -374,21 +395,21 @@ const reassembleMenuNavigation = (scrollY: number) => {
       </a>
 
       <div class="flex">
-        <div
-          class="my-auto cursor-pointer p-[12px]"
-          v-if="props.editMode"
-          @click="
-            () => {
-              currentCategory = category;
-              toggleProductEditModal();
-            }
-          "
-        >
-          <PlusIcon :color="menuStore.menu.primaryColor" :width="30" :height="30" />
-        </div>
-        <div class="flex flex-wrap justify-center gap-6 xl:justify-normal">
-          <ul v-for="product in category.products" :key="product.id">
-            <li class="flex flex-col-reverse">
+        <ul class="flex flex-wrap gap-2">
+          <li
+            class="flex h-[200px] w-[400px] cursor-pointer items-center justify-center bg-slate-400"
+            v-if="props.editMode"
+            @click="
+              () => {
+                currentCategory = category;
+                toggleProductEditModal();
+              }
+            "
+          >
+            <PlusIcon :color="menuStore.menu.primaryColor" :width="30" :height="30" />
+          </li>
+          <li v-for="product in category.products" :key="product.id">
+            <div class="flex flex-col-reverse">
               <CardProduct :product="product" />
               <div class="relative bottom-[6px] left-[350px] flex">
                 <EditIcon
@@ -397,6 +418,10 @@ const reassembleMenuNavigation = (scrollY: number) => {
                   @click="
                     () => {
                       productWillBeEdited = product;
+                      productState.title.value = product.title;
+                      productState.description.value = product.description;
+                      productState.price.value = product.price;
+                      productState.unit.value = product.unit;
                       categoryState.title.value = category.title;
                       toggleProductEditModal();
                     }
@@ -418,9 +443,9 @@ const reassembleMenuNavigation = (scrollY: number) => {
                   :height="20"
                 />
               </div>
-            </li>
-          </ul>
-        </div>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
     <div>
@@ -435,7 +460,6 @@ const reassembleMenuNavigation = (scrollY: number) => {
         @save="actionProduct"
         :button-is-disabled="productButtonIsDisabled()"
       >
-        <!-- <input type="file" @change="(e) => setImage(e)" ref="fileInput" /> -->
         <FileInput
           label="Imagem do produto"
           @validate="productState.image.validator"
@@ -500,7 +524,7 @@ const reassembleMenuNavigation = (scrollY: number) => {
       <AlertDialog
         v-if="showAlertDialog"
         :name="categorieWillBeDeleted.title"
-        @allow="deleteCategory(categorieWillBeDeleted)"
+        @allow="allowAlertDialog()"
         @not-allow="toggleAlertDialog()"
       />
     </div>

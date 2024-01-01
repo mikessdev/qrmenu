@@ -14,13 +14,12 @@ const props = defineProps({
 <template>
   <div class="flex h-[200px] w-[400px] overflow-hidden rounded-lg shadow-lg">
     <img class="h-full w-[180px] object-cover" :src="props.product.productImg" alt="" />
-    <div class="p-[16px] font-notosans">
+    <div class="w-[220px] p-[16px] font-notosans">
       <div class="flex justify-between">
         <span class="text-base font-bold">{{ props.product.title }}</span>
         <div class="flex flex-col text-center">
           <HeartIcon class="mx-auto" />
           <span class="text-sm">{{ props.product.likes }}</span>
-          <p class="text-black">test</p>
         </div>
       </div>
       <p class="text-sm leading-tight text-[#514E4E]">{{ props.product.description }}</p>

@@ -3,7 +3,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
-  type UserCredential
+  type UserCredential,
+  signOut
 } from 'firebase/auth';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
@@ -36,10 +37,15 @@ export const useAuthStore = defineStore('authManagement', () => {
     }
   };
 
+  const signOutWithFirebase = async () => {
+    await signOut(firebaseAuth);
+  };
+
   return {
     userCredential,
     signinWithFirebase,
     signUpWithFirebase,
-    signInWithGoogle
+    signInWithGoogle,
+    signOutWithFirebase
   };
 });
