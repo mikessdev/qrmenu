@@ -312,7 +312,7 @@ const reassembleMenuNavigation = (scrollY: number) => {
       ]"
     >
       <div class="cursor-pointer p-[12px]" v-if="props.editMode" @click="toggleCategoryEditModal()">
-        <PlusIcon color="#FF393A" :width="24" :height="24" />
+        <PlusIcon :color="menuStore.menu.primaryColor" :width="24" :height="24" />
       </div>
       <nav class="flex">
         <ul v-for="category in categoryStore.categories" :key="category.id">
@@ -341,12 +341,12 @@ const reassembleMenuNavigation = (scrollY: number) => {
                     toggleCategoryEditModal();
                   }
                 "
-                color="#FF393A"
+                :color="menuStore.menu.primaryColor"
                 :width="20"
                 :height="20"
               />
               <DeleteIcon
-                color="#FF393A"
+                :color="menuStore.menu.primaryColor"
                 @click="
                   () => {
                     categorieWillBeDeleted = category;
@@ -384,13 +384,13 @@ const reassembleMenuNavigation = (scrollY: number) => {
             }
           "
         >
-          <PlusIcon color="#FF393A" :width="30" :height="30" />
+          <PlusIcon :color="menuStore.menu.primaryColor" :width="30" :height="30" />
         </div>
         <div class="flex flex-wrap justify-center gap-6 xl:justify-normal">
           <ul v-for="product in category.products" :key="product.id">
-            <li>
+            <li class="flex flex-col-reverse">
               <CardProduct :product="product" />
-              <div class="ml-[6px] flex">
+              <div class="relative bottom-[6px] left-[350px] flex">
                 <EditIcon
                   class="mr-[6px]"
                   v-if="props.editMode"
@@ -401,13 +401,13 @@ const reassembleMenuNavigation = (scrollY: number) => {
                       toggleProductEditModal();
                     }
                   "
-                  color="#FF393A"
+                  :color="menuStore.menu.primaryColor"
                   :width="20"
                   :height="20"
                 />
                 <DeleteIcon
                   v-if="props.editMode"
-                  color="#FF393A"
+                  :color="menuStore.menu.primaryColor"
                   @click="
                     () => {
                       productWillBeDeleted = product;
