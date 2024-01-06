@@ -70,12 +70,11 @@ jobs:
 
           envkey_VITE_CATEGORY_URL: ${{ secrets.CATEGORY_URL }}
           envkey_VITE_PRODUCT_URL: ${{ secrets.PRODUCT_URL }}
+          envkey_VITE_MENU_URL: ${{ secrets.MENU_URL }}
+          envkey_VITE_USER_URL: ${{ secrets.PRODUCT_URL }}
 
       - name: Install Dependenciess
         run: 'npm ci'
 
-      - name: Run project
-        run: 'npm run dev'
-
       - name: Run E2e tests
-        run: 'npm run test:e2e'
+        run: 'npm run dev & npm run test:e2e'
