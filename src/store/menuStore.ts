@@ -70,12 +70,30 @@ export const useMenuStore = defineStore('menuManagement', () => {
       console.error(error);
     }
   };
+
+  const deleteMenuById = async (menuId: string, accessToken: string): Promise<void> => {
+    const url: string = import.meta.env.VITE_MENU_URL;
+
+    try {
+      await fetch(`${url}/${menuId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          // prettier-ignore
+          "Authorization": 'Bearer ' + accessToken
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return {
     menus,
     menu,
     createMenu,
     getMenus,
     getMenuByURL,
-    updateMenu
+    updateMenu,
+    deleteMenuById
   };
 });

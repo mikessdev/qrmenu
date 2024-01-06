@@ -8,8 +8,12 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
 
   const getCategories = async (menuId: string): Promise<void> => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
-    const response = await fetch(url + menuId);
-    categories.value = await response.json();
+    try {
+      const response = await fetch(url + menuId);
+      categories.value = await response.json();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const updateCategory = async (newCategory: Category, accessToken: string): Promise<void> => {

@@ -3,7 +3,7 @@ import { defineConfig } from 'cypress';
 export default defineConfig({
   env: {
     email: 'mike100.boy@gmail.com',
-    password: 'dd@22DD'
+    password: 'ddDD@22'
   },
 
   e2e: {

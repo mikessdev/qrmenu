@@ -48,10 +48,27 @@ export const useUserStore = defineStore('userProfile', () => {
       console.error(error);
     }
   };
+
+  const deleteUserById = async (userId: String, accessToken: string): Promise<void> => {
+    const url: string = import.meta.env.VITE_USER_URL;
+    try {
+      await fetch(`${url}/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          // prettier-ignore
+          "Authorization": 'Bearer ' + accessToken
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return {
     user,
     createUser,
     getUser,
-    updateUser
+    updateUser,
+    deleteUserById
   };
 });
