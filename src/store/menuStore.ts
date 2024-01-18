@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import type { Menu } from '@/utils/interfaces/Menu';
 import { v4 as uuidv4 } from 'uuid';
+import type { Result } from '@/utils/interfaces/Response';
+import { Status } from '@/utils/enuns/status';
 
 export const useMenuStore = defineStore('menuManagement', () => {
   const menus = ref<Menu[]>([] as Menu[]);
@@ -36,7 +38,16 @@ export const useMenuStore = defineStore('menuManagement', () => {
           "Authorization": 'Bearer ' + accessToken
         }
       });
-      menus.value = await response.json();
+      const result: Result = await response.json();
+      const success = result.status === Status.SUCCESS;
+
+      if (success) {
+        menus.value = result.message;
+      }
+
+      if (!success) {
+        menus.value = [];
+      }
     } catch (error) {
       console.error(error);
     }
@@ -46,7 +57,17 @@ export const useMenuStore = defineStore('menuManagement', () => {
     const url: string = import.meta.env.VITE_MENU_URL;
     try {
       const response = await fetch(`${url}/url/${menuURL}`);
-      menu.value = await response.json();
+
+      const result: Result = await response.json();
+      const success = result.status === Status.SUCCESS;
+
+      if (success) {
+        menu.value = result.message;
+      }
+
+      if (!success) {
+        menu.value = {} as Menu;
+      }
     } catch (error) {
       console.error(error);
     }
