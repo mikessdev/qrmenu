@@ -2,6 +2,8 @@ import type { Category } from '@/utils/interfaces/Category';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
+import { Status } from '@/utils/enuns/status';
+import type { Result } from '@/utils/interfaces/Result';
 
 export const useCategoryStore = defineStore('categoryManagement', () => {
   const categories = ref<Category[]>([] as Category[]);
@@ -9,8 +11,12 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
   const getCategories = async (menuId: string): Promise<void> => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
     try {
-      const response = await fetch(url + menuId);
-      categories.value = await response.json();
+      const response = await fetch(url + '?menuId=' + menuId);
+      const result: Result = await response.json();
+      const success = result.status === Status.SUCCESS;
+      if (success) {
+        categories.value = result.message;
+      }
     } catch (error) {
       console.error(error);
     }

@@ -23,6 +23,7 @@ import EditModal from '@/components/EditModal.vue';
 import CardProduct from '@/components/CardProduct.vue';
 import FileInput from '@/components/FileInput.vue';
 import { checkImageSize } from '@/validators/imageLimit';
+import { v4 as uuidv4 } from 'uuid';
 
 const props = defineProps({
   editMode: {
@@ -155,6 +156,7 @@ const cleanCategoryState = () => {
 };
 
 const cleanProductState = () => {
+  productWillBeEdited.value = {} as Product;
   productState.title.error = '';
   productState.description.error = '';
   productState.price.error = '';
@@ -210,10 +212,47 @@ const productButtonIsDisabled = (): boolean => {
 const actionProduct = async () => {
   const { id: menuId } = menuStore.menu;
 
-  await createProduct();
+  const isToBeEdited = !!productWillBeEdited.value.id;
+
+  if (isToBeEdited) {
+    await updateProduct();
+  }
+
+  if (!isToBeEdited) {
+    await createProduct();
+  }
+
   await categoryStore.getCategories(menuId);
   toggleProductEditModal();
   cleanProductState();
+};
+
+const updateProduct = async () => {
+  let newImage;
+  const { id, categoryId, likes, image: imageURL } = productWillBeEdited.value;
+  const { image, description, price, unit, title } = productState;
+
+  if (image.value.name) {
+    newImage = await setImage(image.value, id);
+  }
+
+  if (!image.value.name) {
+    newImage = imageURL;
+  }
+
+  const product = {
+    id,
+    categoryId,
+    title: title.value,
+    image: newImage,
+    description: description.value,
+    price: price.value,
+    unit: unit.value,
+    likes
+  } as unknown as Product;
+
+  const { accessToken } = userStore.user;
+  await productStore.updateProduct(product, accessToken);
 };
 
 const deleteProduct = async (id: string) => {
@@ -244,22 +283,23 @@ const createProduct = async () => {
   const { accessToken } = userStore.user;
   const { id: categoryId } = currentCategory.value;
   const { title, description, price, unit, image } = productState;
+  const id = uuidv4();
 
   const product: Product = {
+    id,
     categoryId,
     title: title.value,
-    image: await setImage(image.value),
+    image: await setImage(image.value, id),
     description: description.value,
     price: price.value,
     unit: unit.value,
     likes: 0
   } as Product;
-
   await productStore.createProduct(product, accessToken);
   await menuStore.updateMenu(menuStore.menu, accessToken);
 };
 
-const setImage = async (file: File): Promise<string> => {
+const setImage = async (file: File, productId: string): Promise<string> => {
   const { id: userId } = userStore.user;
   const { id: menuId } = menuStore.menu;
   const { id: categorId } = currentCategory.value;
@@ -270,7 +310,7 @@ const setImage = async (file: File): Promise<string> => {
     menuId,
     categorId,
     folder: StorageFolder.Products,
-    fileName: StorageFolder.Products
+    fileName: productId
   } as UploadData);
 
   return await donwloadImage({
@@ -278,7 +318,7 @@ const setImage = async (file: File): Promise<string> => {
     menuId,
     categorId,
     folder: StorageFolder.Products,
-    fileName: StorageFolder.Products
+    fileName: productId
   } as DownloadRef);
 };
 
@@ -465,6 +505,7 @@ const reassembleMenuNavigation = (scrollY: number) => {
           @validate="productState.image.validator"
           v-model="productState.image.value"
           :error-message="productState.image.error"
+          :preview-by-u-r-l="productWillBeEdited.image"
         />
         <BaseInput
           type="text"

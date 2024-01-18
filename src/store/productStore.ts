@@ -1,14 +1,12 @@
 import type { Product } from '@/utils/interfaces/Product';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { v4 as uuidv4 } from 'uuid';
 
 export const useProductStore = defineStore('productManagement', () => {
   const products = ref<Product[]>([] as Product[]);
 
   const createProduct = async (newProduct: Product, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_PRODUCT_URL;
-    newProduct.id = uuidv4();
     try {
       await fetch(url, {
         method: 'POST',

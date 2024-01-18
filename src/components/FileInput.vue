@@ -15,6 +15,10 @@ const props = defineProps({
   errorMessage: {
     type: String,
     default: ''
+  },
+  previewByURL: {
+    type: String,
+    default: ''
   }
 });
 
@@ -44,6 +48,12 @@ const handleInput = (e: any): void => {
         v-if="preview"
         class="h-30 w-30 rounded-lg object-cover"
         :src="preview"
+        alt="Current product photo"
+      />
+      <img
+        v-else-if="previewByURL"
+        class="h-30 w-30 rounded-lg object-cover"
+        :src="previewByURL"
         alt="Current product photo"
       />
       <img

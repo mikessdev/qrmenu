@@ -107,16 +107,19 @@ const submit = async (e: Event) => {
 
   if (thereIsNoError) {
     try {
-      authStore.signUpWithFirebase(email, password);
+      await authStore.signUpWithFirebase(email, password);
       const { uid } = authStore.userCredential.user;
-
-      await userStore.createUser({
-        id: uid,
-        name: viewState.name.value,
-        lastName: viewState.lastName.value,
-        email: viewState.email.value,
-        emailVerified: false
-      } as User);
+      const accessToken = await authStore.userCredential.user.getIdToken();
+      await userStore.createUser(
+        {
+          id: uid,
+          name: viewState.name.value,
+          lastName: viewState.lastName.value,
+          email: viewState.email.value,
+          emailVerified: false
+        } as User,
+        accessToken
+      );
 
       loginErrorMessage.value = '';
       router.push('/register-complete');
