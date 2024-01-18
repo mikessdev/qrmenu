@@ -13,7 +13,7 @@ const props = defineProps({
 
 <template>
   <div class="flex h-[200px] w-[400px] overflow-hidden rounded-lg shadow-lg">
-    <img class="h-full w-[180px] object-cover" :src="props.product.productImg" alt="" />
+    <img class="h-full w-[180px] object-cover" :src="props.product.image" alt="" />
     <div class="w-[220px] p-[16px] font-notosans">
       <div class="flex justify-between">
         <span class="text-base font-bold">{{ props.product.title }}</span>

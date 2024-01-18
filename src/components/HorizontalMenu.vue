@@ -248,7 +248,7 @@ const createProduct = async () => {
   const product: Product = {
     categoryId,
     title: title.value,
-    productImg: await setImage(image.value),
+    image: await setImage(image.value),
     description: description.value,
     price: price.value,
     unit: unit.value,
