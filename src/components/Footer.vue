@@ -1,13 +1,12 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-import InstagramIcon from '@/components/icons/InstagramIcon.vue';
+import SocialIcon from '@/components/icons/SocialIcon.vue';
 import YoutubeIcon from '@/components/icons/YoutubeIcon.vue';
 </script>
 <template>
   <div class="relative flex h-[300px] w-full bg-qr-dark-gray">
     <div class="mx-auto my-0 flex flex-col items-center justify-center">
       <div class="flex gap-2.5">
-        <InstagramIcon />
+        <SocialIcon title="instagram" />
         <YoutubeIcon :width="38" />
       </div>
       <h1 class="mt-[30px] font-notosans font-bold text-white">SEU CARDÁPIO</h1>
@@ -18,3 +17,8 @@ import YoutubeIcon from '@/components/icons/YoutubeIcon.vue';
   </div>
 </template>
 <style scoped lang="scss"></style>
+<script lang="ts">
+export default {
+  name: 'FooterItem'
+};
+</script>

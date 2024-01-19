@@ -7,19 +7,17 @@ import Button from '@/components/Button.vue';
 import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { validateEmptyText } from '@/validators/emptyText';
-import { validateEmail } from '@/validators/email.ts';
-import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from 'firebase/auth';
-import { firebaseAuth } from '@/firebase/config';
-import { type HeaderLinks } from '../components/Header.vue';
+import { validateEmail } from '@/validators/email';
 import { useUserStore } from '@/store/userStore';
+import { AuthError } from '@/utils/enuns/firebase';
+import { useAuthStore } from '@/store/authStore';
 
 const router = useRouter();
+const authStore = useAuthStore();
 const userStore = useUserStore();
 
 const loginErrorMessage = ref<string>('');
 const passwordInputType = ref<string>('password');
-
-const headerLinks: HeaderLinks[] = [{ id: 1, name: 'Voltar', link: '/' }];
 
 const viewState = reactive({
   email: {
@@ -54,34 +52,41 @@ const validFilds = () => {
 
 const submit = async (e: Event) => {
   e.preventDefault();
+
+  const email: string = viewState.email.value;
+  const password: string = viewState.password.value;
+
   const thereIsNoError = validFilds();
   if (thereIsNoError) {
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        firebaseAuth,
-        viewState.email.value,
-        viewState.password.value
-      );
-      const { uid: userId, emailVerified } = userCredential.user;
-      await userStore.getUser(userId);
-      userStore.userCredential = userCredential.user;
+      await authStore.signinWithFirebase(email, password);
+      const { uid: id, emailVerified } = authStore.userCredential.user;
 
-      loginErrorMessage.value = '';
-      emailVerified ? router.push('/') : router.push('/register-complete');
+      if (emailVerified) {
+        await userStore.getUser(id);
+        userStore.user.accessToken = await authStore.userCredential.user.getIdToken();
+        loginErrorMessage.value = '';
+        return router.push('/select-menu');
+      }
+
+      if (!emailVerified) {
+        loginErrorMessage.value = '';
+        return router.push('/register-complete');
+      }
     } catch (error) {
-      const userNotFound: string = 'auth/user-not-found';
-      const wrongPassword: string = 'auth/wrong-password';
-      const invalidEmail: string = 'auth/invalid-email';
+      const userNotFound: string = AuthError.userNotFound;
+      const wrongPassword: string = AuthError.wrongPassword;
+      const invalidEmail: string = AuthError.invalidEmail;
 
       const userNoHaveAccount: boolean = error.code === userNotFound;
       const userHaveAccount: boolean = error.code === invalidEmail || error.code === wrongPassword;
 
       if (userNoHaveAccount) {
-        loginErrorMessage.value = 'Nenhuma conta com esse email foi encontrada.';
+        loginErrorMessage.value = 'Nenhuma conta com esse email foi encontrada!';
       }
 
       if (userHaveAccount) {
-        loginErrorMessage.value = 'Email ou senha inválida.';
+        loginErrorMessage.value = 'Email ou senha inválida!';
       }
     }
   }
@@ -91,21 +96,13 @@ const togglePasswordVisibility = () => {
   const visible: boolean = passwordInputType.value === 'text';
   passwordInputType.value = visible ? 'password' : 'text';
 };
-
-const signInWithGoogle = async () => {
-  try {
-    await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
-  } catch (error) {
-    console.error(error.code);
-  }
-};
 </script>
 <template>
-  <div class="flex h-screen flex-col bg-qr-primary-orange">
-    <Header :links="headerLinks" />
-    <div class="mx-auto my-auto h-[800px] w-[800px] rounded-[10px] bg-white p-[40px]">
-      <form class="mt-[80px] flex flex-col" method="POST">
-        <h1 class="mb-[60px] text-center text-5xl font-bold text-qr-primary-orange">
+  <Header class="top-0" :fixed="true" />
+  <div class="min-h-screen bg-qr-primary-orange px-[20px] pb-[20px] pt-[80px]">
+    <div class="mx-auto max-w-[800px] rounded-[10px] bg-white px-[40px] py-[80px]">
+      <form class="flex flex-col" method="POST">
+        <h1 class="mb-[20px] text-center text-5xl font-bold text-qr-primary-orange">
           Entre com sua conta
         </h1>
         <BaseInput
@@ -141,7 +138,7 @@ const signInWithGoogle = async () => {
         </div>
       </form>
       <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">Ou entre com</p>
-      <LoginWithGoogle @click="signInWithGoogle()" />
+      <LoginWithGoogle />
       <p class="mt-[60px] text-center font-notosans text-sm">
         Não tem uma conta?
         <router-link to="/register">

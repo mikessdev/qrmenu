@@ -4,6 +4,9 @@ import HomePage from '@/pages/HomePage.vue';
 import LoginPage from '@/pages/LoginPage.vue';
 import RegisterPage from '@/pages/RegisterPage.vue';
 import RegisterCompletePage from '@/pages/RegisterCompletePage.vue';
+import SelectMenuPage from '@/pages/SelectMenuPage.vue';
+import authMiddleware from '@/middleware/authMiddleware';
+import menuRoutesMiddleware from '@/middleware/menuRoutesMiddleware';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,9 +17,10 @@ const router = createRouter({
       component: LandingPage
     },
     {
-      path: '/restaurant',
+      path: '/:url',
       name: 'home',
-      component: HomePage
+      component: HomePage,
+      beforeEnter: (to) => menuRoutesMiddleware(to)
     },
     {
       path: '/login',
@@ -31,7 +35,14 @@ const router = createRouter({
     {
       path: '/register-complete',
       name: 'register-complete',
-      component: RegisterCompletePage
+      component: RegisterCompletePage,
+      beforeEnter: async () => await authMiddleware()
+    },
+    {
+      path: '/select-menu',
+      name: 'select-menu',
+      component: SelectMenuPage,
+      beforeEnter: async () => await authMiddleware()
     }
   ]
 });

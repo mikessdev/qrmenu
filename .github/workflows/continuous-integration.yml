@@ -43,7 +43,7 @@ jobs:
         run: 'npm ci'
 
       - name: Unit test
-        run: 'npm run test'
+        run: 'npm run test:unit'
 
   E2Etest:
     runs-on: ubuntu-latest
@@ -70,9 +70,11 @@ jobs:
 
           envkey_VITE_CATEGORY_URL: ${{ secrets.CATEGORY_URL }}
           envkey_VITE_PRODUCT_URL: ${{ secrets.PRODUCT_URL }}
+          envkey_VITE_MENU_URL: ${{ secrets.MENU_URL }}
+          envkey_VITE_USER_URL: ${{ secrets.PRODUCT_URL }}
 
       - name: Install Dependenciess
         run: 'npm ci'
 
-      - name: cypress
-        run: 'npm run dev & npx cypress run --env EMAIL=${{ secrets.CYPRESS_EMAIL }},PASSWORD=${{ secrets.CYPRESS_PASSWORD }}'
+      - name: Run E2e tests
+        run: 'npm run dev & npm run test:e2e'

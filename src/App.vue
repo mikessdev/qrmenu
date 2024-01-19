@@ -1,26 +1,28 @@
 <script setup lang="ts">
-import { onAuthStateChanged, type User } from 'firebase/auth';
-import { firebaseAuth } from './firebase/config';
-import { useAuthStore } from './store/useAuthStore';
-import { useUserStore } from './store/userStore';
 import { useRecaptchaProvider } from 'vue-recaptcha';
+import { useUserStore } from './store/userStore';
+import { useAuthStore } from './store/authStore';
+import { getAuth, onAuthStateChanged, type UserCredential } from 'firebase/auth';
+import type { User } from './utils/interfaces/User';
+
+const auth = getAuth();
+const userStore = useUserStore();
+const authStore = useAuthStore();
 
 useRecaptchaProvider();
 
-const authStore = useAuthStore();
-const userStore = useUserStore();
+// onAuthStateChanged(auth, async (user) => {
+//   if (user) {
+//     await userStore.getUser(user.uid);
+//     userStore.user.accessToken = await user.getIdToken();
+//   }
 
-onAuthStateChanged(firebaseAuth, (user) => {
-  if (user) {
-    authStore.setUser(user);
-    userStore.isAdmin = true;
-  }
-
-  if (!user) {
-    authStore.setUser({} as User);
-    userStore.isAdmin = false;
-  }
-});
+//   if (!user) {
+//     userStore.user = {} as User;
+//     authStore.userCredential = {} as UserCredential;
+//   }
+// });
+authStore.isAuthenticated();
 </script>
 <template>
   <router-view />

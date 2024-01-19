@@ -6,17 +6,18 @@ import PasswordInput from '@/components/PasswordInput.vue';
 import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import { reactive, ref } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { firebaseAuth } from '@/firebase/config';
 import { useRouter } from 'vue-router';
-import { type HeaderLinks } from '../components/Header.vue';
-import { validateEmail } from '@/validators/email.ts';
+import { validateEmail } from '@/validators/email';
 import { validateConfirmPassword, validatePassword } from '@/validators/password';
 import { useUserStore } from '@/store/userStore';
 import type { User } from '@/utils/interfaces/User';
+import { useAuthStore } from '@/store/authStore';
 
 const router = useRouter();
+
 const userStore = useUserStore();
+const authStore = useAuthStore();
+
 const loginErrorMessage = ref<string>('');
 const passwordInputType = ref<string>('password');
 const confirmPasswordInputType = ref<string>('password');
@@ -97,27 +98,27 @@ const validFilds = () => {
 
 const submit = async (e: Event) => {
   e.preventDefault();
+  const email: string = viewState.email.value;
+  const password: string = viewState.password.value;
 
   sendButtonIsClicked.value = true;
   const thereIsNoError = validFilds();
 
   if (thereIsNoError) {
     try {
-      const UserCredentialImpl = await createUserWithEmailAndPassword(
-        firebaseAuth,
-        viewState.email.value,
-        viewState.password.value
+      await authStore.signUpWithFirebase(email, password);
+      const { uid } = authStore.userCredential.user;
+      const accessToken = await authStore.userCredential.user.getIdToken();
+      await userStore.createUser(
+        {
+          id: uid,
+          name: viewState.name.value,
+          lastName: viewState.lastName.value,
+          email: viewState.email.value,
+          emailVerified: false
+        } as User,
+        accessToken
       );
-      userStore.userCredential = UserCredentialImpl.user;
-      const { uid } = UserCredentialImpl.user;
-
-      await userStore.createUser({
-        id: uid,
-        name: viewState.name.value,
-        lastName: viewState.lastName.value,
-        email: viewState.email.value,
-        emailVerified: false
-      } as User);
 
       loginErrorMessage.value = '';
       router.push('/register-complete');
@@ -131,8 +132,6 @@ const submit = async (e: Event) => {
   }
 };
 
-const headerLinks: HeaderLinks[] = [{ id: 1, name: 'Voltar', link: '/' }];
-
 const togglePasswordVisibility = () => {
   const visible: boolean = passwordInputType.value === 'text';
   passwordInputType.value = visible ? 'password' : 'text';
@@ -144,9 +143,9 @@ const toggleconfirmPasswordVisibility = () => {
 };
 </script>
 <template>
-  <div class="flex h-screen flex-col bg-qr-primary-orange">
-    <Header :links="headerLinks" />
-    <div class="mx-auto my-auto w-[800px] rounded-[10px] bg-white p-[40px]">
+  <Header :fixed="true" />
+  <div class="min-h-screen bg-qr-primary-orange px-[20px] pb-[20px] pt-[80px]">
+    <div class="mx-auto max-w-[800px] rounded-[10px] bg-white px-[40px] py-[80px]">
       <form class="flex flex-col" method="POST">
         <h1 class="mb-[20px] text-center text-5xl font-bold text-qr-primary-orange">
           Crie sua conta

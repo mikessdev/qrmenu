@@ -52,7 +52,7 @@ const togglePasswordVisibility = () => {
     </label>
     <!-- <div class="relative flex w-full"> -->
     <input
-      class="font-base rounded-[10px] border-2 border-qr-primary-orange bg-qr-light-gray p-[10px] font-notosans font-bold text-qr-bit-light-gray focus-visible:outline-none"
+      class="font-base rounded-[10px] border-2 border-qr-dark-gray bg-qr-light-gray p-[10px] font-notosans font-bold text-qr-bit-light-gray focus:border-[3px] focus:border-qr-primary-orange focus-visible:outline-none"
       :type="props.inputType"
       :placeholder="props.placeholder"
       autofocus="true"
