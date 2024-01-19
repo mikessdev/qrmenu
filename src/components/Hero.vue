@@ -189,11 +189,12 @@ const formatWhatsappNumber = (phoneNumber: string): string => {
       </div>
       <div class="pt-[12px]">
         <div class="flex md:items-center lg:items-center">
-          <div class="max-h-[30%] max-w-[30%] overflow-hidden rounded-[10px]">
+          <div class="overflow-hidden rounded-[10px]">
             <img
               v-if="menuStore.menu.profileImg"
               :src="menuStore.menu.profileImg"
               alt="Banner image"
+              width="200"
             />
             <img v-else src="@/assets/img/withoutProfile.png" alt="Banner image" />
           </div>
@@ -264,6 +265,7 @@ const formatWhatsappNumber = (phoneNumber: string): string => {
     </button>
   </div>
   <EditModal v-if="showEditModal" @cancel="cancel()" @save="updateHero()">
+    <span>Tamanho de imagem recomendado 1200x675 </span>
     <FileInput
       label="Imagem do Banner"
       @validate="heroState.banner.validator"
@@ -271,6 +273,7 @@ const formatWhatsappNumber = (phoneNumber: string): string => {
       :error-message="heroState.banner.error"
       :preview-by-u-r-l="menuStore.menu.headerImg"
     />
+    <span>Tamanho de imagem recomendado 200x200 </span>
     <FileInput
       label="Imagem do Perfil"
       @validate="heroState.profile.validator"
