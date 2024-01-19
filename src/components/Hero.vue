@@ -186,30 +186,28 @@ const formatWhatsappNumber = (phoneNumber: string): string => {
       <div class="max-h-[400px] overflow-hidden rounded-b-lg">
         <img v-if="menuStore.menu.headerImg" :src="menuStore.menu.headerImg" alt="Banner image" />
         <img v-else src="@/assets/img/withoutBanner.png" alt="Banner image" />
+        <div
+          class="absolute top-[350px] z-50 max-h-[30%] max-w-[30%] overflow-hidden rounded-[10px] pl-[6px]"
+        >
+          <img
+            v-if="menuStore.menu.profileImg"
+            :src="menuStore.menu.profileImg"
+            alt="Banner image"
+          />
+          <img v-else src="@/assets/img/withoutProfile.png" alt="Banner image" />
+        </div>
       </div>
       <div class="pt-[12px]">
         <div class="flex md:items-center lg:items-center">
-          <div class="max-h-[30%] max-w-[30%] overflow-hidden rounded-[10px]">
-            <img
-              v-if="menuStore.menu.profileImg"
-              :src="menuStore.menu.profileImg"
-              alt="Banner image"
-            />
-            <img v-else src="@/assets/img/withoutProfile.png" alt="Banner image" />
-          </div>
           <h1
-            class="text-center font-notosans text-[2rem] font-bold uppercase text-[#5F5F5F] md:mx-auto md:px-[20px] lg:mx-auto lg:px-[20px] xl:ml-[6px]"
+            class="w-[100%] text-center font-notosans text-[2rem] font-bold uppercase text-[#5F5F5F]"
           >
             {{ menuStore.menu.name }}
           </h1>
         </div>
 
-        <div
-          class="mt-[30px] lg:flex lg:flex-row-reverse lg:justify-between xl:relative xl:top-[-170px] xl:flex xl:flex-row-reverse xl:justify-between"
-        >
-          <div
-            class="lg:flex lg:flex-col-reverse lg:items-end xl:flex xl:flex-col-reverse xl:items-end"
-          >
+        <div class="flex flex-row-reverse justify-between bg-slate-400">
+          <div>
             <button
               class="mb-[12px] flex h-[40px] w-[max-content] cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-[#F8F8F8] px-[16px] font-notosans text-xl font-bold text-[#5F5F5F] drop-shadow-lg md:w-[100%]"
             >
@@ -227,7 +225,7 @@ const formatWhatsappNumber = (phoneNumber: string): string => {
               <span>Av. Brasil. 833. São Paulo</span>
             </button>
           </div>
-          <div class="xl:relative xl:left-[202px]">
+          <div class="">
             <button
               class="flex h-[40px] cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-[#EB4967] px-[16px] font-notosans text-xl font-bold text-white drop-shadow-lg md:mt-[12px] md:w-[100%]"
             >

@@ -38,17 +38,21 @@ const signInWithGoogle = async () => {
     } = authStore.userCredential.user;
     const name = displayName?.split(' ')[0];
     const lastName = displayName?.split(' ')[1];
+    const accessToken = await authStore.userCredential.user.getIdToken();
 
-    await userStore.createUser({
-      id,
-      name,
-      lastName,
-      email,
-      emailVerified,
-      phoneNumber
-    } as User);
+    await userStore.createUser(
+      {
+        id,
+        name,
+        lastName,
+        email,
+        emailVerified,
+        phoneNumber
+      } as User,
+      accessToken
+    );
 
-    userStore.user.accessToken = await authStore.userCredential.user.getIdToken();
+    userStore.user.accessToken = accessToken;
     return router.push('/select-menu');
   }
 };

@@ -2,7 +2,8 @@
 
 online menu for restaurants
 
-![image](https://github.com/mikessdev/qrmenu/assets/77863237/03616a7b-4362-400e-b5a9-6ebef6ad1e81)
+Figma prototype: https://www.figma.com/file/A2IsCpeCVxuz9B9pQN3Pni/qrmenu?type=design&mode=design
+Deploy vesion: https://qrmenu-frontend.vercel.app/
 
 # Steps to run the project locally
 
