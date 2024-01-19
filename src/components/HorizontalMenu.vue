@@ -228,16 +228,13 @@ const actionProduct = async () => {
 };
 
 const updateProduct = async () => {
-  let newImage;
   const { id, categoryId, likes, image: imageURL } = productWillBeEdited.value;
   const { image, description, price, unit, title } = productState;
 
+  let newImage = imageURL;
+
   if (image.value.name) {
     newImage = await setImage(image.value, id);
-  }
-
-  if (!image.value.name) {
-    newImage = imageURL;
   }
 
   const product = {
@@ -437,7 +434,7 @@ const reassembleMenuNavigation = (scrollY: number) => {
       <div class="flex">
         <ul class="flex flex-wrap gap-2">
           <li
-            class="flex h-[200px] w-[400px] cursor-pointer items-center justify-center bg-slate-400"
+            class="flex h-[200px] w-[400px] cursor-pointer items-center justify-center"
             v-if="props.editMode"
             @click="
               () => {

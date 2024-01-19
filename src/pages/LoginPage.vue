@@ -8,7 +8,6 @@ import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateEmail } from '@/validators/email';
-import { type HeaderLinks } from '@/components/Header.vue';
 import { useUserStore } from '@/store/userStore';
 import { AuthError } from '@/utils/enuns/firebase';
 import { useAuthStore } from '@/store/authStore';
@@ -19,8 +18,6 @@ const userStore = useUserStore();
 
 const loginErrorMessage = ref<string>('');
 const passwordInputType = ref<string>('password');
-
-const headerLinks: HeaderLinks[] = [{ id: 1, name: 'Voltar', link: '/' }];
 
 const viewState = reactive({
   email: {
@@ -101,7 +98,7 @@ const togglePasswordVisibility = () => {
 };
 </script>
 <template>
-  <Header class="top-0" :fixed="true" :links="headerLinks" />
+  <Header class="top-0" :fixed="true" />
   <div class="min-h-screen bg-qr-primary-orange px-[20px] pb-[20px] pt-[80px]">
     <div class="mx-auto max-w-[800px] rounded-[10px] bg-white px-[40px] py-[80px]">
       <form class="flex flex-col" method="POST">

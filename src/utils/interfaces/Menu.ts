@@ -10,6 +10,6 @@ export interface Menu {
   instagram: string;
   openDays: string;
   address: string;
-  createdAt?: Date | undefined;
-  updatedAt?: Date | undefined;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

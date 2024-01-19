@@ -1,18 +1,15 @@
 <script setup lang="ts">
-export interface HeaderLinks {
-  id: number;
-  name: string;
-  link: string;
-}
+import { useAuthStore } from '@/store/authStore';
+import { onMounted, ref } from 'vue';
+
+const authStore = useAuthStore();
+
+const isAuthenticated = ref<boolean>(false);
 
 const props = defineProps({
   fixed: {
     type: Boolean,
     default: false
-  },
-  links: {
-    type: Array<HeaderLinks>,
-    default: []
   },
   center: {
     type: Boolean,
@@ -22,6 +19,10 @@ const props = defineProps({
     type: String,
     default: '#f85d3a'
   }
+});
+
+onMounted(async () => {
+  isAuthenticated.value = await authStore.isAuthenticated();
 });
 </script>
 
@@ -42,10 +43,22 @@ const props = defineProps({
       class="mx-auto my-0 flex h-full max-w-[1200px] items-center justify-between px-2.5 font-notosans font-bold text-white"
     >
       <p>LOGO</p>
+
       <ul>
-        <li v-for="link in props.links" :key="link.id">
-          <router-link :to="link.link">
-            <a class="cursor-pointer hover:text-qr-medium-gray">{{ link.name }}</a>
+        <li
+          v-if="isAuthenticated"
+          @click="
+            () => {
+              authStore.signOutWithFirebase();
+              isAuthenticated = false;
+            }
+          "
+        >
+          <a class="cursor-pointer hover:text-qr-medium-gray">Sair</a>
+        </li>
+        <li v-else>
+          <router-link to="/login">
+            <a class="cursor-pointer hover:text-qr-medium-gray">Acessar</a>
           </router-link>
         </li>
       </ul>

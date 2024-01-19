@@ -6,7 +6,8 @@ import {
   donwloadImage
 } from '@/firebase/cloud.storage';
 import { StorageFolder } from '@/utils/enuns/firebase';
-import { ref } from 'vue';
+import SettingsIcon from './icons/SettingsIcon.vue';
+import { reactive, ref } from 'vue';
 import { useUserStore } from '@/store/userStore';
 import { useMenuStore } from '@/store/menuStore';
 import EditModal from '@/components/EditModal.vue';
@@ -14,12 +15,17 @@ import SocialIcon from '@/components/icons/SocialIcon.vue';
 import ClockIcon from '@/components/icons/ClockIcon.vue';
 import ArrowIcon from '@/components/icons/ArrowIcon.vue';
 import SpotIcon from '@/components/icons/SpotIcon.vue';
-import SettingsIcon from './icons/SettingsIcon.vue';
+import FileInput from '@/components/FileInput.vue';
+import { checkImageSize } from '@/validators/imageLimit';
+import { validateEmptyText } from '@/validators/emptyText';
+import type { Menu } from '@/utils/interfaces/Menu';
+import BaseInput from '@/components/BaseInput.vue';
+
+const MAX_IMAGE_SIZE_BYTES = 500000; //0.5Mb;
 
 const userStore = useUserStore();
 const menuStore = useMenuStore();
 
-const fileInput = ref();
 const showEditModal = ref<boolean>(false);
 
 const props = defineProps({
@@ -29,49 +35,126 @@ const props = defineProps({
   }
 });
 
-const changeImage = async (event: any, folder: string) => {
+const heroState = reactive({
+  banner: {
+    value: {} as File,
+    error: '',
+    validator: () => {
+      heroState.banner.error = checkImageSize(heroState.banner.value.size, MAX_IMAGE_SIZE_BYTES);
+    }
+  },
+  profile: {
+    value: {} as File,
+    error: '',
+    validator: () => {
+      heroState.banner.error = checkImageSize(heroState.banner.value.size, MAX_IMAGE_SIZE_BYTES);
+    }
+  },
+  name: {
+    value: '',
+    error: '',
+    validator: () => {
+      heroState.name.error = validateEmptyText(heroState.name.value);
+    }
+  },
+  primaryColor: {
+    value: '',
+    error: '',
+    validator: () => {
+      heroState.primaryColor.error = validateEmptyText(heroState.primaryColor.value);
+    }
+  },
+  phoneNumber: {
+    value: '',
+    error: '',
+    validator: () => {
+      heroState.phoneNumber.error = validateEmptyText(heroState.phoneNumber.value);
+    }
+  },
+  instagram: {
+    value: '',
+    error: '',
+    validator: () => {
+      heroState.instagram.error = validateEmptyText(heroState.instagram.value);
+    }
+  }
+});
+
+const setImage = async (file: File, folder: string) => {
   const { id: userId } = userStore.user;
   const { id: menuId } = menuStore.menu;
-  const file = event.target.files[0];
 
-  if (file) {
-    if (folder === StorageFolder.Banner) {
-      await uploadImage({
-        file,
-        userId,
-        menuId,
-        folder: StorageFolder.Banner,
-        fileName: StorageFolder.Banner
-      } as UploadData);
+  if (folder === StorageFolder.Banner) {
+    await uploadImage({
+      file,
+      userId,
+      menuId,
+      folder: StorageFolder.Banner,
+      fileName: StorageFolder.Banner
+    } as UploadData);
 
-      menuStore.menu.headerImg = await donwloadImage({
-        userId,
-        menuId,
-        folder: StorageFolder.Banner,
-        fileName: StorageFolder.Banner
-      } as DownloadRef);
-    }
-
-    if (folder === StorageFolder.Profile) {
-      await uploadImage({
-        file,
-        userId,
-        menuId,
-        folder: StorageFolder.Profile,
-        fileName: StorageFolder.Profile
-      } as UploadData);
-
-      menuStore.menu.profileImg = await donwloadImage({
-        userId,
-        menuId,
-        folder: StorageFolder.Profile,
-        fileName: StorageFolder.Profile
-      } as DownloadRef);
-    }
-
-    const { accessToken } = userStore.user;
-    menuStore.updateMenu(menuStore.menu, accessToken);
+    return await donwloadImage({
+      userId,
+      menuId,
+      folder: StorageFolder.Banner,
+      fileName: StorageFolder.Banner
+    } as DownloadRef);
   }
+
+  if (folder === StorageFolder.Profile) {
+    await uploadImage({
+      file,
+      userId,
+      menuId,
+      folder: StorageFolder.Profile,
+      fileName: StorageFolder.Profile
+    } as UploadData);
+
+    return await donwloadImage({
+      userId,
+      menuId,
+      folder: StorageFolder.Profile,
+      fileName: StorageFolder.Profile
+    } as DownloadRef);
+  }
+};
+
+const updateHero = async () => {
+  const { accessToken } = userStore.user;
+  const { id, userId, headerImg, profileImg, url, address, openDays } = menuStore.menu;
+
+  const { banner, profile, name, primaryColor, instagram, phoneNumber } = heroState;
+
+  let headerImage: string = headerImg;
+  let profileImage: string = profileImg;
+
+  const headerImgWasUpdated = banner.value.name;
+  const profileImgWasUpdated = profile.value.name;
+
+  if (headerImgWasUpdated) {
+    headerImage = (await setImage(banner.value, StorageFolder.Banner)) || '';
+  }
+
+  if (profileImgWasUpdated) {
+    profileImage = (await setImage(profile.value, StorageFolder.Profile)) || '';
+  }
+  const menu: Menu = {
+    id,
+    userId,
+    headerImg: headerImage,
+    profileImg: profileImage,
+    name: name.value,
+    primaryColor: primaryColor.value,
+    address,
+    instagram: instagram.value,
+    openDays,
+    phoneNumber: phoneNumber.value,
+    url
+  } as Menu;
+
+  await menuStore.updateMenu(menu, accessToken);
+  await menuStore.getMenuByURL(menu.url);
+  showEditModal.value = false;
 };
 
 const toggleEditModal = () => {
@@ -82,7 +165,7 @@ const cancel = () => {
   showEditModal.value = false;
 };
 
-const formatWhastappNumber = (phoneNumber: string): string => {
+const formatWhatsappNumber = (phoneNumber: string): string => {
   if (phoneNumber.length === 11) {
     return (
       '(' +
@@ -156,7 +239,7 @@ const formatWhastappNumber = (phoneNumber: string): string => {
                 class="mb-[12px] mt-[12px] flex h-[40px] cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-[#40C351] px-[16px] font-notosans text-xl font-bold text-white drop-shadow-lg md:w-[100%]"
               >
                 <SocialIcon title="whatsapp" />
-                <span>{{ formatWhastappNumber(menuStore.menu.phoneNumber) }}</span>
+                <span>{{ formatWhatsappNumber(menuStore.menu.phoneNumber) }}</span>
               </button>
             </a>
           </div>
@@ -166,15 +249,68 @@ const formatWhastappNumber = (phoneNumber: string): string => {
     <button
       v-if="props.editMode"
       class="absolute right-[12px] z-50 mb-[12px] mt-[12px] flex h-[40px] cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-qr-primary-orange px-[16px] font-notosans text-xl font-bold text-white drop-shadow-lg"
-      @click="toggleEditModal()"
+      @click="
+        () => {
+          heroState.name.value = menuStore.menu.name;
+          heroState.primaryColor.value = menuStore.menu.primaryColor;
+          heroState.phoneNumber.value = menuStore.menu.phoneNumber;
+          heroState.instagram.value = menuStore.menu.instagram;
+          toggleEditModal();
+        }
+      "
     >
       <SettingsIcon />
       <span>Editar página</span>
     </button>
   </div>
-  <EditModal v-if="showEditModal" @cancel="cancel()" @save="cancel()">
-    <input type="file" @change="(e) => changeImage(e, StorageFolder.Banner)" ref="fileInput" />
-    <input type="file" @change="(e) => changeImage(e, StorageFolder.Profile)" ref="fileInput" />
+  <EditModal v-if="showEditModal" @cancel="cancel()" @save="updateHero()">
+    <FileInput
+      label="Imagem do Banner"
+      @validate="heroState.banner.validator"
+      v-model="heroState.banner.value"
+      :error-message="heroState.banner.error"
+      :preview-by-u-r-l="menuStore.menu.headerImg"
+    />
+    <FileInput
+      label="Imagem do Perfil"
+      @validate="heroState.profile.validator"
+      v-model="heroState.profile.value"
+      :error-message="heroState.profile.error"
+      :preview-by-u-r-l="menuStore.menu.profileImg"
+    />
+    <BaseInput
+      maxlength="30"
+      v-model="heroState.name.value"
+      label="Nome de Exibição"
+      :error-message="heroState.name.error"
+      @validate="heroState.name.validator()"
+    />
+
+    <BaseInput
+      maxlength="30"
+      v-model="heroState.primaryColor.value"
+      label="Cor de destaque no formato HEX"
+      placeholder="#531459"
+      :error-message="heroState.primaryColor.error"
+      @validate="heroState.primaryColor.validator()"
+    />
+
+    <BaseInput
+      maxlength="30"
+      v-model="heroState.phoneNumber.value"
+      label="Número de telefone"
+      :error-message="heroState.phoneNumber.error"
+      @validate="heroState.phoneNumber.validator()"
+    />
+
+    <BaseInput
+      maxlength="30"
+      v-model="heroState.instagram.value"
+      label="@ do instagram"
+      placeholder="@restaurant"
+      :error-message="heroState.instagram.error"
+      @validate="heroState.instagram.validator()"
+    />
   </EditModal>
 </template>
 

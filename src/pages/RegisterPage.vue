@@ -7,7 +7,6 @@ import LoginWithGoogle from '@/components/LoginWithGoogle.vue';
 import { reactive, ref } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { useRouter } from 'vue-router';
-import { type HeaderLinks } from '../components/Header.vue';
 import { validateEmail } from '@/validators/email';
 import { validateConfirmPassword, validatePassword } from '@/validators/password';
 import { useUserStore } from '@/store/userStore';
@@ -133,8 +132,6 @@ const submit = async (e: Event) => {
   }
 };
 
-const headerLinks: HeaderLinks[] = [{ id: 1, name: 'Voltar', link: '/' }];
-
 const togglePasswordVisibility = () => {
   const visible: boolean = passwordInputType.value === 'text';
   passwordInputType.value = visible ? 'password' : 'text';
@@ -146,7 +143,7 @@ const toggleconfirmPasswordVisibility = () => {
 };
 </script>
 <template>
-  <Header :fixed="true" :links="headerLinks" />
+  <Header :fixed="true" />
   <div class="min-h-screen bg-qr-primary-orange px-[20px] pb-[20px] pt-[80px]">
     <div class="mx-auto max-w-[800px] rounded-[10px] bg-white px-[40px] py-[80px]">
       <form class="flex flex-col" method="POST">

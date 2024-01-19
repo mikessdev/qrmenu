@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import Header, { type HeaderLinks } from '@/components/Header.vue';
+import Header from '@/components/Header.vue';
 import HorizontalMenu from '@/components/HorizontalMenu.vue';
 import { useUserStore } from '@/store/userStore';
 import { useMenuStore } from '@/store/menuStore';
 import Footer from '@/components/Footer.vue';
 import Hero from '@/components/Hero.vue';
-import { ref } from 'vue';
 
 const userStore = useUserStore();
 const menuStore = useMenuStore();
-
-const headerLinks = ref<HeaderLinks[]>([{ id: 1, name: 'Accesar', link: '/login' }]);
 
 const userHavePermissionToEdit = (): boolean => {
   const { user } = userStore;
@@ -25,7 +22,7 @@ const userHavePermissionToEdit = (): boolean => {
 </script>
 
 <template>
-  <Header :center="false" :color="menuStore.menu.primaryColor" :links="headerLinks" />
+  <Header :center="false" :color="menuStore.menu.primaryColor" />
   <main>
     <Hero :edit-mode="userHavePermissionToEdit()" />
 
