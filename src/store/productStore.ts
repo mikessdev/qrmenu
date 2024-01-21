@@ -27,7 +27,7 @@ export const useProductStore = defineStore('productManagement', () => {
     const { id } = newProduct;
 
     try {
-      await fetch(url + id, {
+      await fetch(url + '/' + id, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

@@ -12,10 +12,10 @@ const authStore = useAuthStore();
 const signInWithGoogle = async () => {
   await authStore.signInWithGoogle();
 
-  const { uid: userId, emailVerified } = authStore.userCredential.user;
+  const { uid: id, emailVerified } = authStore.userCredential.user;
 
-  await userStore.getUser(userId);
-  const useAlreadyExists = !!userStore.user.id;
+  await userStore.getUser(id);
+  const useAlreadyExists = userStore.user === null ? false : true;
 
   if (useAlreadyExists) {
     userStore.user.accessToken = await authStore.userCredential.user.getIdToken();

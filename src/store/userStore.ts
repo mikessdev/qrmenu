@@ -23,7 +23,6 @@ export const useUserStore = defineStore('userProfile', () => {
       const success = result.status === Status.SUCCESS;
       if (success) {
         user.value = result.message;
-        alert(result.message);
       }
     } catch (error) {
       console.error(error);
