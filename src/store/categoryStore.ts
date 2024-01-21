@@ -26,7 +26,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
     const { id } = newCategory;
     try {
-      await fetch(url + id, {
+      await fetch(url + '/' + id, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
   const deleteCategoryById = async (id: string, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
     try {
-      await fetch(url + id, {
+      await fetch(url + '/' + id, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
