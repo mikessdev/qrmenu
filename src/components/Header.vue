@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/store/authStore';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
+const router = useRouter();
 
 const isAuthenticated = ref<boolean>(false);
 
@@ -19,6 +21,26 @@ const props = defineProps({
     type: String,
     default: '#f85d3a'
   }
+});
+
+const headerItens = computed(() => {
+  return [
+    {
+      id: 1,
+      text: 'Sair',
+      action: async () => {
+        await authStore.signOutWithFirebase();
+        isAuthenticated.value = false;
+      },
+      show: isAuthenticated.value
+    },
+    {
+      id: 2,
+      text: 'Acessar',
+      action: () => router.push('/login'),
+      show: !isAuthenticated.value
+    }
+  ];
 });
 
 onMounted(async () => {
@@ -45,21 +67,13 @@ onMounted(async () => {
       <p>LOGO</p>
 
       <ul>
-        <li
-          v-if="isAuthenticated"
-          @click="
-            () => {
-              authStore.signOutWithFirebase();
-              isAuthenticated = false;
-            }
-          "
-        >
-          <a class="cursor-pointer hover:text-qr-medium-gray">Sair</a>
-        </li>
-        <li v-else>
-          <router-link to="/login">
-            <a class="cursor-pointer hover:text-qr-medium-gray">Acessar</a>
-          </router-link>
+        <li v-for="item in headerItens" :key="item.id">
+          <a
+            v-if="item.show"
+            @click="item.action"
+            class="cursor-pointer hover:text-qr-medium-gray"
+            >{{ item.text }}</a
+          >
         </li>
       </ul>
     </div>
