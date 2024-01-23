@@ -34,3 +34,23 @@
         }
     }
 }
+
+
+/* Custom fonts */
+
+.title {
+    font-family: 'NotoSans', sans-serif;
+    font-weight: bold;
+    font-size: clamp(28px, 1em + 3vw, 48px);
+}
+
+.paragraph {
+    font-family: 'NotoSans', sans-serif;
+    font-size: clamp(12px, 1em + 0.5vw, 20px);
+}
+
+.button-font {
+    font-family: 'NotoSans', sans-serif;
+    font-weight: bold;
+    font-size: clamp(12px, 1em + 0.5vw, 20px);
+}

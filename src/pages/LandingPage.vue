@@ -119,13 +119,13 @@ onVerify(() => {
 <template>
   <Header :fixed="fixedHeader as boolean" />
   <section
-    :class="fixedHeader ? 'h-[660px] pt-[60px]' : 'h-[600px]'"
+    :class="fixedHeader ? 'h-[760px] py-[60px]' : ' h-[700px]'"
     class="w-full overflow-hidden bg-qr-primary-orange px-[20px]"
   >
     <div class="relative mx-auto my-0 flex max-w-[1200px]">
       <div class="absolute left-0 z-10 mt-[60px] max-w-[600px] text-white">
-        <h1 class="text-5xl font-bold">Crie seu cardápio personalizado de forma gratuita</h1>
-        <p class="mb-[60px] mt-[40px] max-w-[380px] font-notosans text-xl">
+        <h1 class="title">Crie seu cardápio personalizado de forma gratuita</h1>
+        <p class="paragraph mb-[60px] mt-[40px] max-w-[380px]">
           Nós entendemos o quanto um cardápio bem elaborado pode fazer a diferença no seu negócio ou
           na sua experiência culinária, e é por isso que estamos aqui para ajudar.
         </p>
@@ -133,18 +133,21 @@ onVerify(() => {
           <Button label="Cadastre-se Grátis" />
         </router-link>
       </div>
-      <img class="absolute right-[-80px] top-[10px]" src="@/assets/img/hero.png" />
+      <img
+        class="absolute right-[-280px] top-[250px] scale-[1.2] mobile:right-[-250px] mobile:top-[500px] mobile:scale-[2.0]"
+        src="@/assets/img/hero.png"
+      />
     </div>
   </section>
   <section class="h-[600px] w-full bg-qr-light-gray px-[20px]">
-    <div class="mx-auto my-0 flex max-w-[1200px] flex-col items-center text-center">
+    <div class="mx-auto my-0 flex h-[100%] max-w-[1200px] flex-col items-center text-center">
       <h2 class="mb-[20px] mt-[40px] text-5xl font-bold">Crie. Personalize. Compartilhe</h2>
       <p class="mb-[40px] max-w-[900px] font-notosans text-xl">
         Nossa plataforma intuitiva e fácil de usar permite que você crie cardápios personalizados em
         questão de minutos, sem a necessidade de conhecimento em design gráfico.
       </p>
       <iframe
-        class="h-[315px] w-[560px] md:h-[200px] md:w-[400px]"
+        class="mb-[30px] h-[100%] max-h-[315px] w-[80%] max-w-[560px]"
         src="https://www.youtube.com/embed/9xht4JIOfjU?si=tfhhzH_A6jUZdbYs"
         title="YouTube video player"
         frameborder="0"
@@ -165,9 +168,11 @@ onVerify(() => {
         <p class="mb-[60px] max-w-[460px] font-notosans text-xl">
           Gere o qr code no app ou no site, e compartilhe facilmente com os seus clientes.
         </p>
-        <img class="w-[200px]" src="@/assets/img/qrcode.png" />
       </div>
-      <img class="absolute right-[60px] mt-[40px] w-[320px]" src="@/assets/img/phone.png" />
+      <img
+        class="absolute right-[-16px] top-[175px] mt-[40px] w-[360px] mobile:top-[240px] mobile:w-[300px]"
+        src="@/assets/img/phone.png"
+      />
     </div>
   </section>
   <section class="w-full bg-qr-light-gray px-[20px] pb-[60px]">
@@ -176,7 +181,9 @@ onVerify(() => {
         Se você está pronto para elevar a apresentação do seu cardápio a um nível totalmente novo,
         comece agora mesmo no <strong class="text-qr-primary-orange">Seu Cardápio.</strong>
       </p>
-      <div class="flex w-full justify-between">
+      <div
+        class="flex w-full justify-between mobile:flex-col mobile:items-center mobile:gap-[30px] tablet:flex-col tablet:items-center tablet:gap-[30px]"
+      >
         <div class="max-w-[300px] text-center">
           <p class="text-5xl font-bold text-qr-primary-orange">Grátis</p>
           <br />
@@ -205,7 +212,7 @@ onVerify(() => {
       <p class="my-[40px] text-center text-xl text-black">
         Você tem mais alguma dúvida? Por favor, entre em contato.
       </p>
-      <form class="flex w-[70%] flex-col">
+      <form class="flex w-[100%] max-w-[800px] flex-col">
         <BaseInput
           label="Nome"
           maxlength="35"
