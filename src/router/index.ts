@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type NavigationGuardNext } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import LandingPage from '@/pages/LandingPage.vue';
 import HomePage from '@/pages/HomePage.vue';
 import LoginPage from '@/pages/LoginPage.vue';
@@ -6,7 +6,6 @@ import RegisterPage from '@/pages/RegisterPage.vue';
 import RegisterCompletePage from '@/pages/RegisterCompletePage.vue';
 import SelectMenuPage from '@/pages/SelectMenuPage.vue';
 import authMiddleware from '@/middleware/authMiddleware';
-import menuRoutesMiddleware from '@/middleware/menuRoutesMiddleware';
 import emailVerificationMiddleware from '@/middleware/emailVerificationMiddleware';
 
 const router = createRouter({
@@ -20,8 +19,7 @@ const router = createRouter({
     {
       path: '/:url',
       name: 'home',
-      component: HomePage,
-      beforeEnter: (to) => menuRoutesMiddleware(to)
+      component: HomePage
     },
     {
       path: '/login',

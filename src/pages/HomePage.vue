@@ -5,9 +5,12 @@ import { useUserStore } from '@/store/userStore';
 import { useMenuStore } from '@/store/menuStore';
 import Footer from '@/components/Footer.vue';
 import Hero from '@/components/Hero.vue';
+import { onBeforeMount } from 'vue';
+import { useRoute } from 'vue-router';
 
 const userStore = useUserStore();
 const menuStore = useMenuStore();
+const route = useRoute();
 
 const userHavePermissionToEdit = (): boolean => {
   const { user } = userStore;
@@ -19,6 +22,15 @@ const userHavePermissionToEdit = (): boolean => {
 
   return userHavePermission;
 };
+
+const loadData = async (url: string) => {
+  return await menuStore.getMenuByURL(url as string);
+};
+
+onBeforeMount(async () => {
+  const { url } = route.params;
+  await loadData(url as string);
+});
 </script>
 
 <template>
