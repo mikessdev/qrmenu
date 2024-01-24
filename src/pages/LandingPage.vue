@@ -130,7 +130,7 @@ onVerify(() => {
           na sua experiência culinária, e é por isso que estamos aqui para ajudar.
         </p>
         <router-link to="/register">
-          <Button label="Cadastre-se Grátis" />
+          <Button data-cy="btn-redirect-to-register" label="Cadastre-se Grátis" />
         </router-link>
       </div>
       <img
@@ -141,8 +141,8 @@ onVerify(() => {
   </section>
   <section class="h-[600px] w-full bg-qr-light-gray px-[20px]">
     <div class="mx-auto my-0 flex h-[100%] max-w-[1200px] flex-col items-center text-center">
-      <h2 class="mb-[20px] mt-[40px] text-5xl font-bold">Crie. Personalize. Compartilhe</h2>
-      <p class="mb-[40px] max-w-[900px] font-notosans text-xl">
+      <h2 class="title mb-[20px] mt-[40px]">Crie. Personalize. Compartilhe</h2>
+      <p class="paragraph mb-[40px] max-w-[900px]">
         Nossa plataforma intuitiva e fácil de usar permite que você crie cardápios personalizados em
         questão de minutos, sem a necessidade de conhecimento em design gráfico.
       </p>
@@ -160,12 +160,10 @@ onVerify(() => {
   <section class="h-[600px] w-full overflow-hidden bg-qr-medium-gray px-[20px]">
     <div class="relative mx-auto my-0 flex max-w-[1200px]">
       <div class="z-10 flex h-[600px] flex-col">
-        <h3
-          class="mb-[20px] mt-[40px] max-w-[600px] text-left text-5xl font-bold text-qr-primary-orange"
-        >
+        <h3 class="title mb-[20px] mt-[40px] max-w-[600px] text-left text-qr-primary-orange">
           Com o Qr code, tudo fica mais fácil.
         </h3>
-        <p class="mb-[60px] max-w-[460px] font-notosans text-xl">
+        <p class="paragraph mb-[60px] max-w-[460px]">
           Gere o qr code no app ou no site, e compartilhe facilmente com os seus clientes.
         </p>
       </div>
@@ -177,7 +175,7 @@ onVerify(() => {
   </section>
   <section class="w-full bg-qr-light-gray px-[20px] pb-[60px]">
     <div class="mx-auto my-0 flex max-w-[1200px] flex-col items-center">
-      <p class="my-[60px] max-w-[750px] text-center font-notosans text-xl text-black">
+      <p class="paragraph my-[60px] max-w-[750px] text-center text-black">
         Se você está pronto para elevar a apresentação do seu cardápio a um nível totalmente novo,
         comece agora mesmo no <strong class="text-qr-primary-orange">Seu Cardápio.</strong>
       </p>
@@ -185,31 +183,29 @@ onVerify(() => {
         class="flex w-full justify-between mobile:flex-col mobile:items-center mobile:gap-[30px] tablet:flex-col tablet:items-center tablet:gap-[30px]"
       >
         <div class="max-w-[300px] text-center">
-          <p class="text-5xl font-bold text-qr-primary-orange">Grátis</p>
+          <p class="title text-qr-primary-orange">Rápido</p>
           <br />
-          <p class="font-notosans text-xl text-black">
-            Pode usar a vontade sem custos necessários.
-          </p>
-        </div>
-        <div class="max-w-[300px] text-center">
-          <p class="text-5xl font-bold text-qr-primary-orange">Rápido</p>
-          <br />
-          <p class="font-notosans text-xl text-black">
+          <p class="paragraph text-black">
             Em pouco minutos seu cardápio está pronto para ser compartilhado para seus clientes.
           </p>
         </div>
         <div class="max-w-[300px] text-center">
-          <p class="font-notosans text-5xl font-bold text-qr-primary-orange">Fácil</p>
+          <p class="title text-qr-primary-orange">Grátis</p>
           <br />
-          <p class="text-xl text-black">
+          <p class="paragraph text-black">Pode usar a vontade sem custos necessários.</p>
+        </div>
+        <div class="max-w-[300px] text-center">
+          <p class="title font-notosans text-qr-primary-orange">Fácil</p>
+          <br />
+          <p class="paragraph text-black">
             Qualquer pessoa consegue criar um cardápio sem conhecimento em design ou em criação de
             sites.
           </p>
         </div>
       </div>
       <div class="my-[60px] h-[6px] w-full rounded-[100px] bg-qr-primary-orange"></div>
-      <h2 class="text-5xl font-bold text-qr-primary-orange">Contato</h2>
-      <p class="my-[40px] text-center text-xl text-black">
+      <h2 class="title text-qr-primary-orange">Contato</h2>
+      <p class="paragraph my-[40px] text-center text-black">
         Você tem mais alguma dúvida? Por favor, entre em contato.
       </p>
       <form class="flex w-[100%] max-w-[800px] flex-col">

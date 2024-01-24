@@ -57,20 +57,19 @@ export const useAuthStore = defineStore('authManagement', () => {
   const isAuthenticated = async (): Promise<boolean> => {
     const auth = getAuth();
     const userStore = useUserStore();
+
     return new Promise((resolve) => {
       onAuthStateChanged(auth, async (user: User | null) => {
         const isAuthenticated = user;
-        if (isAuthenticated) {
-          await userStore.getUser(user.uid);
-          userStore.user.accessToken = await user.getIdToken();
-          resolve(true);
-        }
-
         if (!isAuthenticated) {
           userStore.user = {} as CustomUser;
           userCredential.value = {} as UserCredential;
-          resolve(false);
+          return resolve(false);
         }
+
+        await userStore.getUser(user.uid);
+        userStore.user.accessToken = await user.getIdToken();
+        return resolve(true);
       });
     });
   };

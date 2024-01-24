@@ -42,6 +42,7 @@
     font-family: 'NotoSans', sans-serif;
     font-weight: bold;
     font-size: clamp(28px, 1em + 3vw, 48px);
+
 }
 
 .paragraph {
