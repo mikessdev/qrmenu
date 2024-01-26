@@ -1,13 +1,20 @@
+import { useAuthComposable } from '@/composables/useAuthComposable';
 import { useAuthStore } from '@/store/authStore';
 import { type RouteLocationNormalized } from 'vue-router';
 
-export default async function authMiddleware(to: RouteLocationNormalized): Promise<any> {
+export default async function authMiddleware(
+  to: RouteLocationNormalized
+): Promise<boolean | object> {
   const authStore = useAuthStore();
-  const isAuthenticated = await authStore.isAuthenticated();
-  const isLoginPage = to.name === 'login';
+  const { isAuthenticated } = useAuthComposable();
 
-  if (!isAuthenticated && isLoginPage) return true;
-  if (isAuthenticated && isLoginPage) return { name: 'landingPage' };
-  if (!isAuthenticated) return { name: 'login' };
-  return true;
+  await authStore.checkAuthState();
+  const isLoginPage = to.name === 'login';
+  const allow = true;
+
+  if (!isAuthenticated.value && isLoginPage) return allow;
+  if (isAuthenticated.value && isLoginPage) return { name: 'landingPage' };
+  if (!isAuthenticated.value) return { name: 'login' };
+
+  return allow;
 }

@@ -14,6 +14,7 @@ import { ref } from 'vue';
 import { firebaseAuth } from '@/firebase/config';
 import { useUserStore } from './userStore';
 import { type User as CustomUser } from '@/utils/interfaces/User';
+import { useAuthComposable } from '@/composables/useAuthComposable';
 
 export const useAuthStore = defineStore('authManagement', () => {
   const userCredential = ref<UserCredential>({} as UserCredential);
@@ -54,29 +55,29 @@ export const useAuthStore = defineStore('authManagement', () => {
     }
   };
 
-  const isAuthenticated = async (): Promise<boolean> => {
+  const checkAuthState = async (): Promise<boolean> => {
+    const { updateAuthState } = useAuthComposable();
     const auth = getAuth();
     const userStore = useUserStore();
 
     return new Promise((resolve) => {
       onAuthStateChanged(auth, async (user: User | null) => {
-        const isAuthenticated = user;
-        if (!isAuthenticated) {
-          userStore.user = {} as CustomUser;
-          userCredential.value = {} as UserCredential;
-          return resolve(false);
+        if (user) {
+          updateAuthState(true);
+          await userStore.getUser(user.uid);
+          userStore.user.accessToken = await user.getIdToken();
+          return resolve(true);
         }
 
-        await userStore.getUser(user.uid);
-        userStore.user.accessToken = await user.getIdToken();
-        return resolve(true);
+        updateAuthState(false);
+        return resolve(false);
       });
     });
   };
 
   return {
     userCredential,
-    isAuthenticated,
+    checkAuthState,
     signinWithFirebase,
     signUpWithFirebase,
     signInWithGoogle,

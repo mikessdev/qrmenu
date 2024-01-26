@@ -1,19 +1,16 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/store/authStore';
-import { computed, onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthComposable } from '@/composables/useAuthComposable';
 
 const authStore = useAuthStore();
 const router = useRouter();
 
-const isAuthenticated = ref<boolean>(false);
+const { isAuthenticated } = useAuthComposable();
 
 const props = defineProps({
   fixed: {
-    type: Boolean,
-    default: false
-  },
-  center: {
     type: Boolean,
     default: false
   },
@@ -42,10 +39,6 @@ const headerItens = computed(() => {
     }
   ];
 });
-
-onMounted(async () => {
-  isAuthenticated.value = await authStore.isAuthenticated();
-});
 </script>
 
 <template>
@@ -55,16 +48,11 @@ onMounted(async () => {
     class="h-[60px] w-full shadow-md"
   >
     <div
-      v-if="props.center"
-      class="mx-auto my-0 flex h-full max-w-[1200px] items-center px-2.5 font-notosans font-bold text-white"
-    >
-      <p class="mx-auto">LOGO</p>
-    </div>
-    <div
-      v-if="!props.center"
       class="mx-auto my-0 flex h-full max-w-[1200px] items-center justify-between px-2.5 font-notosans font-bold text-white"
     >
-      <p>LOGO</p>
+      <router-link to="/">
+        <p>LOGO</p>
+      </router-link>
 
       <ul>
         <li v-for="item in headerItens" :key="item.id">

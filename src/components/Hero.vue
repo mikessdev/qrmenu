@@ -164,21 +164,6 @@ const toggleEditModal = () => {
 const cancel = () => {
   showEditModal.value = false;
 };
-
-const formatWhatsappNumber = (phoneNumber: string): string => {
-  if (phoneNumber.length === 11) {
-    return (
-      '(' +
-      menuStore.menu.phoneNumber.slice(0, 2) +
-      ') ' +
-      menuStore.menu.phoneNumber.slice(2, -4) +
-      ' ' +
-      menuStore.menu.phoneNumber.slice(7)
-    );
-  }
-
-  return phoneNumber;
-};
 </script>
 <template>
   <div class="flex w-[100%]">
@@ -240,7 +225,7 @@ const formatWhatsappNumber = (phoneNumber: string): string => {
                 class="mb-[12px] mt-[12px] flex h-[40px] cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-[#40C351] px-[16px] font-notosans text-xl font-bold text-white drop-shadow-lg md:w-[100%]"
               >
                 <SocialIcon title="whatsapp" />
-                <span>{{ formatWhatsappNumber(menuStore.menu.phoneNumber) }}</span>
+                <span>{{ menuStore.menu.phoneNumber }}</span>
               </button>
             </a>
           </div>

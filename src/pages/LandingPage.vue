@@ -160,10 +160,12 @@ onVerify(() => {
   <section class="h-[600px] w-full overflow-hidden bg-qr-medium-gray px-[20px]">
     <div class="relative mx-auto my-0 flex max-w-[1200px]">
       <div class="z-10 flex h-[600px] flex-col">
-        <h3 class="title mb-[20px] mt-[40px] max-w-[600px] text-left text-qr-primary-orange">
+        <h3
+          class="title mb-[20px] mt-[40px] max-w-[600px] text-left text-qr-primary-orange mobile:text-center"
+        >
           Com o Qr code, tudo fica mais fácil.
         </h3>
-        <p class="paragraph mb-[60px] max-w-[460px]">
+        <p class="paragraph mb-[60px] max-w-[460px] mobile:text-center">
           Gere o qr code no app ou no site, e compartilhe facilmente com os seus clientes.
         </p>
       </div>

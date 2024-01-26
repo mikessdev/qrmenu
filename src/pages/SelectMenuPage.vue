@@ -134,7 +134,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Header :center="true" />
+  <Header />
   <main class="flex flex-col items-center pt-[60px]">
     <div class="flex flex-wrap justify-evenly gap-8">
       <ul
