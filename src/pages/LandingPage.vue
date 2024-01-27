@@ -3,11 +3,19 @@ import Header from '@/components/Header.vue';
 import Button from '@/components/Button.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import Footer from '@/components/Footer.vue';
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateEmail } from '@/validators/email';
 import { sendEmailWithBrevo, type BrevoEmailBody } from '@/utils/sendEmail';
 import { useChallengeV2 } from 'vue-recaptcha';
+import { useAuthComposable } from '@/composables/useAuthComposable';
+import { useAuthStore } from '@/store/authStore';
+import { useRouter } from 'vue-router';
+import { computed } from 'vue';
+
+const { isAuthenticated } = useAuthComposable();
+const authStore = useAuthStore();
+const router = useRouter();
 
 const reCAPTCHAChecked = ref<Boolean>(false);
 const sendButtonIsClicked = ref<Boolean>(false);
@@ -114,10 +122,30 @@ onVerify(() => {
   reCAPTCHAChecked.value = true;
   viewState.recaptcha.validator();
 });
+
+const headerItens = computed(() => {
+  return [
+    {
+      id: 1,
+      text: 'Sair',
+      action: async () => {
+        await authStore.signOutWithFirebase();
+        isAuthenticated.value = false;
+      },
+      show: isAuthenticated.value
+    },
+    {
+      id: 2,
+      text: 'Acessar',
+      action: () => router.push('/login'),
+      show: !isAuthenticated.value
+    }
+  ];
+});
 </script>
 
 <template>
-  <Header :fixed="fixedHeader as boolean" />
+  <Header :fixed="fixedHeader as boolean" :header-itens="headerItens" />
   <section
     :class="fixedHeader ? 'h-[760px] py-[60px]' : ' h-[700px]'"
     class="w-full overflow-hidden bg-qr-primary-orange px-[20px]"
@@ -210,7 +238,7 @@ onVerify(() => {
       <p class="paragraph my-[40px] text-center text-black">
         Você tem mais alguma dúvida? Por favor, entre em contato.
       </p>
-      <form class="flex w-[100%] max-w-[800px] flex-col">
+      <form ref="form" class="flex w-[100%] max-w-[800px] flex-col">
         <BaseInput
           label="Nome"
           maxlength="35"

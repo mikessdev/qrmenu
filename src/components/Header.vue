@@ -1,13 +1,5 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/store/authStore';
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthComposable } from '@/composables/useAuthComposable';
-
-const authStore = useAuthStore();
-const router = useRouter();
-
-const { isAuthenticated } = useAuthComposable();
+import { type PropType } from 'vue';
 
 const props = defineProps({
   fixed: {
@@ -17,28 +9,19 @@ const props = defineProps({
   color: {
     type: String,
     default: '#f85d3a'
+  },
+  headerItens: {
+    type: Array as PropType<HeaderItem[]>,
+    default: [] as HeaderItem[]
   }
 });
 
-const headerItens = computed(() => {
-  return [
-    {
-      id: 1,
-      text: 'Sair',
-      action: async () => {
-        await authStore.signOutWithFirebase();
-        isAuthenticated.value = false;
-      },
-      show: isAuthenticated.value
-    },
-    {
-      id: 2,
-      text: 'Acessar',
-      action: () => router.push('/login'),
-      show: !isAuthenticated.value
-    }
-  ];
-});
+interface HeaderItem {
+  id: number;
+  text: string;
+  action: Function;
+  show: boolean;
+}
 </script>
 
 <template>

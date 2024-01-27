@@ -69,17 +69,12 @@ const submit = async (e: Event) => {
         return router.push('/select-menu');
       }
 
-      if (!emailVerified) {
-        loginErrorMessage.value = '';
-        return router.push('/register-complete');
-      }
+      loginErrorMessage.value = '';
+      return router.push('/register-complete');
     } catch (error) {
-      const userNotFound: string = AuthError.userNotFound;
-      const wrongPassword: string = AuthError.wrongPassword;
-      const invalidEmail: string = AuthError.invalidEmail;
-
-      const userNoHaveAccount: boolean = error.code === userNotFound;
-      const userHaveAccount: boolean = error.code === invalidEmail || error.code === wrongPassword;
+      const userNoHaveAccount: boolean = error.code === AuthError.userNotFound;
+      const userHaveAccount: boolean =
+        error.code === AuthError.invalidEmail || error.code === AuthError.wrongPassword;
 
       if (userNoHaveAccount) {
         loginErrorMessage.value = 'Nenhuma conta com esse email foi encontrada!';
@@ -96,55 +91,68 @@ const togglePasswordVisibility = () => {
   const visible: boolean = passwordInputType.value === 'text';
   passwordInputType.value = visible ? 'password' : 'text';
 };
+
+const headerItens = [
+  {
+    id: 1,
+    text: 'Voltar',
+    action: () => router.back(),
+    show: true
+  }
+];
 </script>
 <template>
-  <Header class="top-0" :fixed="true" />
-  <div class="min-h-screen bg-qr-primary-orange px-[20px] pb-[20px] pt-[80px]">
-    <div class="mx-auto max-w-[800px] rounded-[10px] bg-white px-[40px] py-[80px]">
-      <form class="flex flex-col" method="POST">
-        <h1 class="mb-[20px] text-center text-5xl font-bold text-qr-primary-orange">
-          Entre com sua conta
-        </h1>
-        <BaseInput
-          label="E-mail"
-          inputType="email"
-          placeholder="Digite seu e-mail"
-          v-model="viewState.email.value"
-          :error-message="viewState.email.error"
-          @validate="viewState.email.validator"
-        />
-        <PasswordInput
-          label="Senha"
-          :inputType="passwordInputType"
-          placeholder="Digite sua senha"
-          v-model="viewState.password.value"
-          :error-message="viewState.password.error"
-          @validate="viewState.password.validator"
-          @password-visible="togglePasswordVisibility()"
-        />
-        <div class="flex flex-col pb-[40px]">
-          <Button
-            class="mx-auto mt-[40px]"
-            type="submit"
-            label="Acessar"
-            @click="(e) => submit(e)"
-            variante="secundary"
+  <Header :header-itens="headerItens" />
+  <div class="flex min-h-screen bg-qr-primary-orange">
+    <div
+      class="mx-auto my-[10px] flex h-[90vh] max-h-[800px] min-h-[500px] w-[96%] max-w-[800px] items-center justify-center rounded-[10px] bg-white px-[8px]"
+    >
+      <div class="flex h-[100%] w-[90%] flex-col justify-evenly py-[20px]">
+        <h1 class="title max text-center text-qr-primary-orange">Entre com sua conta</h1>
+        <form class="flex flex-col" method="POST">
+          <BaseInput
+            label="E-mail"
+            inputType="email"
+            placeholder="Digite seu e-mail"
+            v-model="viewState.email.value"
+            :error-message="viewState.email.error"
+            @validate="viewState.email.validator"
           />
-          <span
-            v-if="loginErrorMessage"
-            class="relative z-10 mx-auto mt-[6px] font-notosans font-bold text-qr-primary-orange"
-            >{{ loginErrorMessage }}</span
-          >
+          <PasswordInput
+            label="Senha"
+            :inputType="passwordInputType"
+            placeholder="Digite sua senha"
+            v-model="viewState.password.value"
+            :error-message="viewState.password.error"
+            @validate="viewState.password.validator"
+            @password-visible="togglePasswordVisibility()"
+          />
+          <div class="mt-[30px] flex flex-col">
+            <Button
+              class="mx-auto"
+              type="submit"
+              label="Acessar"
+              @click="(e) => submit(e)"
+              variante="secundary"
+            />
+            <span
+              v-if="loginErrorMessage"
+              class="relative z-10 mx-auto mt-[6px] font-notosans font-bold text-qr-primary-orange"
+              >{{ loginErrorMessage }}</span
+            >
+          </div>
+        </form>
+        <div class="flex h-[20%] flex-col justify-evenly">
+          <p class="paragraph-14px text-center text-black">Ou entre com</p>
+          <LoginWithGoogle />
+          <p class="paragraph-14px text-center">
+            Não tem uma conta?
+            <router-link to="/register">
+              <strong class="cursor-pointer text-qr-primary-orange">Registre-se</strong>
+            </router-link>
+          </p>
         </div>
-      </form>
-      <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">Ou entre com</p>
-      <LoginWithGoogle />
-      <p class="mt-[60px] text-center font-notosans text-sm">
-        Não tem uma conta?
-        <router-link to="/register">
-          <strong class="cursor-pointer text-qr-primary-orange">Registre-se</strong>
-        </router-link>
-      </p>
+      </div>
     </div>
   </div>
 </template>
