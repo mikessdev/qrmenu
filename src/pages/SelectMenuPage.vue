@@ -3,7 +3,7 @@ import Header from '@/components/Header.vue';
 import PlusIcon from '@/components/icons/PlusIcon.vue';
 import EditModal from '@/components/EditModal.vue';
 import BaseInput from '@/components/BaseInput.vue';
-import { onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateSlug } from '@/validators/slug';
 import { useMenuStore } from '@/store/menuStore';
@@ -12,9 +12,12 @@ import type { Menu } from '@/utils/interfaces/Menu';
 import { useRouter } from 'vue-router';
 import { useCategoryStore } from '@/store/categoryStore';
 import type { Category } from '@/utils/interfaces/Category';
+import { useAuthComposable } from '@/composables/useAuthComposable';
+import { useAuthStore } from '@/store/authStore';
 
 const router = useRouter();
-
+const { isAuthenticated } = useAuthComposable();
+const authStore = useAuthStore();
 const menuStore = useMenuStore();
 const userStore = useUserStore();
 const categoryStore = useCategoryStore();
@@ -131,10 +134,30 @@ onMounted(async () => {
   await menuStore.getMenus(userId, accessToken);
   menus.value = menuStore.menus;
 });
+
+const headerItens = computed(() => {
+  return [
+    {
+      id: 1,
+      text: 'Sair',
+      action: async () => {
+        await authStore.signOutWithFirebase();
+        isAuthenticated.value = false;
+      },
+      show: isAuthenticated.value
+    },
+    {
+      id: 2,
+      text: 'Acessar',
+      action: () => router.push('/login'),
+      show: !isAuthenticated.value
+    }
+  ];
+});
 </script>
 
 <template>
-  <Header />
+  <Header :header-itens="headerItens" />
   <main class="flex flex-col items-center pt-[60px]">
     <div class="flex flex-wrap justify-evenly gap-8">
       <ul

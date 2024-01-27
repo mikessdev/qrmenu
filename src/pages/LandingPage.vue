@@ -3,7 +3,7 @@ import Header from '@/components/Header.vue';
 import Button from '@/components/Button.vue';
 import BaseInput from '@/components/BaseInput.vue';
 import Footer from '@/components/Footer.vue';
-import { onMounted, reactive, ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateEmail } from '@/validators/email';
 import { sendEmailWithBrevo, type BrevoEmailBody } from '@/utils/sendEmail';

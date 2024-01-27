@@ -5,13 +5,16 @@ import { useUserStore } from '@/store/userStore';
 import { useMenuStore } from '@/store/menuStore';
 import Footer from '@/components/Footer.vue';
 import Hero from '@/components/Hero.vue';
-import { onBeforeMount, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, onBeforeMount, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useCategoryStore } from '@/store/categoryStore';
 import { useAuthComposable } from '@/composables/useAuthComposable';
+import { useAuthStore } from '@/store/authStore';
 
+const router = useRouter();
 const userStore = useUserStore();
 const menuStore = useMenuStore();
+const authStore = useAuthStore();
 const categoryStore = useCategoryStore();
 const route = useRoute();
 const { isAuthenticated } = useAuthComposable();
@@ -43,10 +46,30 @@ onBeforeMount(async () => {
   const { url } = route.params;
   return await loadData(`${url}`);
 });
+
+const headerItens = computed(() => {
+  return [
+    {
+      id: 1,
+      text: 'Sair',
+      action: async () => {
+        await authStore.signOutWithFirebase();
+        isAuthenticated.value = false;
+      },
+      show: isAuthenticated.value
+    },
+    {
+      id: 2,
+      text: 'Acessar',
+      action: () => router.push('/login'),
+      show: !isAuthenticated.value
+    }
+  ];
+});
 </script>
 
 <template>
-  <Header :center="false" :color="menuStore.menu.primaryColor" />
+  <Header :center="false" :color="menuStore.menu.primaryColor" :header-itens="headerItens" />
   <main>
     <Hero :edit-mode="userHavePermission" />
 
