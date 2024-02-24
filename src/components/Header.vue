@@ -37,8 +37,8 @@ interface HeaderItem {
         <p>LOGO</p>
       </router-link>
 
-      <ul>
-        <li v-for="item in headerItens" :key="item.id">
+      <ul class="flex">
+        <li class="ml-[10px]" v-for="item in headerItens" :key="item.id">
           <a
             v-if="item.show"
             @click="item.action"
