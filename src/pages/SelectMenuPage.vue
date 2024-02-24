@@ -187,72 +187,86 @@ const headerItens = computed(() => {
         </div>
       </div>
     </main>
-    <EditModal
-      v-if="showEditModal"
-      @cancel="cancel()"
-      @save="save()"
-      :button-is-disabled="createMenuButtonIsDisabled()"
-    >
-      <h1 class="font-notosans text-base font-bold text-[#4E4E4E]">
-        Vamos precisar de algumas informações para montarmos o seu cardápio.
-      </h1>
-      <BaseInput
-        maxlength="30"
-        v-model="menuState.name.value"
-        label="Nome de Exibição"
-        :error-message="menuState.name.error"
-        @validate="menuState.name.validator()"
-      />
+    <transition name="fade-modal" mode="out-in">
+      <EditModal
+        v-if="showEditModal"
+        @cancel="cancel()"
+        @save="save()"
+        :button-is-disabled="createMenuButtonIsDisabled()"
+      >
+        <h1 class="font-notosans text-base font-bold text-[#4E4E4E]">
+          Vamos precisar de algumas informações para montarmos o seu cardápio.
+        </h1>
+        <BaseInput
+          maxlength="30"
+          v-model="menuState.name.value"
+          label="Nome de Exibição"
+          :error-message="menuState.name.error"
+          @validate="menuState.name.validator()"
+        />
 
-      <BaseInput
-        maxlength="30"
-        v-model="menuState.primaryColor.value"
-        label="Cor de destaque no formato HEX"
-        placeholder="#531459"
-        :error-message="menuState.primaryColor.error"
-        @validate="menuState.primaryColor.validator()"
-      />
+        <BaseInput
+          maxlength="30"
+          v-model="menuState.primaryColor.value"
+          label="Cor de destaque no formato HEX"
+          placeholder="#531459"
+          :error-message="menuState.primaryColor.error"
+          @validate="menuState.primaryColor.validator()"
+        />
 
-      <BaseInput
-        maxlength="30"
-        v-model="menuState.phoneNumber.value"
-        label="Número de telefone"
-        :error-message="menuState.phoneNumber.error"
-        @validate="menuState.phoneNumber.validator()"
-      />
+        <BaseInput
+          maxlength="30"
+          v-model="menuState.phoneNumber.value"
+          label="Número de telefone"
+          :error-message="menuState.phoneNumber.error"
+          @validate="menuState.phoneNumber.validator()"
+        />
 
-      <BaseInput
-        maxlength="30"
-        v-model="menuState.instagram.value"
-        label="@ do instagram"
-        placeholder="@restaurant"
-        :error-message="menuState.instagram.error"
-        @validate="menuState.instagram.validator()"
-      />
+        <BaseInput
+          maxlength="30"
+          v-model="menuState.instagram.value"
+          label="@ do instagram"
+          placeholder="@restaurant"
+          :error-message="menuState.instagram.error"
+          @validate="menuState.instagram.validator()"
+        />
 
-      <p class="mt-[30px] font-notosans text-[#4E4E4E]">Escolha um nome para a URL do Cardápio.</p>
-      <p class="mt-[20px] font-notosans text-xs text-[#4E4E4E]">
-        <strong>Obs:</strong> O nome escolhido precisa ser em letras minúscula, não deve conter
-        caracteres especiais
-        <strong
-          >(ex: ç, letras acentuadas e todos os outros caracteres com exceção do hífen)</strong
-        >
-        e as palavras devem ser separadas por hífen.
-      </p>
-      <p class="mt-[20px] font-notosans text-xs text-[#4E4E4E]">
-        <strong>Ex:</strong> <br />
-        <strong class="text-[#00c65e]">Permitido:</strong> acaiteria-da-maite. <br />
-        <strong class="text-[#e81f43]">Não permitido:</strong> açaiteria-da-Maitê.
-      </p>
-      <BaseInput
-        maxlength="30"
-        placeholder="acaiteria-da-borcelle"
-        v-model="menuState.url.value"
-        :error-message="menuState.url.error"
-        @validate="menuState.url.validator()"
-      />
-    </EditModal>
+        <p class="mt-[30px] font-notosans text-[#4E4E4E]">
+          Escolha um nome para a URL do Cardápio.
+        </p>
+        <p class="mt-[20px] font-notosans text-xs text-[#4E4E4E]">
+          <strong>Obs:</strong> O nome escolhido precisa ser em letras minúscula, não deve conter
+          caracteres especiais
+          <strong
+            >(ex: ç, letras acentuadas e todos os outros caracteres com exceção do hífen)</strong
+          >
+          e as palavras devem ser separadas por hífen.
+        </p>
+        <p class="mt-[20px] font-notosans text-xs text-[#4E4E4E]">
+          <strong>Ex:</strong> <br />
+          <strong class="text-[#00c65e]">Permitido:</strong> acaiteria-da-maite. <br />
+          <strong class="text-[#e81f43]">Não permitido:</strong> açaiteria-da-Maitê.
+        </p>
+        <BaseInput
+          maxlength="30"
+          placeholder="acaiteria-da-borcelle"
+          v-model="menuState.url.value"
+          :error-message="menuState.url.error"
+          @validate="menuState.url.validator()"
+        />
+      </EditModal>
+    </transition>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.fade-modal-enter-active,
+.fade-modal-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-modal-enter-from,
+.fade-modal-leave-to {
+  opacity: 0;
+}
+</style>
