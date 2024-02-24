@@ -102,55 +102,57 @@ const headerItens = [
 ];
 </script>
 <template>
-  <Header :header-itens="headerItens" />
-  <div class="flex min-h-screen bg-qr-primary-orange">
-    <div
-      class="mx-auto my-[10px] flex h-[90vh] max-h-[800px] min-h-[500px] w-[96%] max-w-[800px] items-center justify-center rounded-[10px] bg-white px-[8px]"
-    >
-      <div class="flex h-[100%] w-[90%] flex-col justify-evenly py-[20px]">
-        <h1 class="title max text-center text-qr-primary-orange">Entre com sua conta</h1>
-        <form class="flex flex-col" method="POST">
-          <BaseInput
-            label="E-mail"
-            inputType="email"
-            placeholder="Digite seu e-mail"
-            v-model="viewState.email.value"
-            :error-message="viewState.email.error"
-            @validate="viewState.email.validator"
-          />
-          <PasswordInput
-            label="Senha"
-            :inputType="passwordInputType"
-            placeholder="Digite sua senha"
-            v-model="viewState.password.value"
-            :error-message="viewState.password.error"
-            @validate="viewState.password.validator"
-            @password-visible="togglePasswordVisibility()"
-          />
-          <div class="mt-[30px] flex flex-col">
-            <Button
-              class="mx-auto"
-              type="submit"
-              label="Acessar"
-              @click="(e) => submit(e)"
-              variante="secundary"
+  <div>
+    <Header :fixed="true" :header-itens="headerItens" />
+    <div class="flex min-h-screen bg-qr-primary-orange pt-[80px]">
+      <div
+        class="mx-auto my-[10px] flex h-[90vh] max-h-[800px] min-h-[500px] w-[96%] max-w-[800px] items-center justify-center rounded-[10px] bg-white px-[8px]"
+      >
+        <div class="flex h-[100%] w-[90%] flex-col justify-evenly py-[20px]">
+          <h1 class="title max text-center text-qr-primary-orange">Entre com sua conta</h1>
+          <form class="flex flex-col" method="POST">
+            <BaseInput
+              label="E-mail"
+              inputType="email"
+              placeholder="Digite seu e-mail"
+              v-model="viewState.email.value"
+              :error-message="viewState.email.error"
+              @validate="viewState.email.validator"
             />
-            <span
-              v-if="loginErrorMessage"
-              class="relative z-10 mx-auto mt-[6px] font-notosans font-bold text-qr-primary-orange"
-              >{{ loginErrorMessage }}</span
-            >
+            <PasswordInput
+              label="Senha"
+              :inputType="passwordInputType"
+              placeholder="Digite sua senha"
+              v-model="viewState.password.value"
+              :error-message="viewState.password.error"
+              @validate="viewState.password.validator"
+              @password-visible="togglePasswordVisibility()"
+            />
+            <div class="mt-[30px] flex flex-col">
+              <Button
+                class="mx-auto"
+                type="submit"
+                label="Acessar"
+                @click="(e) => submit(e)"
+                variante="secundary"
+              />
+              <span
+                v-if="loginErrorMessage"
+                class="relative z-10 mx-auto mt-[6px] font-notosans font-bold text-qr-primary-orange"
+                >{{ loginErrorMessage }}</span
+              >
+            </div>
+          </form>
+          <div class="flex h-[20%] flex-col justify-evenly">
+            <p class="paragraph-14px text-center text-black">Ou entre com</p>
+            <LoginWithGoogle />
+            <p class="paragraph-14px text-center">
+              Não tem uma conta?
+              <router-link to="/register">
+                <strong class="cursor-pointer text-qr-primary-orange">Registre-se</strong>
+              </router-link>
+            </p>
           </div>
-        </form>
-        <div class="flex h-[20%] flex-col justify-evenly">
-          <p class="paragraph-14px text-center text-black">Ou entre com</p>
-          <LoginWithGoogle />
-          <p class="paragraph-14px text-center">
-            Não tem uma conta?
-            <router-link to="/register">
-              <strong class="cursor-pointer text-qr-primary-orange">Registre-se</strong>
-            </router-link>
-          </p>
         </div>
       </div>
     </div>

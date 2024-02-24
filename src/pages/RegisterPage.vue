@@ -158,74 +158,76 @@ const headerItens = [
 ];
 </script>
 <template>
-  <Header :fixed="true" :header-itens="headerItens" />
-  <div class="min-h-screen bg-qr-primary-orange px-[20px] pb-[20px] pt-[80px]">
-    <div class="mx-auto max-w-[800px] rounded-[10px] bg-white px-[40px] py-[80px]">
-      <form class="flex flex-col" method="POST">
-        <h1 class="mb-[20px] text-center text-5xl font-bold text-qr-primary-orange">
-          Crie sua conta
-        </h1>
-        <BaseInput
-          label="Nome"
-          inputType="text"
-          placeholder="Digite seu nome"
-          v-model="viewState.name.value"
-          @validate="viewState.name.validator"
-          :error-message="viewState.name.error"
-        />
-        <BaseInput
-          label="Sobre nome"
-          inputType="text"
-          placeholder="Digite seu sobre nome"
-          v-model="viewState.lastName.value"
-          @validate="viewState.lastName.validator"
-          :error-message="viewState.lastName.error"
-        />
-        <BaseInput
-          label="E-mail"
-          inputType="email"
-          placeholder="Digite seu e-mail"
-          v-model="viewState.email.value"
-          @validate="viewState.email.validator"
-          :error-message="viewState.email.error"
-        />
-        <PasswordInput
-          label="Senha"
-          :inputType="passwordInputType"
-          placeholder="Digite sua senha"
-          v-model="viewState.password.value"
-          @validate="viewState.password.validator"
-          :error-message="viewState.password.error"
-          @password-visible="togglePasswordVisibility()"
-        />
-        <PasswordInput
-          label="Confirme sua Senha"
-          :inputType="confirmPasswordInputType"
-          placeholder="Digite sua senha novamente"
-          v-model="viewState.confirmPassword.value"
-          @validate="viewState.confirmPassword.validator"
-          :error-message="viewState.confirmPassword.error"
-          @password-visible="toggleconfirmPasswordVisibility()"
-        />
-        <div class="flex flex-col pb-[40px]">
-          <Button
-            class="mx-auto mt-[40px]"
-            type="submit"
-            label="Criar conta"
-            @click="(e) => submit(e)"
-            variante="secundary"
+  <div>
+    <Header :fixed="true" :header-itens="headerItens" />
+    <div class="min-h-screen bg-qr-primary-orange px-[20px] pb-[20px] pt-[80px]">
+      <div class="mx-auto max-w-[800px] rounded-[10px] bg-white px-[40px] py-[80px]">
+        <form class="flex flex-col" method="POST">
+          <h1 class="mb-[20px] text-center text-5xl font-bold text-qr-primary-orange">
+            Crie sua conta
+          </h1>
+          <BaseInput
+            label="Nome"
+            inputType="text"
+            placeholder="Digite seu nome"
+            v-model="viewState.name.value"
+            @validate="viewState.name.validator"
+            :error-message="viewState.name.error"
           />
-          <span
-            v-if="loginErrorMessage"
-            class="relative z-10 mx-auto mt-[6px] font-notosans font-bold text-qr-primary-orange"
-            >{{ loginErrorMessage }}</span
-          >
-        </div>
-      </form>
-      <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">
-        Ou crie uma conta com
-      </p>
-      <LoginWithGoogle class="mb-[20px]" />
+          <BaseInput
+            label="Sobre nome"
+            inputType="text"
+            placeholder="Digite seu sobre nome"
+            v-model="viewState.lastName.value"
+            @validate="viewState.lastName.validator"
+            :error-message="viewState.lastName.error"
+          />
+          <BaseInput
+            label="E-mail"
+            inputType="email"
+            placeholder="Digite seu e-mail"
+            v-model="viewState.email.value"
+            @validate="viewState.email.validator"
+            :error-message="viewState.email.error"
+          />
+          <PasswordInput
+            label="Senha"
+            :inputType="passwordInputType"
+            placeholder="Digite sua senha"
+            v-model="viewState.password.value"
+            @validate="viewState.password.validator"
+            :error-message="viewState.password.error"
+            @password-visible="togglePasswordVisibility()"
+          />
+          <PasswordInput
+            label="Confirme sua Senha"
+            :inputType="confirmPasswordInputType"
+            placeholder="Digite sua senha novamente"
+            v-model="viewState.confirmPassword.value"
+            @validate="viewState.confirmPassword.validator"
+            :error-message="viewState.confirmPassword.error"
+            @password-visible="toggleconfirmPasswordVisibility()"
+          />
+          <div class="flex flex-col pb-[40px]">
+            <Button
+              class="mx-auto mt-[40px]"
+              type="submit"
+              label="Criar conta"
+              @click="(e) => submit(e)"
+              variante="secundary"
+            />
+            <span
+              v-if="loginErrorMessage"
+              class="relative z-10 mx-auto mt-[6px] font-notosans font-bold text-qr-primary-orange"
+              >{{ loginErrorMessage }}</span
+            >
+          </div>
+        </form>
+        <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">
+          Ou crie uma conta com
+        </p>
+        <LoginWithGoogle class="mb-[20px]" />
+      </div>
     </div>
   </div>
 </template>

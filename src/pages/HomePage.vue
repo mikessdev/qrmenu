@@ -69,16 +69,18 @@ const headerItens = computed(() => {
 </script>
 
 <template>
-  <Header :center="false" :color="menuStore.menu.primaryColor" :header-itens="headerItens" />
-  <main>
-    <Hero :edit-mode="userHavePermission" />
+  <div>
+    <Header :center="false" :color="menuStore.menu.primaryColor" :header-itens="headerItens" />
+    <main>
+      <Hero :edit-mode="userHavePermission" />
 
-    <div class="mx-auto max-w-[1200px]">
-      <div class="mx-auto my-[30px] h-[3px] bg-[#D9D9D9] xl:mt-[-106px]"></div>
-      <HorizontalMenu class="mx-auto mt-[30px] px-[12px]" :edit-mode="userHavePermission" />
-    </div>
-  </main>
-  <Footer class="mt-[60px]" />
+      <div class="mx-auto max-w-[1200px]">
+        <div class="mx-auto my-[30px] h-[3px] bg-[#D9D9D9] xl:mt-[-106px]"></div>
+        <HorizontalMenu class="mx-auto mt-[30px] px-[12px]" :edit-mode="userHavePermission" />
+      </div>
+    </main>
+    <Footer class="mt-[60px]" />
+  </div>
 </template>
 
 <style lang="scss" scoped></style>
