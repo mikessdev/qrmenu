@@ -127,6 +127,12 @@ const headerItens = computed(() => {
   return [
     {
       id: 1,
+      text: 'Cardápios',
+      action: () => router.push('/select-menu'),
+      show: isAuthenticated.value
+    },
+    {
+      id: 1,
       text: 'Sair',
       action: async () => {
         await authStore.signOutWithFirebase();
@@ -158,8 +164,11 @@ const headerItens = computed(() => {
             Nós entendemos o quanto um cardápio bem elaborado pode fazer a diferença no seu negócio
             ou na sua experiência culinária, e é por isso que estamos aqui para ajudar.
           </p>
-          <router-link to="/register">
+          <router-link v-if="!isAuthenticated" to="/register">
             <Button data-cy="btn-redirect-to-register" label="Cadastre-se Grátis" />
+          </router-link>
+          <router-link v-else to="/select-menu">
+            <Button data-cy="btn-redirect-to-register" label="Criar cardápio" />
           </router-link>
         </div>
         <img
