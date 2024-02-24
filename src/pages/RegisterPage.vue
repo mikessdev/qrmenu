@@ -141,9 +141,24 @@ const toggleconfirmPasswordVisibility = () => {
   const visible: boolean = confirmPasswordInputType.value === 'text';
   confirmPasswordInputType.value = visible ? 'password' : 'text';
 };
+
+const headerItens = [
+  {
+    id: 1,
+    text: 'Já tem uma conta?',
+    action: () => router.push('/login'),
+    show: true
+  },
+  {
+    id: 2,
+    text: 'Entrar',
+    action: () => router.push('/login'),
+    show: true
+  }
+];
 </script>
 <template>
-  <Header :fixed="true" />
+  <Header :fixed="true" :header-itens="headerItens" />
   <div class="min-h-screen bg-qr-primary-orange px-[20px] pb-[20px] pt-[80px]">
     <div class="mx-auto max-w-[800px] rounded-[10px] bg-white px-[40px] py-[80px]">
       <form class="flex flex-col" method="POST">
@@ -215,4 +230,6 @@ const toggleconfirmPasswordVisibility = () => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+}
+</style>
