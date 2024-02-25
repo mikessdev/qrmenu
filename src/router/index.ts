@@ -1,12 +1,13 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import LandingPage from '@/pages/LandingPage.vue';
-import HomePage from '@/pages/HomePage.vue';
-import LoginPage from '@/pages/LoginPage.vue';
-import RegisterPage from '@/pages/RegisterPage.vue';
-import RegisterCompletePage from '@/pages/RegisterCompletePage.vue';
-import SelectMenuPage from '@/pages/SelectMenuPage.vue';
-import authMiddleware from '@/middleware/authMiddleware';
 import emailVerificationMiddleware from '@/middleware/emailVerificationMiddleware';
+import RegisterCompletePage from '@/pages/RegisterCompletePage.vue';
+import { createRouter, createWebHistory } from 'vue-router';
+import authMiddleware from '@/middleware/authMiddleware';
+import SelectMenuPage from '@/pages/SelectMenuPage.vue';
+import RegisterPage from '@/pages/RegisterPage.vue';
+import NewMenuPage from '@/pages/NewMenuPage.vue';
+import LandingPage from '@/pages/LandingPage.vue';
+import LoginPage from '@/pages/LoginPage.vue';
+import HomePage from '@/pages/HomePage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,6 +51,12 @@ const router = createRouter({
         }
         return isAuthenticated;
       }
+    },
+    {
+      path: '/new',
+      name: 'new',
+      component: NewMenuPage,
+      beforeEnter: async (to) => await authMiddleware(to)
     }
   ]
 });
