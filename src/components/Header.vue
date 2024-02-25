@@ -33,9 +33,7 @@ interface HeaderItem {
     <div
       class="mx-auto my-0 flex h-full max-w-[1200px] items-center justify-between px-2.5 font-notosans font-bold text-white"
     >
-      <router-link to="/">
-        <p>LOGO</p>
-      </router-link>
+      <router-link to="/"> LOGO </router-link>
 
       <ul class="flex">
         <li class="ml-[10px]" v-for="item in headerItens" :key="item.id">
