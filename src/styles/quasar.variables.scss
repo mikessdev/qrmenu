@@ -1,16 +1,22 @@
 // It's highly recommended to change the default colors
 // to match your app's branding.
 
-$primary: #027be3;
-$secondary: #26a69a;
-$accent: #9c27b0;
-
-$dark: #1d1d1d;
-
-$positive: #21ba45;
-$negative: #c10015;
-$info: #31ccec;
-$warning: #f2c037;
+// prettier-ignore
+$primary   : #f85d3a;
+// prettier-ignore
+$secondary : #26A69A;
+// prettier-ignore
+$accent    : #9C27B0;
+// prettier-ignore
+$dark      : #1D1D1D;
+// prettier-ignore
+$positive  : #21BA45;
+// prettier-ignore
+$negative  : #C10015;
+// prettier-ignore
+$info      : #31CCEC;
+// prettier-ignore
+$warning   : #F2C037;
 
 // @import '~quasar-variables-styl'
 @import url('quasar/dist/quasar.sass');
