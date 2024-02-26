@@ -9,7 +9,7 @@ export const useMenuStore = defineStore('menuManagement', () => {
   const menus = ref<Menu[]>([] as Menu[]);
   const menu = ref<Menu>({} as Menu);
 
-  const createMenu = async (menu: Menu, accessToken: string): Promise<Menu> => {
+  const createMenu = async (menu: Menu, accessToken: string): Promise<String> => {
     const url: string = import.meta.env.VITE_MENU_URL;
     menu.id = uuidv4();
     try {
@@ -23,15 +23,11 @@ export const useMenuStore = defineStore('menuManagement', () => {
         body: JSON.stringify(menu)
       });
       const result: Result = await response.json();
-      const success = result.status === Status.SUCCESS;
-      if (success) {
-        return result.message as Menu;
-      }
-      return {} as Menu;
+      return result.status;
     } catch (error) {
       console.error(error);
+      return Status.FAILED;
     }
-    return {} as Menu;
   };
 
   const getMenus = async (userId: string, accessToken: string): Promise<void> => {
