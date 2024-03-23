@@ -6,10 +6,9 @@ import { sendEmailVerification, type UserCredential, type User } from 'firebase/
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-const router = useRouter();
-
 const authStore = useAuthStore();
 const userStore = useUserStore();
+const router = useRouter();
 
 const showInformation = ref<Boolean>(false);
 

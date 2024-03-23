@@ -1,29 +1,27 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/store/authStore';
-import { onMounted, ref } from 'vue';
-
-const authStore = useAuthStore();
-
-const isAuthenticated = ref<boolean>(false);
+import { type PropType } from 'vue';
 
 const props = defineProps({
   fixed: {
     type: Boolean,
     default: false
   },
-  center: {
-    type: Boolean,
-    default: false
-  },
   color: {
     type: String,
     default: '#f85d3a'
+  },
+  headerItens: {
+    type: Array as PropType<HeaderItem[]>,
+    default: [] as HeaderItem[]
   }
 });
 
-onMounted(async () => {
-  isAuthenticated.value = await authStore.isAuthenticated();
-});
+interface HeaderItem {
+  id: number;
+  text: string;
+  action: Function;
+  show: boolean;
+}
 </script>
 
 <template>
@@ -33,33 +31,18 @@ onMounted(async () => {
     class="h-[60px] w-full shadow-md"
   >
     <div
-      v-if="props.center"
-      class="mx-auto my-0 flex h-full max-w-[1200px] items-center px-2.5 font-notosans font-bold text-white"
-    >
-      <p class="mx-auto">LOGO</p>
-    </div>
-    <div
-      v-if="!props.center"
       class="mx-auto my-0 flex h-full max-w-[1200px] items-center justify-between px-2.5 font-notosans font-bold text-white"
     >
-      <p>LOGO</p>
+      <router-link to="/"> LOGO </router-link>
 
-      <ul>
-        <li
-          v-if="isAuthenticated"
-          @click="
-            () => {
-              authStore.signOutWithFirebase();
-              isAuthenticated = false;
-            }
-          "
-        >
-          <a class="cursor-pointer hover:text-qr-medium-gray">Sair</a>
-        </li>
-        <li v-else>
-          <router-link to="/login">
-            <a class="cursor-pointer hover:text-qr-medium-gray">Acessar</a>
-          </router-link>
+      <ul class="flex">
+        <li class="ml-[10px]" v-for="item in headerItens" :key="item.id">
+          <a
+            v-if="item.show"
+            @click="item.action"
+            class="cursor-pointer hover:text-qr-medium-gray"
+            >{{ item.text }}</a
+          >
         </li>
       </ul>
     </div>

@@ -6,15 +6,15 @@ module.exports = {
   theme: {
     extend: {
       screens: {
-        sm: '640px',
+        mobile: { min: '0px', max: '480px' },
 
-        md: { min: '0px', max: '689px' },
+        tablet: { min: '481px', max: '768px' },
 
-        lg: { min: '690px', max: '850px' },
+        laptop: { min: '769px', max: '1024px' },
 
-        xl: { min: '851px' },
+        desktop: { min: '1025px', max: '1200px' },
 
-        '2xl': '1536px'
+        tv: { min: '1201px' },
       },
       colors: {
         'qr-primary-orange': 'var(--qr-primary-orange)',
@@ -24,7 +24,8 @@ module.exports = {
         'qr-bit-light-gray': 'var(--qr-bit-light-gray)'
       },
       fontFamily: {
-        notosans: ['Noto Sans']
+        notosans: ['Noto Sans'],
+
       }
     }
   },

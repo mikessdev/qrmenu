@@ -23,3 +23,9 @@ npm install
 npm run dev
 
 ```
+
+### Option for conventional commits
+
+```bash 
+npm install commitizen -g
+```

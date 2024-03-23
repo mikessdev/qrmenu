@@ -9,11 +9,11 @@ export const useMenuStore = defineStore('menuManagement', () => {
   const menus = ref<Menu[]>([] as Menu[]);
   const menu = ref<Menu>({} as Menu);
 
-  const createMenu = async (menu: Menu, accessToken: string): Promise<void> => {
+  const createMenu = async (menu: Menu, accessToken: string): Promise<String> => {
     const url: string = import.meta.env.VITE_MENU_URL;
     menu.id = uuidv4();
     try {
-      await fetch(url, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -22,8 +22,11 @@ export const useMenuStore = defineStore('menuManagement', () => {
         },
         body: JSON.stringify(menu)
       });
+      const result: Result = await response.json();
+      return result.status;
     } catch (error) {
       console.error(error);
+      return Status.FAILED;
     }
   };
 
@@ -42,8 +45,9 @@ export const useMenuStore = defineStore('menuManagement', () => {
       const success = result.status === Status.SUCCESS;
 
       if (success) {
-        menus.value = result.message;
+        return (menus.value = result.message);
       }
+      throw result;
     } catch (error) {
       console.error(error);
     }
@@ -58,8 +62,10 @@ export const useMenuStore = defineStore('menuManagement', () => {
       const success = result.status === Status.SUCCESS;
 
       if (success) {
-        menu.value = result.message;
+        return (menu.value = result.message);
       }
+
+      throw result;
     } catch (error) {
       console.error(error);
     }
