@@ -41,6 +41,7 @@
 .title {
     font-family: 'NotoSans', sans-serif;
     font-weight: bold;
+    line-height: 1.3;
     font-size: clamp(28px, 1em + 3vw, 48px);
 
 }

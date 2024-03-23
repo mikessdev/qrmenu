@@ -178,7 +178,7 @@ const headerItens = computed(() => {
       </div>
     </section>
     <section class="h-[600px] w-full bg-qr-light-gray px-[20px]">
-      <div class="mx-auto my-0 flex h-[100%] max-w-[1200px] flex-col items-center text-center">
+      <div class="mx-auto my-0 flex h-[100%] max-w-[1200px] justify-center items-center text-center">
         <h2 class="title mb-[20px] mt-[40px]">Crie. Personalize. Compartilhe</h2>
         <p class="paragraph mb-[40px] max-w-[900px]">
           Nossa plataforma intuitiva e fácil de usar permite que você crie cardápios personalizados
