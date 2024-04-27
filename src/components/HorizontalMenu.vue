@@ -42,14 +42,10 @@ const productStore = useProductStore();
 const showEditCategoryModal = ref<Boolean>(false);
 const showEditProductModal = ref<Boolean>(false);
 const showAlertDialog = ref<Boolean>(false);
-
 const reassembleMenu = ref<Boolean>(false);
-
 const currentCategory = ref<Category>({} as Category);
-
 const categorieWillBeDeleted = ref<Category>({} as Category);
 const categorieWillBeEdited = ref<Category>({} as Category);
-
 const productWillBeDeleted = ref<Product>({} as Product);
 const productWillBeEdited = ref<Product>({} as Product);
 
@@ -174,7 +170,7 @@ const deleteCategory = async (id: string) => {
 };
 
 const setCategoryFocus = (categoryId: string, currentCategoryId: string) => {
-  const { primaryColor: color } = menuStore.menu;
+  const { color: color } = menuStore.menu;
   const onFocus = categoryId === currentCategoryId;
   return onFocus ? `border-color: ${color}; color: ${color};` : '';
 };
@@ -182,8 +178,8 @@ const setCategoryFocus = (categoryId: string, currentCategoryId: string) => {
 const sertCategorySeparatorFocus = (categoryId: string, currentCategoryId: string) => {
   const onFocus = categoryId === currentCategoryId;
   return onFocus
-    ? `background-color: ${menuStore.menu.primaryColor}; color: #FFF`
-    : `background-color: #E0E0E0; color: ${menuStore.menu.primaryColor};`;
+    ? `background-color: ${menuStore.menu.color}; color: #FFF`
+    : `background-color: #E0E0E0; color: ${menuStore.menu.color};`;
 };
 
 const toggleProductEditModal = () => {
@@ -214,13 +210,7 @@ const actionProduct = async () => {
 
   const isToBeEdited = !!productWillBeEdited.value.id;
 
-  if (isToBeEdited) {
-    await updateProduct();
-  }
-
-  if (!isToBeEdited) {
-    await createProduct();
-  }
+  isToBeEdited ? await updateProduct() : await createProduct();
 
   await categoryStore.getCategories(menuId);
   toggleProductEditModal();
@@ -271,6 +261,7 @@ const allowAlertDialog = async () => {
   if (isProduct) {
     await deleteProduct(productId);
   }
+
   const { id: menuId } = menuStore.menu;
   await categoryStore.getCategories(menuId);
   toggleAlertDialog();
@@ -335,10 +326,14 @@ const scrollCategoryAnimation = (e: Event, selector: string) => {
 
 const setupHorizontalMenu = async () => {
   const { id: menuId } = menuStore.menu;
-  await categoryStore.getCategories(menuId);
-  const firstCategory: Category = categoryStore.categories[0];
-  currentCategory.value = firstCategory;
-  setCategoryFocus(firstCategory.id, firstCategory.id);
+
+  if (menuId) {
+    await categoryStore.getCategories(menuId);
+    const firstCategory: Category = categoryStore.categories[0];
+
+    currentCategory.value = firstCategory;
+    setCategoryFocus(firstCategory.id, firstCategory.id);
+  }
 };
 
 onMounted(async () => {
@@ -370,7 +365,7 @@ const reassembleMenuNavigation = (scrollY: number) => {
       ]"
     >
       <div class="cursor-pointer p-[12px]" v-if="props.editMode" @click="toggleCategoryEditModal()">
-        <PlusIcon :color="menuStore.menu.primaryColor" :width="24" :height="24" />
+        <PlusIcon :color="menuStore.menu.color" :width="24" :height="24" />
       </div>
       <nav class="flex">
         <ul v-for="category in categoryStore.categories" :key="category.id">
@@ -399,12 +394,12 @@ const reassembleMenuNavigation = (scrollY: number) => {
                     toggleCategoryEditModal();
                   }
                 "
-                :color="menuStore.menu.primaryColor"
+                :color="menuStore.menu.color"
                 :width="20"
                 :height="20"
               />
               <DeleteIcon
-                :color="menuStore.menu.primaryColor"
+                :color="menuStore.menu.color"
                 @click="
                   () => {
                     categorieWillBeDeleted = category;
@@ -443,7 +438,7 @@ const reassembleMenuNavigation = (scrollY: number) => {
               }
             "
           >
-            <PlusIcon :color="menuStore.menu.primaryColor" :width="30" :height="30" />
+            <PlusIcon :color="menuStore.menu.color" :width="30" :height="30" />
           </li>
           <li v-for="product in category.products" :key="product.id">
             <div class="flex flex-col-reverse">
@@ -463,13 +458,13 @@ const reassembleMenuNavigation = (scrollY: number) => {
                       toggleProductEditModal();
                     }
                   "
-                  :color="menuStore.menu.primaryColor"
+                  :color="menuStore.menu.color"
                   :width="20"
                   :height="20"
                 />
                 <DeleteIcon
                   v-if="props.editMode"
-                  :color="menuStore.menu.primaryColor"
+                  :color="menuStore.menu.color"
                   @click="
                     () => {
                       productWillBeDeleted = product;

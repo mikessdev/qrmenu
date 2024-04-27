@@ -11,12 +11,12 @@ import { useCategoryStore } from '@/store/categoryStore';
 import { useAuthComposable } from '@/composables/useAuthComposable';
 import { useAuthStore } from '@/store/authStore';
 
+const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
 const menuStore = useMenuStore();
 const authStore = useAuthStore();
 const categoryStore = useCategoryStore();
-const route = useRoute();
 const { isAuthenticated } = useAuthComposable();
 
 const userHavePermission = ref<boolean>(false);
@@ -32,25 +32,29 @@ const setPermissionToEdit = (): boolean => {
 };
 
 const loadData = async (url: string) => {
-  await menuStore.getMenuByURL(url as string);
-  await categoryStore.getCategories(menuStore.menu.id);
+  await menuStore.getMenuByURL(url);
+  await categoryStore.getCategories(menuStore.menu?.id);
 };
 
 onMounted(async () => {
-  // const { url } = route.params;
-  // return await loadData(`${url}`);
   userHavePermission.value = setPermissionToEdit();
 });
 
 onBeforeMount(async () => {
-  const { url } = route.params;
-  return await loadData(`${url}`);
+  const url: string = route.fullPath.slice(1);
+  return await loadData(url);
 });
 
 const headerItens = computed(() => {
   return [
     {
       id: 1,
+      text: 'Cardápios',
+      action: () => router.push('/select-menu'),
+      show: isAuthenticated.value
+    },
+    {
+      id: 2,
       text: 'Sair',
       action: async () => {
         await authStore.signOutWithFirebase();
@@ -59,7 +63,7 @@ const headerItens = computed(() => {
       show: isAuthenticated.value
     },
     {
-      id: 2,
+      id: 3,
       text: 'Acessar',
       action: () => router.push('/login'),
       show: !isAuthenticated.value
@@ -70,7 +74,7 @@ const headerItens = computed(() => {
 
 <template>
   <div>
-    <Header :center="false" :color="menuStore.menu.primaryColor" :header-itens="headerItens" />
+    <Header :center="false" :color="menuStore.menu.color" :header-itens="headerItens" />
     <main>
       <Hero :edit-mode="userHavePermission" />
 

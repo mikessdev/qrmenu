@@ -117,7 +117,7 @@ const createMenu = async () => {
     userId,
     name: name.value,
     url: url.value + generateId(),
-    primaryColor: color.value,
+    color: color.value,
     instagram: instagram.value,
     phoneNumber: phoneNumber.value
   } as Menu;
@@ -151,7 +151,7 @@ const errorCreatingMenuNotify = () => {
 };
 
 const generateId = () => {
-  let numbers = '#';
+  let numbers = '';
   for (let i = 0; i < 4; i++) {
     numbers = numbers + Math.floor(Math.random() * 9);
   }
