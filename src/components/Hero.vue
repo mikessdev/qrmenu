@@ -153,7 +153,7 @@ const updateHero = async () => {
   } as Menu;
 
   await menuStore.updateMenu(menu, accessToken);
-  menuStore.menu = await menuStore.getMenuByURL(menu.url);
+  await menuStore.getMenuByURL(menu.url);
   showEditModal.value = false;
 };
 
