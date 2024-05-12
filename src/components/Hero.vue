@@ -57,11 +57,11 @@ const heroState = reactive({
       heroState.name.error = validateEmptyText(heroState.name.value);
     }
   },
-  primaryColor: {
+  color: {
     value: '',
     error: '',
     validator: () => {
-      heroState.primaryColor.error = validateEmptyText(heroState.primaryColor.value);
+      heroState.color.error = validateEmptyText(heroState.color.value);
     }
   },
   phoneNumber: {
@@ -123,7 +123,7 @@ const updateHero = async () => {
   const { accessToken } = userStore.user;
   const { id, userId, headerImg, profileImg, url, address, openDays } = menuStore.menu;
 
-  const { banner, profile, name, primaryColor, instagram, phoneNumber } = heroState;
+  const { banner, profile, name, color, instagram, phoneNumber } = heroState;
 
   let headerImage: string = headerImg;
   let profileImage: string = profileImg;
@@ -144,7 +144,7 @@ const updateHero = async () => {
     headerImg: headerImage,
     profileImg: profileImage,
     name: name.value,
-    primaryColor: primaryColor.value,
+    color: color.value,
     address,
     instagram: instagram.value,
     openDays,
@@ -163,21 +163,6 @@ const toggleEditModal = () => {
 
 const cancel = () => {
   showEditModal.value = false;
-};
-
-const formatWhatsappNumber = (phoneNumber: string): string => {
-  if (phoneNumber.length === 11) {
-    return (
-      '(' +
-      menuStore.menu.phoneNumber.slice(0, 2) +
-      ') ' +
-      menuStore.menu.phoneNumber.slice(2, -4) +
-      ' ' +
-      menuStore.menu.phoneNumber.slice(7)
-    );
-  }
-
-  return phoneNumber;
 };
 </script>
 <template>
@@ -240,7 +225,7 @@ const formatWhatsappNumber = (phoneNumber: string): string => {
                 class="mb-[12px] mt-[12px] flex h-[40px] cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-[#40C351] px-[16px] font-notosans text-xl font-bold text-white drop-shadow-lg md:w-[100%]"
               >
                 <SocialIcon title="whatsapp" />
-                <span>{{ formatWhatsappNumber(menuStore.menu.phoneNumber) }}</span>
+                <span>{{ menuStore.menu.phoneNumber }}</span>
               </button>
             </a>
           </div>
@@ -253,7 +238,7 @@ const formatWhatsappNumber = (phoneNumber: string): string => {
       @click="
         () => {
           heroState.name.value = menuStore.menu.name;
-          heroState.primaryColor.value = menuStore.menu.primaryColor;
+          heroState.color.value = menuStore.menu.color;
           heroState.phoneNumber.value = menuStore.menu.phoneNumber;
           heroState.instagram.value = menuStore.menu.instagram;
           toggleEditModal();
@@ -291,11 +276,11 @@ const formatWhatsappNumber = (phoneNumber: string): string => {
 
     <BaseInput
       maxlength="30"
-      v-model="heroState.primaryColor.value"
+      v-model="heroState.color.value"
       label="Cor de destaque no formato HEX"
       placeholder="#531459"
-      :error-message="heroState.primaryColor.error"
-      @validate="heroState.primaryColor.validator()"
+      :error-message="heroState.color.error"
+      @validate="heroState.color.validator()"
     />
 
     <BaseInput
