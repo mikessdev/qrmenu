@@ -18,9 +18,10 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "@unhead/vue": "^1.7.4",
+    "commitizen": "^4.3.0",
     "firebase": "^10.1.0",
     "pinia": "^2.1.3",
-    "quasar": "^2.0.0",
+    "quasar": "^2.16.2",
     "uuid": "^9.0.0",
     "vue": "^3.3.2",
     "vue-recaptcha": "^3.0.0-alpha.6",
