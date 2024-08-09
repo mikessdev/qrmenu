@@ -10,12 +10,10 @@ import Header from '@/components/Header.vue';
 import Button from '@/components/Button.vue';
 import { useRouter } from 'vue-router';
 import { validateSlug } from '@/validators/slug';
-import { useQuasar } from 'quasar';
 import { Status } from '@/utils/enuns/status';
 
 const menuStore = useMenuStore();
 const userStore = useUserStore();
-const quasar = useQuasar();
 const router = useRouter();
 const { isAuthenticated } = useAuthComposable();
 
@@ -133,21 +131,23 @@ const createMenu = async () => {
 };
 
 const createMenuNotify = () => {
-  quasar.notify({
-    spinner: false,
-    color: 'primary',
-    message: 'Menu criado com sucesso!',
-    timeout: 2000
-  });
+  alert('Menu criado com sucesso');
+  // quasar.notify({
+  //   spinner: false,
+  //   color: 'primary',
+  //   message: 'Menu criado com sucesso!',
+  //   timeout: 2000
+  // });
 };
 
 const errorCreatingMenuNotify = () => {
-  quasar.notify({
-    spinner: false,
-    color: 'primary',
-    message: 'Não foi possível criar o cardápio! Por favor, tente novamente mais tarde.',
-    timeout: 2000
-  });
+  alert('Não foi possível criar o cardápio! Por favor, tente novamente mais tarde.');
+  // quasar.notify({
+  //   spinner: false,
+  //   color: 'primary',
+  //   message: 'Não foi possível criar o cardápio! Por favor, tente novamente mais tarde.',
+  //   timeout: 2000
+  // });
 };
 
 const generateId = () => {
@@ -164,14 +164,8 @@ const generateId = () => {
     <Header :header-itens="headerItens" />
     <div class="mx-auto my-0">
       <div>
-        <q-stepper v-model="step" ref="stepper" alternative-labels :flat="true" animated>
-          <q-step
-            :name="1"
-            done-color="primary"
-            title="Informações"
-            icon="description"
-            :done="step > 1"
-          >
+        <v-stepper Editable :items="['Informações', 'Cor', 'URL']">
+          <template v-slot:item.1>
             <p class="text-center font-notosans text-base font-bold text-[#4E4E4E]">
               Vamos precisar de algumas informações para montarmos o seu cardápio.
             </p>
@@ -201,24 +195,16 @@ const generateId = () => {
                 @validate="menuState.instagram.validator()"
               />
             </div>
-          </q-step>
+          </template>
 
-          <q-step :name="2" title="Cor" icon="color_lens" :done="step > 2">
+          <template v-slot:item.2>
             <p class="text-center font-notosans text-base font-bold text-[#4E4E4E]">
               Escolha uma cor de destaque para o seu cardápio.
             </p>
-            <div class="flex w-full justify-center">
-              <q-color
-                v-model="menuState.color.value"
-                default-value="#f85d3a"
-                style="max-width: 250px"
-                :no-footer="true"
-                :no-header="false"
-              />
-            </div>
-          </q-step>
+            <v-color-picker v-model="menuState.color.value"></v-color-picker>
+          </template>
 
-          <q-step :name="3" title="URL" icon="link">
+          <template v-slot:item.3>
             <div class="mx-auto my-0 max-w-[400px]">
               <p class="text-center font-notosans text-base font-bold text-[#4E4E4E]">
                 Escolha um nome para a URL do Cardápio.
@@ -245,29 +231,8 @@ const generateId = () => {
                 @validate="menuState.url.validator()"
               />
             </div>
-          </q-step>
-
-          <template v-slot:navigation>
-            <q-stepper-navigation>
-              <div class="mx-auto my-0 flex w-full justify-center gap-10">
-                <Button
-                  v-if="step > 1"
-                  flat
-                  color="secondary"
-                  variante="primary"
-                  @click="previous()"
-                  label="Voltar"
-                />
-                <Button
-                  @click="next()"
-                  variante="secundary"
-                  :is-disabled="nextButtonIsDisabled()"
-                  :label="step === 3 ? 'Criar cardápio' : 'Continuar'"
-                />
-              </div>
-            </q-stepper-navigation>
           </template>
-        </q-stepper>
+        </v-stepper>
       </div>
     </div>
   </div>

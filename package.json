@@ -25,7 +25,8 @@
     "uuid": "^9.0.0",
     "vue": "^3.3.2",
     "vue-recaptcha": "^3.0.0-alpha.6",
-    "vue-router": "^4.2.0"
+    "vue-router": "^4.2.0",
+    "vuetify": "^3.6.14"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
