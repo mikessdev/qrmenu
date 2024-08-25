@@ -179,13 +179,16 @@ const headerItens = computed(() => {
     </section>
     <section class="h-[600px] w-full bg-qr-light-gray px-[20px]">
       <div
-        class="mx-auto my-0 flex h-[100%] max-w-[1200px] items-center justify-center text-center"
+        class="mx-auto my-0 flex h-[100%] max-w-[1200px] flex-col items-center justify-center text-center"
       >
-        <h2 class="title mb-[20px] mt-[40px]">Crie. Personalize. Compartilhe</h2>
-        <p class="paragraph mb-[40px] max-w-[900px]">
-          Nossa plataforma intuitiva e fácil de usar permite que você crie cardápios personalizados
-          em questão de minutos, sem a necessidade de conhecimento em design gráfico.
-        </p>
+        <div>
+          <h2 class="title mb-[20px] mt-[40px]">Crie. Personalize. Compartilhe</h2>
+          <p class="paragraph mb-[40px] max-w-[900px]">
+            Nossa plataforma intuitiva e fácil de usar permite que você crie cardápios
+            personalizados em questão de minutos, sem a necessidade de conhecimento em design
+            gráfico.
+          </p>
+        </div>
         <iframe
           class="mb-[30px] h-[100%] max-h-[315px] w-[80%] max-w-[560px]"
           src="https://www.youtube.com/embed/9xht4JIOfjU?si=tfhhzH_A6jUZdbYs"
