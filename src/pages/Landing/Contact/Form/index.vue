@@ -6,9 +6,9 @@ import { validateEmail } from '@/validators/email';
 import { sendEmailWithBrevo, type BrevoEmailBody } from '@/utils/sendEmail';
 import { useChallengeV2 } from 'vue-recaptcha';
 import { reactive, ref } from 'vue';
+import ErrorText from '@/components/Typography/ErrorText.vue';
 
 const valid = ref(false);
-
 const loading = ref(false);
 const reCAPTCHAChecked = ref<Boolean>(false);
 const sendButtonIsClicked = ref<Boolean>(false);
@@ -142,9 +142,8 @@ const checkValidation = () => {
     </div>
     <div class="mx-auto mt-[40px] flex flex-col items-center">
       <div ref="root" />
-      <div v-if="viewState.recaptcha.error" class="text-caption text-error">
-        {{ viewState.recaptcha.error }}
-      </div>
+      <ErrorText v-if="viewState.recaptcha.error" :text="viewState.recaptcha.error" />
+
       <Button
         :loading="loading"
         class="mt-[20px]"
