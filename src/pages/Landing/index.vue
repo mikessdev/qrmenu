@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import Header from '@/components/Header.vue';
 import Button from '@/components/Button.vue';
-import BaseInput from '@/components/BaseInput.vue';
+import Contact from '@/pages/Landing/Contact/index.vue';
 import Footer from '@/components/Footer.vue';
-import { reactive, ref } from 'vue';
-import { validateEmptyText } from '@/validators/emptyText';
-import { validateEmail } from '@/validators/email';
-import { sendEmailWithBrevo, type BrevoEmailBody } from '@/utils/sendEmail';
-import { useChallengeV2 } from 'vue-recaptcha';
+import { ref } from 'vue';
 import { useAuthComposable } from '@/composables/useAuthComposable';
 import { useAuthStore } from '@/store/authStore';
 import { useRouter } from 'vue-router';
@@ -17,111 +13,7 @@ const { isAuthenticated } = useAuthComposable();
 const authStore = useAuthStore();
 const router = useRouter();
 
-const reCAPTCHAChecked = ref<Boolean>(false);
-const sendButtonIsClicked = ref<Boolean>(false);
 const fixedHeader = ref<Boolean>(true);
-
-const sendEmail = async (e: Event) => {
-  e.preventDefault();
-  sendButtonIsClicked.value = true;
-  const thereIsNoError = validFilds();
-
-  if (thereIsNoError) {
-    const emailBody: BrevoEmailBody = {
-      sender: {
-        name: viewState.name.value,
-        email: viewState.email.value
-      },
-      to: [
-        {
-          email: import.meta.env.VITE_EMAIL,
-          name: 'Seu Cardápio'
-        }
-      ],
-      subject: 'Dúvida seu cardápio',
-      htmlContent: `<html><head></head><body><p>${viewState.subject.value}</p></body></html>`
-    };
-    await sendEmailWithBrevo(emailBody);
-    reCAPTCHAChecked.value = false;
-  }
-};
-
-const validFilds = () => {
-  viewState.name.validator();
-  viewState.email.validator();
-  viewState.subject.validator();
-  viewState.recaptcha.validator();
-
-  const nameError = viewState.name.error;
-  const emailError = viewState.email.error;
-  const subjectError = viewState.subject.error;
-  const recaptchaError = viewState.recaptcha.error;
-  const thereIsNoError = !nameError && !emailError && !subjectError && !recaptchaError;
-
-  return thereIsNoError;
-};
-
-const viewState = reactive({
-  name: {
-    value: '',
-    error: '',
-    validator: () => {
-      if (sendButtonIsClicked.value) {
-        viewState.name.error = validateEmptyText(viewState.name.value)
-          ? 'Você precisa preencher o campo do seu nome!'
-          : '';
-      }
-    }
-  },
-  email: {
-    value: '',
-    error: '',
-    validator: () => {
-      if (sendButtonIsClicked.value) {
-        viewState.email.error = validateEmptyText(viewState.email.value)
-          ? 'Você precisa preencher o campo do seu E-mail!'
-          : '';
-
-        if (viewState.email.value) {
-          viewState.email.error = validateEmail(viewState.email.value);
-        }
-      }
-    }
-  },
-  subject: {
-    value: '',
-    error: '',
-    validator: () => {
-      if (sendButtonIsClicked.value) {
-        viewState.subject.error = validateEmptyText(viewState.subject.value)
-          ? 'Você precisa preencher o campo de mensagem!'
-          : '';
-      }
-    }
-  },
-  recaptcha: {
-    error: '',
-    validator: () => {
-      if (sendButtonIsClicked.value) {
-        viewState.recaptcha.error = reCAPTCHAChecked.value
-          ? ''
-          : 'Você precisa marcar a caixinha de verificação acima!';
-      }
-    }
-  }
-});
-
-const { root, onVerify } = useChallengeV2({
-  options: {
-    theme: 'light',
-    size: 'normal'
-  }
-});
-
-onVerify(() => {
-  reCAPTCHAChecked.value = true;
-  viewState.recaptcha.validator();
-});
 
 const headerItens = computed(() => {
   return [
@@ -165,10 +57,10 @@ const headerItens = computed(() => {
             ou na sua experiência culinária, e é por isso que estamos aqui para ajudar.
           </p>
           <router-link v-if="!isAuthenticated" to="/register">
-            <Button data-cy="btn-redirect-to-register" label="Cadastre-se Grátis" />
+            <Button data-cy="btn-redirect-to-register" children="Cadastre-se Grátis" />
           </router-link>
           <router-link v-else to="/select-menu">
-            <Button data-cy="btn-redirect-to-register" label="Criar cardápio" />
+            <Button data-cy="btn-redirect-to-register" children="Criar cardápio" />
           </router-link>
         </div>
         <img
@@ -250,50 +142,7 @@ const headerItens = computed(() => {
         </div>
         <div class="my-[60px] h-[6px] w-full rounded-[100px] bg-qr-primary-orange"></div>
         <h2 class="title text-qr-primary-orange">Contato</h2>
-        <p class="paragraph my-[40px] text-center text-black">
-          Você tem mais alguma dúvida? Por favor, entre em contato.
-        </p>
-        <form ref="form" class="flex w-[100%] max-w-[800px] flex-col">
-          <BaseInput
-            label="Nome"
-            maxlength="35"
-            :errorMessage="viewState.name.error"
-            v-model="viewState.name.value"
-            @validate="viewState.name.validator"
-          />
-          <BaseInput
-            label="E-mail"
-            maxlength="35"
-            :errorMessage="viewState.email.error"
-            v-model="viewState.email.value"
-            @validate="viewState.email.validator"
-          />
-          <BaseInput
-            label="Mensagem"
-            :textArea="true"
-            maxlength="600"
-            :errorMessage="viewState.subject.error"
-            v-model="viewState.subject.value"
-            @validate="viewState.subject.validator"
-          />
-          <div class="mx-auto mt-[40px] flex flex-col items-center">
-            <div ref="root" />
-            <span
-              v-if="viewState.recaptcha.error"
-              class="pl-[6px] font-notosans font-bold text-qr-primary-orange"
-            >
-              {{ viewState.recaptcha.error }}
-            </span>
-
-            <Button
-              class="mt-[40px]"
-              label="Enviar"
-              type="submit"
-              @click="(e) => sendEmail(e)"
-              variante="secundary"
-            />
-          </div>
-        </form>
+        <Contact />
       </div>
     </section>
     <Footer />
