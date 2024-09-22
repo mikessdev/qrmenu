@@ -14,7 +14,7 @@ const showInformation = ref<Boolean>(false);
 
 const submit = async (e: Event) => {
   e.preventDefault();
-  const user: User = authStore.userCredential.user;
+  const user: User = authStore?.userCredential?.user || {};
   try {
     await sendEmailVerification(user);
     authStore.userCredential = {} as UserCredential;

@@ -16,6 +16,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "@unhead/vue": "^1.7.4",
     "commitizen": "^4.3.0",
     "firebase": "^10.1.0",

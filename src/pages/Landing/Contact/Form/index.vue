@@ -26,7 +26,7 @@ const viewState = reactive({
     error: '',
     validator: () => {
       if (sendButtonIsClicked.value) {
-        viewState.name.error = validateEmptyText(viewState.name.value) ? 'Campo obrigatório!' : '';
+        viewState.name.error = validateEmptyText(viewState.name.value);
       }
     }
   },
@@ -35,9 +35,7 @@ const viewState = reactive({
     error: '',
     validator: () => {
       if (sendButtonIsClicked.value) {
-        viewState.email.error = validateEmptyText(viewState.email.value)
-          ? 'Campo obrigatório!'
-          : '';
+        viewState.email.error = validateEmptyText(viewState.email.value);
 
         if (viewState.email.value) {
           viewState.email.error = validateEmail(viewState.email.value);
@@ -50,9 +48,7 @@ const viewState = reactive({
     error: '',
     validator: () => {
       if (sendButtonIsClicked.value) {
-        viewState.subject.error = validateEmptyText(viewState.subject.value)
-          ? 'Campo obrigatório!'
-          : '';
+        viewState.subject.error = validateEmptyText(viewState.subject.value);
       }
     }
   },

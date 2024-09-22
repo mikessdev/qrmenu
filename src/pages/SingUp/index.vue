@@ -107,8 +107,8 @@ const submit = async (e: Event) => {
   if (thereIsNoError) {
     try {
       await authStore.signUpWithFirebase(email, password);
-      const { uid } = authStore.userCredential.user;
-      const accessToken = await authStore.userCredential.user.getIdToken();
+      const { uid } = authStore?.userCredential?.user || {};
+      const accessToken = await authStore?.userCredential?.user?.getIdToken();
       await userStore.createUser(
         {
           id: uid,

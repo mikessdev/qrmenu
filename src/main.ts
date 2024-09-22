@@ -10,6 +10,7 @@ import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import { light, dark } from './themes/vuetify';
+import '@mdi/font/css/materialdesignicons.css';
 
 const pinia = createPinia();
 const app = createApp(App);
@@ -21,6 +22,9 @@ const vuetify = createVuetify({
   theme: {
     defaultTheme: 'light',
     themes: { light, dark }
+  },
+  icons: {
+    defaultSet: 'mdi'
   }
 });
 
