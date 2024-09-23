@@ -100,21 +100,6 @@ const headerItens = [
       >
         <div class="flex h-[100%] w-[90%] flex-col justify-evenly py-[20px]">
           <h1 class="title max text-center text-qr-primary-orange">Entre com sua conta</h1>
-          <div v-if="loginErrorMessage === AuthError.userNotFound" class="text-caption my-4">
-            <v-alert icon="mdi-alert-circle-outline" class="" density="compact">
-              <span class="text-caption">
-                Não encontramos nenhuma conta com esse email. Não tem uma conta ainda?
-                <a href="/register"> <Typography text="Registre-se" class="inline underline" /> </a>
-              </span>
-            </v-alert>
-          </div>
-          <ErrorText
-            v-if="
-              loginErrorMessage === AuthError.invalidEmail ||
-              loginErrorMessage === AuthError.wrongPassword
-            "
-            text="Email ou senha incorreta!"
-          />
 
           <form class="flex flex-col" method="POST">
             <div class="flex flex-col gap-2">
@@ -130,7 +115,25 @@ const headerItens = [
                 v-model="viewState.password.value"
                 :error-messages="viewState.password.error"
               />
+
               <div class="mt-[30px] flex flex-col">
+                <div v-if="loginErrorMessage === AuthError.userNotFound" class="text-caption my-4">
+                  <v-alert icon="mdi-alert-circle-outline" class="" density="compact">
+                    <span class="text-caption">
+                      Não encontramos nenhuma conta com esse email. Não tem uma conta ainda?
+                      <a href="/register">
+                        <Typography text="Registre-se" class="inline underline" />
+                      </a>
+                    </span>
+                  </v-alert>
+                </div>
+                <ErrorText
+                  v-if="
+                    loginErrorMessage === AuthError.invalidEmail ||
+                    loginErrorMessage === AuthError.wrongPassword
+                  "
+                  text="Email ou senha incorreta!"
+                />
                 <Button
                   class="mx-auto"
                   color="primary"
