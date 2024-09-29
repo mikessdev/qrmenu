@@ -124,7 +124,7 @@ const submit = async (e: Event) => {
       const emailError: string = 'auth/email-already-in-use';
       const emailAlreadyInUse: boolean = error.code === emailError;
       if (emailAlreadyInUse) {
-        loginErrorMessage.value = 'Já existe uma conta cadastrada com esse email.';
+        loginErrorMessage.value = 'Já existe uma conta cadastrada com este email.';
       }
     } finally {
       loading.value = false;
@@ -192,7 +192,7 @@ const headerItens = [
           </div>
           <div v-if="loginErrorMessage" class="text-caption my-4">
             <v-alert icon="mdi-alert-circle-outline" class="" density="compact">
-              <span class="text-caption"> Já existe uma conta cadastrada com esse email. </span>
+              <span class="text-caption"> Já existe uma conta cadastrada com este email. </span>
             </v-alert>
           </div>
           <div class="flex flex-col pb-[40px]">

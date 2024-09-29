@@ -22,4 +22,3 @@ const props = defineProps({
     {{ children }}
   </v-btn>
 </template>
-<style lang="scss" scoped></style>

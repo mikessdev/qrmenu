@@ -11,16 +11,25 @@ const userStore = useUserStore();
 const router = useRouter();
 
 const showInformation = ref<Boolean>(false);
+const loading = ref<boolean>(false);
+const emailSent = ref<boolean>(false);
 
 const submit = async (e: Event) => {
+  loading.value = true;
   e.preventDefault();
-  const user: User = authStore?.userCredential?.user || {};
+  console.log('user: ', authStore.userCredential.user);
+  const user: User = authStore?.userCredential?.user;
   try {
+    if (!user) throw new Error('User not authenticated');
     await sendEmailVerification(user);
     authStore.userCredential = {} as UserCredential;
     showInformation.value = true;
+    emailSent.value = true;
   } catch (error) {
+    //Error page redirect
     console.error(error);
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -33,31 +42,36 @@ const redirect = () => {
     <div class="flex h-[26vh] w-[100%] bg-qr-primary-orange">
       <p class="mx-auto my-auto text-5xl font-bold">LOGO</p>
     </div>
-    <h1 class="my-[30px] ml-[10%] text-5xl font-bold">Verifique o seu email!</h1>
-    <p class="ml-[10%] text-xl">
-      {{ `Olá, ${userStore.user.name}. Para confirmar seu email clique no botão abaixo.` }}
-    </p>
-    <Button
-      class="ml-[10%] mt-[30px]"
-      type="submit"
-      label="Enviar email de confirmação"
-      @click="(e) => submit(e)"
-      variante="secundary"
-    />
-
-    <div v-if="showInformation" class="mt-[60px]">
-      <p class="ml-[10%] text-xl">
-        Um email de confirmação foi enviado para o seu endereço de email!
+    <div class="mx-[10%] mt-10">
+      <p class="text-base">
+        {{ `Olá, ${userStore.user.name}, seu cadastro está quase pronto.` }}
       </p>
-
-      <p class="ml-[10%] mt-[60px] text-xl">Já confirmou seu email?</p>
+      <p class="mt-10 text-base">
+        Vamos apenas precisar confirmar seu endereço de email. <br />
+        Para isto, basta clicar no botão abaixo que enviaremos um email de confirmação.
+      </p>
       <Button
-        class="ml-[10%] mt-[30px]"
+        class="mt-10"
+        color="primary"
         type="submit"
-        label="Entrar"
-        @click="redirect()"
-        variante="secundary"
+        @click="(e) => submit(e)"
+        :loading="loading"
+        :disabled="emailSent || !authStore.userCredential.user"
+        children="Confirmar email"
       />
+
+      <div v-if="showInformation" class="mt-[60px]">
+        <p class="mt-10 text-base">
+          Email de confirmação enviado com sucesso. Verifique seu email para confirmar seu cadastro.
+        </p>
+
+        <div class="flex items-baseline gap-2">
+          <p class="text-base">Já confirmou seu email?</p>
+          <v-btn class="mt-[30px]" variant="text" type="submit" color="primary" @click="redirect()"
+            >Entrar
+          </v-btn>
+        </div>
+      </div>
     </div>
   </main>
 </template>
