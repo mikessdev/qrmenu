@@ -49,13 +49,22 @@ const menuState = reactive({
   }
 });
 
+const loading = ref(false);
+
 const next = async () => {
   if (!nextButtonIsDisabled()) {
     if (step.value < 3) step.value++;
   }
 
   if (!nextButtonIsDisabled() && step.value == 3) {
-    await createMenu();
+    loading.value = true;
+    try {
+      await createMenu();
+    } catch (error) {
+      console.error('Erro ao criar menu: ', error);
+    } finally {
+      loading.value = false;
+    }
     return router.push(`/select-menu`);
   }
 };
@@ -145,7 +154,13 @@ const generateId = () => {
 };
 </script>
 <template>
-  <v-stepper Editable :items="['Informações', 'Cor', 'URL']">
+  <v-stepper
+    v-model="step"
+    class="remove-shadow"
+    alt-labels
+    Editable
+    :items="['Informações', 'Cor', 'URL']"
+  >
     <template v-slot:item.1>
       <p class="text-center font-notosans text-base font-bold text-[#4E4E4E]">
         Vamos precisar de algumas informações para montarmos o seu cardápio.
@@ -212,5 +227,24 @@ const generateId = () => {
         />
       </div>
     </template>
+    <template v-slot:next>
+      <v-btn
+        class="mt-10"
+        color="primary"
+        variant="outlined"
+        @click="next()"
+        :loading="loading"
+        :disabled="nextButtonIsDisabled()"
+        >Próximo</v-btn
+      >
+    </template>
+    <template v-slot:prev>
+      <v-btn class="mt-10" color="primary" variant="outlined" @click="previous()">Voltar</v-btn>
+    </template>
   </v-stepper>
 </template>
+<style>
+.remove-shadow {
+  box-shadow: none !important;
+}
+</style>
