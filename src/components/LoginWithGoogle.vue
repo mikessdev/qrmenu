@@ -12,13 +12,13 @@ const authStore = useAuthStore();
 const signInWithGoogle = async () => {
   await authStore.signInWithGoogle();
 
-  const { uid: id, emailVerified } = authStore.userCredential.user;
+  const { uid: id, emailVerified } = authStore.userCredential?.user;
 
   await userStore.getUser(id);
   const useAlreadyExists = userStore.user === null ? false : true;
 
   if (useAlreadyExists) {
-    userStore.user.accessToken = await authStore.userCredential.user.getIdToken();
+    userStore.user.accessToken = await authStore.userCredential.user?.getIdToken();
 
     if (!userStore.user.emailVerified) {
       userStore.user.emailVerified = emailVerified;
@@ -35,10 +35,10 @@ const signInWithGoogle = async () => {
       emailVerified,
       phoneNumber,
       uid: id
-    } = authStore.userCredential.user;
+    } = authStore?.userCredential?.user || {};
     const name = displayName?.split(' ')[0];
     const lastName = displayName?.split(' ')[1];
-    const accessToken = await authStore.userCredential.user.getIdToken();
+    const accessToken = await authStore?.userCredential?.user?.getIdToken();
 
     await userStore.createUser(
       {
@@ -59,11 +59,11 @@ const signInWithGoogle = async () => {
 </script>
 <template>
   <div
-    class="mx-auto flex h-[40px] max-w-[300px] cursor-pointer items-center justify-between rounded-[2px] border-2 bg-white px-[10px]"
+    class="mx-auto flex h-[40px] w-[220px] cursor-pointer items-center justify-between rounded-[2px] border-2 bg-white px-[10px]"
     @click="signInWithGoogle()"
   >
     <img src="../assets/img/google.png" width="24" />
-    <span class="text-right font-notosans text-xs font-bold text-black">Entrar com o google</span>
+    <span class="paragraph-12px text-right font-bold text-black">Entrar com o google</span>
   </div>
 </template>
 

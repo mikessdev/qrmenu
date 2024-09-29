@@ -1,31 +1,18 @@
 <script setup lang="ts">
 import { useRecaptchaProvider } from 'vue-recaptcha';
-import { useUserStore } from './store/userStore';
 import { useAuthStore } from './store/authStore';
-import { getAuth, onAuthStateChanged, type UserCredential } from 'firebase/auth';
-import type { User } from './utils/interfaces/User';
 
-const auth = getAuth();
-const userStore = useUserStore();
 const authStore = useAuthStore();
+authStore.checkAuthState();
 
 useRecaptchaProvider();
-
-// onAuthStateChanged(auth, async (user) => {
-//   if (user) {
-//     await userStore.getUser(user.uid);
-//     userStore.user.accessToken = await user.getIdToken();
-//   }
-
-//   if (!user) {
-//     userStore.user = {} as User;
-//     authStore.userCredential = {} as UserCredential;
-//   }
-// });
-authStore.isAuthenticated();
 </script>
 <template>
-  <router-view />
+  <router-view v-slot="{ Component }">
+    <transition name="fade" mode="out-in">
+      <component :is="Component" />
+    </transition>
+  </router-view>
 </template>
 
 <style>
@@ -33,5 +20,15 @@ authStore.isAuthenticated();
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.1s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

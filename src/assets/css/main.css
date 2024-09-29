@@ -34,3 +34,35 @@
         }
     }
 }
+
+
+/* Custom fonts */
+
+.title {
+    font-family: 'NotoSans', sans-serif;
+    font-weight: bold;
+    line-height: 1.3;
+    font-size: clamp(28px, 1em + 3vw, 48px);
+
+}
+
+.paragraph {
+    font-family: 'NotoSans', sans-serif;
+    font-size: clamp(12px, 1em + 0.5vw, 20px);
+}
+
+.button-font {
+    font-family: 'NotoSans', sans-serif;
+    font-weight: bold;
+    font-size: clamp(12px, 1em + 0.5vw, 20px);
+}
+
+.paragraph-14px {
+    font-family: 'NotoSans', sans-serif;
+    font-size: clamp(10px, 1em + 0.5vw, 14px);
+}
+
+.paragraph-12px {
+    font-family: 'NotoSans', sans-serif;
+    font-size: clamp(10px, 1em + 0.5vw, 12px);
+}
