@@ -22,24 +22,21 @@ const loginErrorMessage = ref<string>('');
 const passwordInputType = ref<string>('password');
 const confirmPasswordInputType = ref<string>('password');
 const sendButtonIsClicked = ref<Boolean>(false);
+const loading = ref<boolean>(false);
 
 const viewState = reactive({
   name: {
     value: '',
     error: '',
     validator: () => {
-      viewState.name.error = validateEmptyText(viewState.name.value)
-        ? 'Você precisa preencher o campo do seu nome!'
-        : '';
+      viewState.name.error = validateEmptyText(viewState.name.value);
     }
   },
   lastName: {
     value: '',
     error: '',
     validator: () => {
-      viewState.lastName.error = validateEmptyText(viewState.lastName.value)
-        ? 'Você precisa preencher o campo do seu sobre nome!'
-        : '';
+      viewState.lastName.error = validateEmptyText(viewState.lastName.value);
     }
   },
   email: {
@@ -102,13 +99,14 @@ const submit = async (e: Event) => {
   const password: string = viewState.password.value;
 
   sendButtonIsClicked.value = true;
-  const thereIsNoError = validFilds();
+  const noError = validFilds();
 
-  if (thereIsNoError) {
+  if (noError) {
+    loading.value = true;
     try {
       await authStore.signUpWithFirebase(email, password);
-      const { uid } = authStore.userCredential.user;
-      const accessToken = await authStore.userCredential.user.getIdToken();
+      const { uid } = authStore?.userCredential?.user || {};
+      const accessToken = await authStore?.userCredential?.user?.getIdToken();
       await userStore.createUser(
         {
           id: uid,
@@ -126,20 +124,12 @@ const submit = async (e: Event) => {
       const emailError: string = 'auth/email-already-in-use';
       const emailAlreadyInUse: boolean = error.code === emailError;
       if (emailAlreadyInUse) {
-        loginErrorMessage.value = 'Já existe uma conta cadastrada com esse email.';
+        loginErrorMessage.value = 'Já existe uma conta cadastrada com este email.';
       }
+    } finally {
+      loading.value = false;
     }
   }
-};
-
-const togglePasswordVisibility = () => {
-  const visible: boolean = passwordInputType.value === 'text';
-  passwordInputType.value = visible ? 'password' : 'text';
-};
-
-const toggleconfirmPasswordVisibility = () => {
-  const visible: boolean = confirmPasswordInputType.value === 'text';
-  confirmPasswordInputType.value = visible ? 'password' : 'text';
 };
 
 const headerItens = [
@@ -161,71 +151,62 @@ const headerItens = [
   <div>
     <Header :fixed="true" :header-itens="headerItens" />
     <div class="min-h-screen bg-qr-primary-orange px-[20px] pb-[20px] pt-[80px]">
-      <div class="mx-auto max-w-[800px] rounded-[10px] bg-white px-[40px] py-[80px]">
+      <div class="mx-auto max-w-[600px] rounded-[10px] bg-white px-[40px] py-[80px]">
+        <h1 class="mb-[20px] text-center text-5xl font-bold text-qr-primary-orange">
+          Crie sua conta
+        </h1>
+
         <form class="flex flex-col" method="POST">
-          <h1 class="mb-[20px] text-center text-5xl font-bold text-qr-primary-orange">
-            Crie sua conta
-          </h1>
-          <BaseInput
-            label="Nome"
-            inputType="text"
-            placeholder="Digite seu nome"
-            v-model="viewState.name.value"
-            @validate="viewState.name.validator"
-            :error-message="viewState.name.error"
-          />
-          <BaseInput
-            label="Sobre nome"
-            inputType="text"
-            placeholder="Digite seu sobre nome"
-            v-model="viewState.lastName.value"
-            @validate="viewState.lastName.validator"
-            :error-message="viewState.lastName.error"
-          />
-          <BaseInput
-            label="E-mail"
-            inputType="email"
-            placeholder="Digite seu e-mail"
-            v-model="viewState.email.value"
-            @validate="viewState.email.validator"
-            :error-message="viewState.email.error"
-          />
-          <PasswordInput
-            label="Senha"
-            :inputType="passwordInputType"
-            placeholder="Digite sua senha"
-            v-model="viewState.password.value"
-            @validate="viewState.password.validator"
-            :error-message="viewState.password.error"
-            @password-visible="togglePasswordVisibility()"
-          />
-          <PasswordInput
-            label="Confirme sua Senha"
-            :inputType="confirmPasswordInputType"
-            placeholder="Digite sua senha novamente"
-            v-model="viewState.confirmPassword.value"
-            @validate="viewState.confirmPassword.validator"
-            :error-message="viewState.confirmPassword.error"
-            @password-visible="toggleconfirmPasswordVisibility()"
-          />
+          <div class="flex flex-col gap-2">
+            <BaseInput
+              label="Nome"
+              type="text"
+              v-model="viewState.name.value"
+              :error-messages="viewState.name.error"
+            />
+            <BaseInput
+              label="Sobrenome"
+              type="text"
+              v-model="viewState.lastName.value"
+              :error-messages="viewState.lastName.error"
+            />
+            <BaseInput
+              label="E-mail"
+              type="email"
+              v-model="viewState.email.value"
+              :error-messages="viewState.email.error"
+            />
+            <BaseInput
+              label="Senha"
+              type="password"
+              placeholder="Digite sua senha"
+              v-model="viewState.password.value"
+              :error-messages="viewState.password.error"
+            />
+            <BaseInput
+              label="Confirme sua senha"
+              type="password"
+              v-model="viewState.confirmPassword.value"
+              :error-messages="viewState.confirmPassword.error"
+            />
+          </div>
+          <div v-if="loginErrorMessage" class="text-caption my-4">
+            <v-alert icon="mdi-alert-circle-outline" class="" density="compact">
+              <span class="text-caption"> Já existe uma conta cadastrada com este email. </span>
+            </v-alert>
+          </div>
           <div class="flex flex-col pb-[40px]">
             <Button
-              class="mx-auto mt-[40px]"
+              class="mx-auto"
+              color="primary"
               type="submit"
-              label="Criar conta"
               @click="(e) => submit(e)"
-              variante="secundary"
+              :loading="loading"
+              children="Criar conta"
             />
-            <span
-              v-if="loginErrorMessage"
-              class="relative z-10 mx-auto mt-[6px] font-notosans font-bold text-qr-primary-orange"
-              >{{ loginErrorMessage }}</span
-            >
           </div>
         </form>
-        <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">
-          Ou crie uma conta com
-        </p>
+        <p class="mb-[20px] text-center font-notosans text-sm font-bold text-black">Ou</p>
         <LoginWithGoogle class="mb-[20px]" />
       </div>
     </div>

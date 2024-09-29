@@ -24,6 +24,7 @@ export const useAuthStore = defineStore('authManagement', () => {
       userCredential.value = await signInWithEmailAndPassword(firebaseAuth, email, password);
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
 
@@ -32,6 +33,7 @@ export const useAuthStore = defineStore('authManagement', () => {
       userCredential.value = await createUserWithEmailAndPassword(firebaseAuth, email, password);
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
 
@@ -40,6 +42,7 @@ export const useAuthStore = defineStore('authManagement', () => {
       userCredential.value = await signInWithPopup(firebaseAuth, new GoogleAuthProvider());
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
 
@@ -52,6 +55,7 @@ export const useAuthStore = defineStore('authManagement', () => {
       userStore.user = {} as CustomUser;
     } catch (error) {
       console.error('Erro durante o logout:', error);
+      throw error;
     }
   };
 

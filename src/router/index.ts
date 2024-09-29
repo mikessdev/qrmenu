@@ -1,13 +1,13 @@
 import emailVerificationMiddleware from '@/middleware/emailVerificationMiddleware';
-import RegisterCompletePage from '@/pages/RegisterCompletePage.vue';
+import SingUpComplete from '@/pages/SingUp/Complete/index.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import authMiddleware from '@/middleware/authMiddleware';
-import SelectMenuPage from '@/pages/SelectMenuPage.vue';
-import RegisterPage from '@/pages/RegisterPage.vue';
-import NewMenuPage from '@/pages/NewMenuPage.vue';
-import LandingPage from '@/pages/LandingPage.vue';
-import LoginPage from '@/pages/LoginPage.vue';
-import HomePage from '@/pages/HomePage.vue';
+import Select from '@/pages/Select/index.vue';
+import SingUp from '@/pages/SingUp/index.vue';
+import New from '@/pages/New/index.vue';
+import Landing from '@/pages/Landing/index.vue';
+import SingIn from '@/pages/SingIn/index.vue';
+import Home from '@/pages/Home/index.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,34 +15,34 @@ const router = createRouter({
     {
       path: '/',
       name: 'landingPage',
-      component: LandingPage
+      component: Landing
     },
     {
       path: '/:url',
       name: 'home',
-      component: HomePage
+      component: Home
     },
     {
       path: '/login',
       name: 'login',
-      component: LoginPage,
+      component: SingIn,
       beforeEnter: async (to) => await authMiddleware(to)
     },
     {
       path: '/register',
       name: 'register',
-      component: RegisterPage
+      component: SingUp
     },
     {
       path: '/register-complete',
       name: 'register-complete',
-      component: RegisterCompletePage,
+      component: SingUpComplete,
       beforeEnter: async (to) => await authMiddleware(to)
     },
     {
       path: '/select-menu',
       name: 'select-menu',
-      component: SelectMenuPage,
+      component: Select,
       beforeEnter: async (to) => {
         const isAuthenticated = await authMiddleware(to);
 
@@ -55,7 +55,7 @@ const router = createRouter({
     {
       path: '/new',
       name: 'new',
-      component: NewMenuPage,
+      component: New,
       beforeEnter: async (to) => await authMiddleware(to)
     }
   ]

@@ -23,9 +23,11 @@ export const useUserStore = defineStore('userProfile', () => {
       const success = result.status === Status.SUCCESS;
       if (success) {
         user.value = result.message;
+        console.log(result);
       }
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
 
@@ -40,6 +42,7 @@ export const useUserStore = defineStore('userProfile', () => {
       }
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
 
@@ -58,6 +61,7 @@ export const useUserStore = defineStore('userProfile', () => {
       });
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
 
@@ -74,6 +78,7 @@ export const useUserStore = defineStore('userProfile', () => {
       });
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
   return {
