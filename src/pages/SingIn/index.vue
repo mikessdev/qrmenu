@@ -46,9 +46,8 @@ const checkFieldValidation = () => {
 
   const emailError = viewState.email.error;
   const nameError = viewState.password.error;
-  const thereIsNoError = !nameError && !emailError;
 
-  return thereIsNoError;
+  return nameError && emailError;
 };
 
 const submit = async (e: Event) => {
@@ -57,28 +56,32 @@ const submit = async (e: Event) => {
   const email: string = viewState.email.value;
   const password: string = viewState.password.value;
 
-  const noError = checkFieldValidation();
+  const isError = checkFieldValidation();
 
-  if (noError) {
-    loading.value = true;
-    try {
-      await authStore.signinWithFirebase(email, password);
-      const { uid: id, emailVerified } = authStore?.userCredential?.user || {};
+  if (isError) return;
 
-      if (!emailVerified) {
-        loginErrorMessage.value = '';
-        return router.push('/register-complete');
-      }
+  loading.value = true;
+  try {
+    await authStore.signinWithFirebase(email, password);
+    const { user } = authStore?.userCredential;
 
-      await userStore.getUser(id);
-      userStore.user.accessToken = await authStore?.userCredential?.user?.getIdToken();
+    const accessToken = await user.getIdToken();
+
+    if (!user.emailVerified) {
       loginErrorMessage.value = '';
-      return router.push('/select-menu');
-    } catch (error) {
-      loginErrorMessage.value = error.code;
-    } finally {
-      loading.value = false;
+      return router.push('/register-complete');
     }
+
+    await userStore.getUserByFirebaseId(user.uid, accessToken);
+    userStore.user.accessToken = accessToken;
+    loginErrorMessage.value = '';
+    console.log('cheguei aqui');
+    return router.push('/select-menu');
+  } catch (error) {
+    loginErrorMessage.value = error.code;
+    console.error(error);
+  } finally {
+    loading.value = false;
   }
 };
 

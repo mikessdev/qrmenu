@@ -41,7 +41,7 @@ export const useProductStore = defineStore('productManagement', () => {
     }
   };
 
-  const deleteProductById = async (id: string, accessToken: string): Promise<void> => {
+  const deleteProductById = async (id: number, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_PRODUCT_URL;
     try {
       await fetch(url + id, {

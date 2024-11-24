@@ -11,7 +11,6 @@ export const useMenuStore = defineStore('menuManagement', () => {
 
   const createMenu = async (menu: Menu, accessToken: string): Promise<String> => {
     const url: string = import.meta.env.VITE_MENU_URL;
-    menu.id = uuidv4();
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -30,7 +29,7 @@ export const useMenuStore = defineStore('menuManagement', () => {
     }
   };
 
-  const getMenus = async (userId: string, accessToken: string): Promise<void> => {
+  const getMenus = async (userId: number, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_MENU_URL;
     try {
       const response = await fetch(`${url}/${userId}`, {

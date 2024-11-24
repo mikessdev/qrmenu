@@ -4,7 +4,7 @@ import HorizontalMenu from '@/components/HorizontalMenu.vue';
 import { useUserStore } from '@/store/userStore';
 import { useMenuStore } from '@/store/menuStore';
 import Footer from '@/components/Footer.vue';
-import Hero from '@/components/Hero.vue';
+import Hero from './Hero/index.vue';
 import { computed, onBeforeMount, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCategoryStore } from '@/store/categoryStore';

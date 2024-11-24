@@ -1,6 +1,6 @@
 export interface Menu {
-  id: string;
-  userId: string;
+  id: number;
+  userId: number;
   headerImg: string;
   profileImg: string;
   name: string;

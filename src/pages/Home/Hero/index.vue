@@ -6,7 +6,7 @@ import {
   donwloadImage
 } from '@/firebase/cloud.storage';
 import { StorageFolder } from '@/utils/enuns/firebase';
-import SettingsIcon from './icons/SettingsIcon.vue';
+import SettingsIcon from '@/components/icons/SettingsIcon.vue';
 import { reactive, ref } from 'vue';
 import { useUserStore } from '@/store/userStore';
 import { useMenuStore } from '@/store/menuStore';
@@ -306,6 +306,6 @@ const cancel = () => {
 
 <script lang="ts">
 export default {
-  name: 'HeroItem'
+  name: 'Hero'
 };
 </script>

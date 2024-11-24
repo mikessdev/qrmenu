@@ -109,7 +109,7 @@ const submit = async (e: Event) => {
       const accessToken = await authStore?.userCredential?.user?.getIdToken();
       await userStore.createUser(
         {
-          id: uid,
+          firebaseId: uid,
           name: viewState.name.value,
           lastName: viewState.lastName.value,
           email: viewState.email.value,

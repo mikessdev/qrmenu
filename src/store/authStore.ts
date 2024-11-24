@@ -68,8 +68,14 @@ export const useAuthStore = defineStore('authManagement', () => {
       onAuthStateChanged(auth, async (user: User | null) => {
         if (user) {
           updateAuthState(true);
-          await userStore.getUser(user.uid);
-          userStore.user.accessToken = await user.getIdToken();
+          const accessToken = await user.getIdToken();
+          await userStore.getUserByFirebaseId(user.uid, accessToken);
+          userStore.user.accessToken = accessToken;
+
+          if (user.emailVerified && !userStore.user.emailVerified) {
+            userStore.user.emailVerified = true;
+            await userStore.updateUser(userStore.user, accessToken);
+          }
           return resolve(true);
         }
 
