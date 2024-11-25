@@ -6,6 +6,7 @@ import { ref } from 'vue';
 
 export const useUserStore = defineStore('userProfile', () => {
   const user = ref<User>({} as User);
+  const userBusy = ref<Boolean>(false);
 
   const createUser = async (userData: User, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_USER_URL;
@@ -46,6 +47,7 @@ export const useUserStore = defineStore('userProfile', () => {
   };
 
   const getUserByFirebaseId = async (firebaseId: string, accessToken: string): Promise<void> => {
+    userBusy.value = true;
     const url: string = import.meta.env.VITE_USER_URL;
     try {
       const response = await fetch(`${url}?firebaseId=${firebaseId}`, {
@@ -63,6 +65,8 @@ export const useUserStore = defineStore('userProfile', () => {
     } catch (error) {
       console.error(error);
       throw error;
+    } finally {
+      userBusy.value = false;
     }
   };
 
@@ -110,6 +114,7 @@ export const useUserStore = defineStore('userProfile', () => {
   };
   return {
     user,
+    userBusy,
     createUser,
     getUser,
     getUserByFirebaseId,

@@ -2,7 +2,6 @@
 import BaseInput from '@/components/BaseInput.vue';
 import type { Menu } from '@/utils/interfaces/Menu';
 import { validateEmptyText } from '@/validators/emptyText';
-import Button from '@/components/Button.vue';
 import { validateSlug } from '@/validators/slug';
 import { Status } from '@/utils/enuns/status';
 import { useMenuStore } from '@/store/menuStore';
