@@ -35,6 +35,7 @@ const headerItens = computed(() => {
       action: async () => {
         await authStore.signOutWithFirebase();
         isAuthenticated.value = false;
+        router.push('/');
       },
       show: isAuthenticated.value
     },

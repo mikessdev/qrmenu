@@ -57,11 +57,8 @@ export const useUserStore = defineStore('userProfile', () => {
           "Authorization": 'Bearer ' + accessToken
         }
       });
-      const result: Result = await response.json();
-      const success = result.status === Status.SUCCESS;
-      if (success) {
-        user.value = result.message;
-      }
+
+      user.value = await response.json();
     } catch (error) {
       console.error(error);
       throw error;
