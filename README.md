@@ -1,5 +1,3 @@
-This repository has been discontinued, new version coming soon!!
-
 # qrmenu
 
 online menu for restaurants
