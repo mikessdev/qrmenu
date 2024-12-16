@@ -13,6 +13,8 @@ const menuStore = useMenuStore();
 const userStore = useUserStore();
 const router = useRouter();
 
+const emit = defineEmits(['createSuccess', 'createFailed']);
+
 const menuState = reactive({
   name: {
     value: '',
@@ -117,7 +119,7 @@ const createMenu = async () => {
   const result = await menuStore.createMenu(newMenu as Menu, accessToken);
 
   if (result != Status.SUCCESS) {
-    return errorCreatingMenuNotify();
+    errorCreatingMenuNotify();
   }
 
   createMenuNotify();
@@ -125,23 +127,11 @@ const createMenu = async () => {
 };
 
 const createMenuNotify = () => {
-  alert('Menu criado com sucesso');
-  // quasar.notify({
-  //   spinner: false,
-  //   color: 'primary',
-  //   message: 'Menu criado com sucesso!',
-  //   timeout: 2000
-  // });
+  emit('createSuccess');
 };
 
 const errorCreatingMenuNotify = () => {
-  alert('Não foi possível criar o cardápio! Por favor, tente novamente mais tarde.');
-  // quasar.notify({
-  //   spinner: false,
-  //   color: 'primary',
-  //   message: 'Não foi possível criar o cardápio! Por favor, tente novamente mais tarde.',
-  //   timeout: 2000
-  // });
+  emit('createFailed');
 };
 
 const generateId = () => {

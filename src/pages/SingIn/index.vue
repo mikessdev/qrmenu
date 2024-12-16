@@ -109,12 +109,14 @@ const headerItens = [
               <BaseInput
                 label="E-mail"
                 type="email"
+                data-cy="input-email"
                 v-model="viewState.email.value"
                 :error-messages="viewState.email.error"
               />
               <BaseInput
                 label="Senha"
                 type="password"
+                data-cy="input-password"
                 v-model="viewState.password.value"
                 :error-messages="viewState.password.error"
               />

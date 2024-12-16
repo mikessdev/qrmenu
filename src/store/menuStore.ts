@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import type { Menu } from '@/utils/interfaces/Menu';
-import { v4 as uuidv4 } from 'uuid';
 import type { Result } from '@/utils/interfaces/Result';
 import { Status } from '@/utils/enuns/status';
 

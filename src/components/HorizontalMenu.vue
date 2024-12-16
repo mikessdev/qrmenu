@@ -164,18 +164,18 @@ const cleanProductState = () => {
   productState.unit.value = '';
 };
 
-const deleteCategory = async (id: string) => {
+const deleteCategory = async (id: number) => {
   const { accessToken } = userStore.user;
   await categoryStore.deleteCategoryById(id, accessToken);
 };
 
-const setCategoryFocus = (categoryId: string, currentCategoryId: string) => {
+const setCategoryFocus = (categoryId: number, currentCategoryId: number) => {
   const { color: color } = menuStore.menu;
   const onFocus = categoryId === currentCategoryId;
   return onFocus ? `border-color: ${color}; color: ${color};` : '';
 };
 
-const sertCategorySeparatorFocus = (categoryId: string, currentCategoryId: string) => {
+const sertCategorySeparatorFocus = (categoryId: number, currentCategoryId: number) => {
   const onFocus = categoryId === currentCategoryId;
   return onFocus
     ? `background-color: ${menuStore.menu.color}; color: #FFF`
@@ -187,22 +187,12 @@ const toggleProductEditModal = () => {
 };
 
 const productButtonIsDisabled = (): boolean => {
-  const titleIsEmpty = !!validateEmptyText(productState.title.value);
-  const descriptionIsEmpty = !!validateEmptyText(productState.description.value);
-  const priceIsEmpty = !!validateEmptyText(productState.price.value);
-  const unitIsEmpty = !!validateEmptyText(productState.unit.value);
+  const fields = ['title', 'description', 'price', 'unit'] as const;
 
-  const ImageHasError = !!productState.image.error;
-  const titleHasError = !!productState.title.error;
-  const descriptionHasError = !!productState.description.error;
-  const priceHasError = !!productState.price.error;
-  const unitHasError = !!productState.unit.error;
+  const anyFieldEmpty = fields.some((field) => validateEmptyText(productState[field].value));
+  const anyFieldHasError = fields.some((field) => productState[field].error);
 
-  const anyFieldEmpyt = titleIsEmpty || descriptionIsEmpty || priceIsEmpty || unitIsEmpty;
-  const anyFieldHasError =
-    ImageHasError || titleHasError || descriptionHasError || priceHasError || unitHasError;
-
-  return anyFieldEmpyt || anyFieldHasError ? true : false;
+  return anyFieldEmpty || anyFieldHasError || !!productState.image.error;
 };
 
 const actionProduct = async () => {
@@ -242,7 +232,7 @@ const updateProduct = async () => {
   await productStore.updateProduct(product, accessToken);
 };
 
-const deleteProduct = async (id: string) => {
+const deleteProduct = async (id: number) => {
   const { accessToken } = userStore.user;
   await productStore.deleteProductById(id, accessToken);
 };
@@ -271,23 +261,26 @@ const createProduct = async () => {
   const { accessToken } = userStore.user;
   const { id: categoryId } = currentCategory.value;
   const { title, description, price, unit, image } = productState;
-  const id = uuidv4();
 
   const product: Product = {
-    id,
     categoryId,
     title: title.value,
-    image: await setImage(image.value, id),
+    image: '',
     description: description.value,
     price: price.value,
     unit: unit.value,
     likes: 0
   } as Product;
-  await productStore.createProduct(product, accessToken);
+
+  const newProduct = await productStore.createProduct(product, accessToken);
+  const { id } = newProduct;
+
+  await productStore.updateProduct({ id, image: await setImage(image.value, id) }, accessToken);
+
   await menuStore.updateMenu(menuStore.menu, accessToken);
 };
 
-const setImage = async (file: File, productId: string): Promise<string> => {
+const setImage = async (file: File, productId: number): Promise<string> => {
   const { id: userId } = userStore.user;
   const { id: menuId } = menuStore.menu;
   const { id: categorId } = currentCategory.value;
@@ -299,7 +292,7 @@ const setImage = async (file: File, productId: string): Promise<string> => {
     categorId,
     folder: StorageFolder.Products,
     fileName: productId
-  } as UploadData);
+  } as unknown as UploadData);
 
   return await donwloadImage({
     userId,
@@ -307,7 +300,7 @@ const setImage = async (file: File, productId: string): Promise<string> => {
     categorId,
     folder: StorageFolder.Products,
     fileName: productId
-  } as DownloadRef);
+  } as unknown as DownloadRef);
 };
 
 const scrollCategoryAnimation = (e: Event, selector: string) => {

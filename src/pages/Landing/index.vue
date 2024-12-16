@@ -21,7 +21,8 @@ const headerItens = computed(() => {
       id: 1,
       text: 'Cardápios',
       action: () => router.push('/select-menu'),
-      show: isAuthenticated.value
+      show: isAuthenticated.value,
+      dataCy: 'btn-redirect-to-select-menu'
     },
     {
       id: 1,
@@ -30,13 +31,15 @@ const headerItens = computed(() => {
         await authStore.signOutWithFirebase();
         isAuthenticated.value = false;
       },
-      show: isAuthenticated.value
+      show: isAuthenticated.value,
+      dataCy: 'signout'
     },
     {
       id: 2,
       text: 'Acessar',
       action: () => router.push('/login'),
-      show: !isAuthenticated.value
+      show: !isAuthenticated.value,
+      dataCy: 'signin'
     }
   ];
 });
