@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import BaseInput from '@/components/BaseInput.vue';
+import Stepper from '@/components/organisms/Stepper/index.vue';
+import Information from './InformationStep/index.vue';
 import type { Menu } from '@/utils/interfaces/Menu';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateSlug } from '@/validators/slug';
@@ -141,9 +142,31 @@ const generateId = () => {
   }
   return numbers;
 };
+
+const sections = [
+  {
+    title: 'Informações',
+    subTitle: 'Vamos precisar de algumas informações para montarmos o seu cardápio',
+    Component: Information,
+    ok: true
+  },
+  {
+    title: 'Cores',
+    subTitle: 'Escolha uma cor de destaque para o seu cardápio',
+    Component: Information,
+    ok: true
+  },
+  {
+    title: 'Url',
+    subTitle: 'Escolha um nome para a URL do Cardápio',
+    Component: Information,
+    ok: true
+  }
+];
 </script>
 <template>
-  <v-stepper
+  <Stepper :sections="sections"> </Stepper>
+  <!-- <v-stepper
     v-model="step"
     class="remove-shadow"
     alt-labels
@@ -230,7 +253,7 @@ const generateId = () => {
     <template v-slot:prev>
       <v-btn class="mt-10" color="primary" variant="outlined" @click="previous()">Voltar</v-btn>
     </template>
-  </v-stepper>
+  </v-stepper> -->
 </template>
 <style>
 .remove-shadow {

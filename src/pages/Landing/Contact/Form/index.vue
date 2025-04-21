@@ -6,7 +6,7 @@ import { validateEmail } from '@/validators/email';
 import { sendEmailWithBrevo, type BrevoEmailBody } from '@/utils/sendEmail';
 import { useChallengeV2 } from 'vue-recaptcha';
 import { reactive, ref } from 'vue';
-import ErrorText from '@/components/Typography/ErrorText.vue';
+import ErrorText from '@/components/atoms/Typography/ErrorText.vue';
 
 const valid = ref(false);
 const loading = ref(false);

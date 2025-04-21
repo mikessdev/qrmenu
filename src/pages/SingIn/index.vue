@@ -10,8 +10,8 @@ import { validateEmail } from '@/validators/email';
 import { useUserStore } from '@/store/userStore';
 import { AuthError } from '@/utils/enuns/firebase';
 import { useAuthStore } from '@/store/authStore';
-import ErrorText from '@/components/Typography/ErrorText.vue';
-import Typography from '@/components/Typography/index.vue';
+import ErrorText from '@/components/atoms/Typography/ErrorText.vue';
+import Typography from '@/components/atoms/Typography/index.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -90,7 +90,8 @@ const headerItens = [
     id: 1,
     text: 'Voltar',
     action: () => router.back(),
-    show: true
+    show: true,
+    dataCy: 'header-back'
   }
 ];
 </script>

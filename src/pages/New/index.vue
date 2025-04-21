@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuthComposable } from '@/composables/useAuthComposable';
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive } from 'vue';
 import Header from '@/components/Header.vue';
 import { useRouter } from 'vue-router';
 import Stepper from './Stepper/index.vue';
@@ -42,7 +42,7 @@ const headerItens = computed(() => {
   <div>
     <Header :header-itens="headerItens" />
     <div class="flex">
-      <div class="mx-auto my-0 mt-10 w-[90%] max-w-[800px]">
+      <div class="mx-auto my-0 mt-10 w-[90%] max-w-[1200px]">
         <Stepper @createSuccess="createMenuNotify" @createFailed="errorCreatingMenuNotify" />
       </div>
     </div>

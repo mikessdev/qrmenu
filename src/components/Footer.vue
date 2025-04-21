@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SocialIcon from '@/components/icons/SocialIcon.vue';
 import YoutubeIcon from '@/components/icons/YoutubeIcon.vue';
-import Typography from '@/components/Typography/index.vue';
+import Typography from '@/components/atoms/Typography/index.vue';
 </script>
 <template>
   <div class="relative flex h-[300px] w-full bg-qr-dark-gray">
