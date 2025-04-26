@@ -6,7 +6,7 @@ interface Section {
   title: string;
   subTitle: string;
   Component: Component;
-  ok: boolean;
+  checkValidation: Function;
   model?: Record<string, any>;
 }
 
@@ -20,22 +20,6 @@ const props = defineProps({
 const emit = defineEmits(['finish']);
 
 const step = ref(1);
-
-const next = () => {
-  if (step.value < props.sections.length) {
-    step.value++;
-  }
-};
-
-const previous = () => {
-  if (step.value > 1) {
-    step.value--;
-  }
-};
-
-const nextButtonIsDisabled = () => {
-  return false;
-};
 
 const resolveStepStatus = (currentStep: number) => {
   if (currentStep > step.value) return 'next';
@@ -97,10 +81,22 @@ const colorMapper = {
         <v-card-actions class="justify-space-between mt-6">
           <v-btn v-if="step > 1" variant="outlined" @click="step--"> Voltar </v-btn>
           <v-spacer />
-          <v-btn v-if="step < sections.length" variant="elevated" color="primary" @click="step++">
+          <v-btn
+            v-if="step < sections.length"
+            :disabled="props.sections[step - 1].checkValidation()"
+            variant="elevated"
+            color="primary"
+            @click="step++"
+          >
             Próximo
           </v-btn>
-          <v-btn v-else variant="elevated" color="primary" @click="$emit('finish')">
+          <v-btn
+            v-else
+            variant="elevated"
+            :disabled="props.sections[step - 1].checkValidation()"
+            color="primary"
+            @click="$emit('finish')"
+          >
             Finalizar
           </v-btn>
         </v-card-actions>

@@ -4,8 +4,9 @@ import type { PropType } from 'vue';
 import type { Model } from '../index.vue';
 
 const props = defineProps({
-  model: {
+  url: {
     type: Object as PropType<Model>,
+    required: true,
     default: () => ({
       value: '',
       error: '',
@@ -36,9 +37,9 @@ const props = defineProps({
           maxlength="30"
           placeholder="acaiteria-da-borcelle"
           label="URL"
-          v-model="props.model.value"
-          :error-message="props.model.error"
-          @validate="props.model.validator()"
+          v-model="props.url.value"
+          :error-message="props.url.error"
+          @validate="props.url.validator()"
         />
       </div>
     </div>
