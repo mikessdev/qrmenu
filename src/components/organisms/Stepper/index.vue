@@ -7,7 +7,7 @@ interface Section {
   subTitle: string;
   Component: Component;
   ok: boolean;
-  props?: Record<string, any>;
+  model?: Record<string, any>;
 }
 
 const props = defineProps({
@@ -16,6 +16,8 @@ const props = defineProps({
     default: () => []
   }
 });
+
+const emit = defineEmits(['finish']);
 
 const step = ref(1);
 
@@ -84,13 +86,13 @@ const colorMapper = {
 
     <v-stepper-window>
       <v-stepper-window-item
-        v-for="({ title, subTitle, Component }, index) in sections"
+        v-for="({ title, subTitle, Component, model }, index) in sections"
         :key="index"
         :value="index + 1"
       >
         <p class="text-h4 mt-[40px] text-center">{{ title }}</p>
         <p class="text-subtitle-2 mb-[30px] mt-[20px] text-center">{{ subTitle }}</p>
-        <component :is="Component"></component>
+        <component :is="Component" v-bind="model"></component>
 
         <v-card-actions class="justify-space-between mt-6">
           <v-btn v-if="step > 1" variant="outlined" @click="step--"> Voltar </v-btn>

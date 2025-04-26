@@ -18,6 +18,12 @@ const router = useRouter();
 
 const emit = defineEmits(['createSuccess', 'createFailed']);
 
+export interface Model {
+  value: string;
+  error: string;
+  validator: () => void;
+}
+
 const menuState = reactive({
   name: {
     value: '',
@@ -150,111 +156,34 @@ const sections = [
     title: 'Informações',
     subTitle: 'Vamos precisar de algumas informações para montarmos o seu cardápio',
     Component: InformationStep,
-    ok: true
+    ok: true,
+    model: {
+      name: menuState.name,
+      phoneNumber: menuState.phoneNumber,
+      instagram: menuState.instagram
+    }
   },
   {
     title: 'Cores',
     subTitle: 'Escolha uma cor de destaque para o seu cardápio',
     Component: ColorStep,
-    ok: true
+    ok: true,
+    model: {
+      color: menuState.color.value
+    }
   },
   {
     title: 'URL',
     subTitle: 'Escolha um nome para a URL do Cardápio',
     Component: URLStep,
-    ok: true
+    ok: true,
+    model: {
+      url: menuState.url
+    }
   }
 ];
 </script>
 <template>
-  <Stepper :sections="sections"> </Stepper>
-  <!-- <v-stepper
-    v-model="step"
-    class="remove-shadow"
-    alt-labels
-    Editable
-    :items="['Informações', 'Cor', 'URL']"
-  >
-    <template v-slot:item.1>
-      <p class="text-center font-notosans text-base font-bold text-[#4E4E4E]">
-        Vamos precisar de algumas informações para montarmos o seu cardápio.
-      </p>
-      <div class="mx-auto my-0 max-w-[400px]">
-        <BaseInput
-          maxlength="30"
-          v-model="menuState.name.value"
-          label="Nome de Exibição"
-          placeholder="Ex: Restaurante da Fernanda"
-          :error-message="menuState.name.error"
-          @validate="menuState.name.validator()"
-        />
-        <BaseInput
-          maxlength="30"
-          v-model="menuState.phoneNumber.value"
-          label="Número de telefone"
-          placeholder="Ex: 79 9 9999 9999"
-          :error-message="menuState.phoneNumber.error"
-          @validate="menuState.phoneNumber.validator()"
-        />
-        <BaseInput
-          maxlength="30"
-          v-model="menuState.instagram.value"
-          label="Instagram"
-          placeholder="@restaurantedafernanda"
-          :error-message="menuState.instagram.error"
-          @validate="menuState.instagram.validator()"
-        />
-      </div>
-    </template>
-
-    <template v-slot:item.2>
-      <p class="text-center font-notosans text-base font-bold text-[#4E4E4E]">
-        Escolha uma cor de destaque para o seu cardápio.
-      </p>
-      <v-color-picker v-model="menuState.color.value"></v-color-picker>
-    </template>
-
-    <template v-slot:item.3>
-      <div class="mx-auto my-0 max-w-[400px]">
-        <p class="text-center font-notosans text-base font-bold text-[#4E4E4E]">
-          Escolha um nome para a URL do Cardápio.
-        </p>
-        <p class="mt-[20px] font-notosans text-xs text-[#4E4E4E]">
-          <strong>Obs:</strong> O nome escolhido precisa ser em letras minúscula, não deve conter
-          caracteres especiais
-          <strong
-            >(ex: ç, letras acentuadas e todos os outros caracteres com exceção do hífen)</strong
-          >
-          e as palavras devem ser separadas por hífen.
-        </p>
-        <p class="mt-[20px] font-notosans text-xs text-[#4E4E4E]">
-          <strong>Ex:</strong> <br />
-          <strong class="text-[#00c65e]">Permitido:</strong> acaiteria-da-maite. <br />
-          <strong class="text-[#e81f43]">Não permitido:</strong> açaiteria-da-Maitê.
-        </p>
-        <BaseInput
-          maxlength="30"
-          placeholder="acaiteria-da-borcelle"
-          v-model="menuState.url.value"
-          :error-message="menuState.url.error"
-          @validate="menuState.url.validator()"
-        />
-      </div>
-    </template>
-    <template v-slot:next>
-      <v-btn
-        class="mt-10"
-        color="primary"
-        variant="outlined"
-        @click="next()"
-        :loading="loading"
-        :disabled="nextButtonIsDisabled()"
-        >Próximo</v-btn
-      >
-    </template>
-    <template v-slot:prev>
-      <v-btn class="mt-10" color="primary" variant="outlined" @click="previous()">Voltar</v-btn>
-    </template>
-  </v-stepper> -->
+  <Stepper :sections="sections" @finish="createMenu()"> </Stepper>
 </template>
 <style scoped lang="scss"></style>

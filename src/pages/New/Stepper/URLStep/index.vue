@@ -1,12 +1,7 @@
 <script lang="ts" setup>
 import BaseInput from '@/components/BaseInput.vue';
 import type { PropType } from 'vue';
-
-interface Model {
-  value: string;
-  error: string;
-  validator: () => void;
-}
+import type { Model } from '../index.vue';
 
 const props = defineProps({
   model: {
