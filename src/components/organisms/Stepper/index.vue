@@ -93,12 +93,14 @@ const colorMapper = {
         <component :is="Component"></component>
 
         <v-card-actions class="justify-space-between mt-6">
-          <v-btn v-if="step > 1" variant="outlined" color="grey" @click="step--"> Voltar </v-btn>
+          <v-btn v-if="step > 1" variant="outlined" @click="step--"> Voltar </v-btn>
           <v-spacer />
-          <v-btn v-if="step < sections.length" color="deep-purple-accent-4" @click="step++">
+          <v-btn v-if="step < sections.length" variant="elevated" color="primary" @click="step++">
             Próximo
           </v-btn>
-          <v-btn v-else color="green-darken-2" @click="$emit('finish')"> Finalizar </v-btn>
+          <v-btn v-else variant="elevated" color="primary" @click="$emit('finish')">
+            Finalizar
+          </v-btn>
         </v-card-actions>
       </v-stepper-window-item>
     </v-stepper-window>
