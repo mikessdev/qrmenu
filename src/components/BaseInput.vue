@@ -13,7 +13,19 @@ const props = defineProps({
 });
 </script>
 <template>
-  <v-textarea v-if="textArea" variant="outlined" color="primary" v-bind:props="props" />
-  <v-text-field v-else variant="outlined" color="primary" v-bind:props="props" />
+  <v-textarea
+    v-if="textArea"
+    variant="outlined"
+    color="primary"
+    density="comfortable"
+    v-bind:props="props"
+  />
+  <v-text-field
+    v-else
+    variant="outlined"
+    color="primary"
+    density="comfortable"
+    v-bind:props="props"
+  />
 </template>
 <style lang="scss" scoped></style>
