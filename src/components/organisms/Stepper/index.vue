@@ -56,25 +56,23 @@ const colorMapper = {
 </script>
 <template>
   <v-stepper class="remove-shadow" v-model="step" alt-labels hide-actions>
-    <v-stepper-header class="remove-shadow flex w-full flex-col justify-center">
-      <div class="flex w-full flex-row gap-1">
-        <div v-for="(section, index) in sections" class="flex w-full justify-center" :key="index">
-          <div
-            class="h-[6px] w-full rounded-xl bg-green-400"
-            :style="{ backgroundColor: `${colorMapper[resolveStepStatus(index + 1)]}` }"
-          ></div>
-        </div>
-      </div>
-
-      <div class="flex w-full justify-evenly">
+    <v-stepper-header class="remove-shadow">
+      <div class="flex w-full justify-center">
         <v-stepper-item
+          class="resete-v-stepper-item"
           v-for="({ title }, index) in sections"
           :key="index"
           :value="index + 1"
           :complete="step > index + 1"
         >
-          <div class="flex flex-row gap-1">
-            <v-icon :color="colorMapper[resolveStepStatus(index + 1)]">{{
+          <div
+            class="h-[4px] w-full rounded-xl"
+            :style="{
+              backgroundColor: `${colorMapper[resolveStepStatus(index + 1)]}`
+            }"
+          ></div>
+          <div class="align-center flex flex-row gap-1">
+            <v-icon size="16" :color="colorMapper[resolveStepStatus(index + 1)]">{{
               iconMapper[resolveStepStatus(index + 1)]
             }}</v-icon>
             <p class="text-subtitle-1 text-center">{{ title }}</p>
@@ -90,8 +88,8 @@ const colorMapper = {
         :key="index"
         :value="index + 1"
       >
-        <p class="text-h4 text-center">{{ title }}</p>
-        <p class="text-subtitle-1 text-center">{{ subTitle }}</p>
+        <p class="text-h4 mt-[40px] text-center">{{ title }}</p>
+        <p class="text-subtitle-2 mb-[30px] mt-[20px] text-center">{{ subTitle }}</p>
         <component :is="Component"></component>
 
         <v-card-actions class="justify-space-between mt-6">
@@ -107,18 +105,24 @@ const colorMapper = {
   </v-stepper>
 </template>
 
-<style>
+<style scoped lang="scss">
 .remove-shadow {
   box-shadow: none !important;
 }
-.v-stepper--alt-labels .v-stepper-item {
-  padding: 6px 0px !important;
-  align-items: start !important;
-  flex-direction: row !important;
+
+.resete-v-stepper-item {
+  padding: 0px !important;
   gap: 6px;
+  opacity: 1 !important;
+  flex-basis: 0 !important;
+  flex: 1 !important;
 }
 
-.v-stepper-item__avatar {
+.resete-v-stepper-item ::v-deep(.v-stepper-item__content) {
+  width: 98% !important;
+}
+
+.resete-v-stepper-item ::v-deep(.v-stepper-item__avatar) {
   display: none !important;
 }
 </style>
