@@ -66,7 +66,7 @@ const colorMapper = {
           :complete="step > index + 1"
         >
           <div
-            class="h-[4px] w-full rounded-xl"
+            class="h-[6px] w-full rounded-xl"
             :style="{
               backgroundColor: `${colorMapper[resolveStepStatus(index + 1)]}`
             }"

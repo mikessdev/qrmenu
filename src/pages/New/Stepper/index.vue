@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import Stepper from '@/components/organisms/Stepper/index.vue';
-import Information from './InformationStep/index.vue';
 import type { Menu } from '@/utils/interfaces/Menu';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateSlug } from '@/validators/slug';
@@ -9,6 +8,9 @@ import { useMenuStore } from '@/store/menuStore';
 import { useUserStore } from '@/store/userStore';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import InformationStep from './InformationStep/index.vue';
+import ColorStep from './ColorStep/index.vue';
+import URLStep from './URLStep/index.vue';
 
 const menuStore = useMenuStore();
 const userStore = useUserStore();
@@ -147,19 +149,19 @@ const sections = [
   {
     title: 'Informações',
     subTitle: 'Vamos precisar de algumas informações para montarmos o seu cardápio',
-    Component: Information,
+    Component: InformationStep,
     ok: true
   },
   {
     title: 'Cores',
     subTitle: 'Escolha uma cor de destaque para o seu cardápio',
-    Component: Information,
+    Component: ColorStep,
     ok: true
   },
   {
-    title: 'Url',
+    title: 'URL',
     subTitle: 'Escolha um nome para a URL do Cardápio',
-    Component: Information,
+    Component: URLStep,
     ok: true
   }
 ];
@@ -255,8 +257,4 @@ const sections = [
     </template>
   </v-stepper> -->
 </template>
-<style>
-.remove-shadow {
-  box-shadow: none !important;
-}
-</style>
+<style scoped lang="scss"></style>
