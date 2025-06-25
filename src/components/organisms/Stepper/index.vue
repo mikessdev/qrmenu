@@ -14,6 +14,10 @@ const props = defineProps({
   sections: {
     type: Array as PropType<Section[]>,
     default: () => []
+  },
+  busy: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -93,9 +97,10 @@ const colorMapper = {
           <v-btn
             v-else
             variant="elevated"
-            :disabled="props.sections[step - 1].checkValidation()"
+            :disabled="props.busy || props.sections[step - 1].checkValidation()"
             color="primary"
             @click="$emit('finish')"
+            :loading="props.busy"
           >
             Finalizar
           </v-btn>

@@ -8,7 +8,7 @@ export const useMenuStore = defineStore('menuManagement', () => {
   const menus = ref<Menu[]>([] as Menu[]);
   const menu = ref<Menu>({} as Menu);
 
-  const createMenu = async (menu: Menu, accessToken: string): Promise<String> => {
+  const createMenu = async (menu: Menu, accessToken: string): Promise<Menu> => {
     const url: string = import.meta.env.VITE_MENU_URL;
     try {
       const response = await fetch(url, {
@@ -20,11 +20,10 @@ export const useMenuStore = defineStore('menuManagement', () => {
         },
         body: JSON.stringify(menu)
       });
-      const result: Result = await response.json();
-      return result.status;
+      return await response.json();
     } catch (error) {
       console.error(error);
-      return Status.FAILED;
+      throw new Error(error);
     }
   };
 

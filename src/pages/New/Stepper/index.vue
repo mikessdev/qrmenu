@@ -14,6 +14,7 @@ import URLStep from './URLStep/index.vue';
 
 const menuStore = useMenuStore();
 const userStore = useUserStore();
+const createMenuBusy = ref(false);
 const router = useRouter();
 
 const emit = defineEmits(['createSuccess', 'createFailed']);
@@ -84,6 +85,7 @@ const urlIsInvalid = () => {
 };
 
 const createMenu = async () => {
+  createMenuBusy.value = true;
   const { id: userId, accessToken } = userStore.user;
   const { name, url, color, instagram, phoneNumber } = menuState;
 
@@ -96,14 +98,16 @@ const createMenu = async () => {
     phoneNumber: phoneNumber.value
   } as Menu;
 
-  const result = await menuStore.createMenu(newMenu as Menu, accessToken);
-
-  if (result != Status.SUCCESS) {
+  try {
+    const menu = await menuStore.createMenu(newMenu as Menu, accessToken);
+    createMenuNotify();
+    createMenuBusy.value = false;
+    router.push(`/${menu.url}`);
+  } catch (error) {
     errorCreatingMenuNotify();
   }
 
-  createMenuNotify();
-  await menuStore.getMenus(userId, accessToken);
+  createMenuBusy.value = false;
 };
 
 const createMenuNotify = () => {
@@ -155,6 +159,6 @@ const sections = [
 ];
 </script>
 <template>
-  <Stepper :sections="sections" @finish="createMenu()"> </Stepper>
+  <Stepper :sections="sections" @finish="createMenu" :busy="createMenuBusy"> </Stepper>
 </template>
 <style scoped lang="scss"></style>
