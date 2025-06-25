@@ -4,7 +4,6 @@ import PlusIcon from '@/components/icons/PlusIcon.vue';
 import { computed, onMounted, ref } from 'vue';
 import { useMenuStore } from '@/store/menuStore';
 import { useUserStore } from '@/store/userStore';
-import type { Menu } from '@/utils/interfaces/Menu';
 import { useRouter } from 'vue-router';
 import { useAuthComposable } from '@/composables/useAuthComposable';
 import { useAuthStore } from '@/store/authStore';
@@ -15,8 +14,6 @@ const authStore = useAuthStore();
 const menuStore = useMenuStore();
 const userStore = useUserStore();
 
-const menus = ref<Menu[]>([]);
-
 const navigateTo = (url: string) => {
   return router.push(`/${url}`);
 };
@@ -24,7 +21,6 @@ const navigateTo = (url: string) => {
 onMounted(async () => {
   const { id: userId, accessToken } = userStore.user;
   await menuStore.getMenus(userId, accessToken);
-  menus.value = menuStore.menus;
 });
 
 const headerItens = computed(() => {
@@ -35,6 +31,7 @@ const headerItens = computed(() => {
       action: async () => {
         await authStore.signOutWithFirebase();
         isAuthenticated.value = false;
+        router.push('/');
       },
       show: isAuthenticated.value
     },
@@ -69,7 +66,7 @@ const headerItens = computed(() => {
             <span class="relative font-notosans text-[#4E4E4E]">{{ menu.name }}</span>
           </li>
         </ul>
-        <router-link to="new">
+        <router-link to="new" data-cy="new-menu">
           <div class="flex cursor-pointer flex-col items-center">
             <div
               class="flex h-[100px] w-[100px] items-center justify-center rounded-full border-[4px] border-[#DCDCDC] bg-qr-medium-gray"

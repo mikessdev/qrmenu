@@ -5,10 +5,10 @@ import { ref } from 'vue';
 export const useProductStore = defineStore('productManagement', () => {
   const products = ref<Product[]>([] as Product[]);
 
-  const createProduct = async (newProduct: Product, accessToken: string): Promise<void> => {
+  const createProduct = async (newProduct: Product, accessToken: string): Promise<Product> => {
     const url: string = import.meta.env.VITE_PRODUCT_URL;
     try {
-      await fetch(url, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -17,17 +17,26 @@ export const useProductStore = defineStore('productManagement', () => {
         },
         body: JSON.stringify(newProduct)
       });
+
+      const product = await response.json();
+      products.value.push(product);
+
+      return product;
     } catch (error) {
       console.error(error);
+      return {} as Product;
     }
   };
 
-  const updateProduct = async (newProduct: Product, accessToken: string): Promise<void> => {
+  const updateProduct = async (
+    newProduct: Partial<Product>,
+    accessToken: string
+  ): Promise<void> => {
     const url: string = import.meta.env.VITE_PRODUCT_URL;
     const { id } = newProduct;
 
     try {
-      await fetch(url + '/' + id, {
+      const response = await fetch(url + '/' + id, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -36,12 +45,15 @@ export const useProductStore = defineStore('productManagement', () => {
         },
         body: JSON.stringify(newProduct)
       });
+      const product = await response.json();
+
+      products.value = products.value.map((item) => (item.id === product.id ? product : item));
     } catch (error) {
       console.error(error);
     }
   };
 
-  const deleteProductById = async (id: string, accessToken: string): Promise<void> => {
+  const deleteProductById = async (id: number, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_PRODUCT_URL;
     try {
       await fetch(url + id, {

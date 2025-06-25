@@ -12,13 +12,18 @@ const authStore = useAuthStore();
 const signInWithGoogle = async () => {
   await authStore.signInWithGoogle();
 
-  const { uid: id, emailVerified } = authStore.userCredential?.user;
+  const {
+    uid: firebaseId,
+    emailVerified,
+    displayName,
+    email,
+    phoneNumber
+  } = authStore.userCredential?.user;
+  const accessToken = await authStore.userCredential?.user.getIdToken();
+  await userStore.getUserByFirebaseId(firebaseId, accessToken);
 
-  await userStore.getUser(id);
-  const useAlreadyExists = userStore.user === null ? false : true;
-
-  if (useAlreadyExists) {
-    userStore.user.accessToken = await authStore.userCredential.user?.getIdToken();
+  if (userStore.user.id) {
+    userStore.user.accessToken = accessToken;
 
     if (!userStore.user.emailVerified) {
       userStore.user.emailVerified = emailVerified;
@@ -28,33 +33,23 @@ const signInWithGoogle = async () => {
     return router.push('/select-menu');
   }
 
-  if (!useAlreadyExists) {
-    const {
-      displayName,
+  const name = displayName?.split(' ')[0];
+  const lastName = displayName?.split(' ')[1];
+
+  await userStore.createUser(
+    {
+      firebaseId,
+      name,
+      lastName,
       email,
       emailVerified,
-      phoneNumber,
-      uid: id
-    } = authStore?.userCredential?.user || {};
-    const name = displayName?.split(' ')[0];
-    const lastName = displayName?.split(' ')[1];
-    const accessToken = await authStore?.userCredential?.user?.getIdToken();
+      phoneNumber
+    } as User,
+    accessToken
+  );
 
-    await userStore.createUser(
-      {
-        id,
-        name,
-        lastName,
-        email,
-        emailVerified,
-        phoneNumber
-      } as User,
-      accessToken
-    );
-
-    userStore.user.accessToken = accessToken;
-    return router.push('/select-menu');
-  }
+  userStore.user.accessToken = accessToken;
+  return router.push('/select-menu');
 };
 </script>
 <template>
