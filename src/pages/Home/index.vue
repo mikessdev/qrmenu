@@ -48,6 +48,7 @@ onMounted(async () => {
   isLoading.value = true;
   const url: string = route.fullPath.slice(1);
   await loadData(url);
+  isLoading.value = false;
 });
 
 // onBeforeMount(async () => {

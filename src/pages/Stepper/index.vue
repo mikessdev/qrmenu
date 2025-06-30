@@ -3,7 +3,6 @@ import Stepper from '@/components/organisms/Stepper/index.vue';
 import type { Menu } from '@/utils/interfaces/Menu';
 import { validateEmptyText } from '@/validators/emptyText';
 import { validateSlug } from '@/validators/slug';
-import { Status } from '@/utils/enuns/status';
 import { useMenuStore } from '@/store/menuStore';
 import { useUserStore } from '@/store/userStore';
 import { reactive, ref } from 'vue';

@@ -23,7 +23,6 @@ import EditModal from '@/components/EditModal.vue';
 import CardProduct from '@/components/CardProduct.vue';
 import FileInput from '@/components/FileInput.vue';
 import { checkImageSize } from '@/validators/imageLimit';
-import { v4 as uuidv4 } from 'uuid';
 
 const props = defineProps({
   editMode: {

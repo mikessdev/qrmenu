@@ -47,19 +47,4 @@ const headerItens = computed(() => {
       </div>
     </div>
   </div>
-
-  <!-- <v-snackbar
-    v-model="snackbar.show"
-    :color="snackbar.type"
-    :timeout="1000"
-    location="top"
-    class="snackbar-top"
-  >
-    {{ snackbar.message }}
-    <template #actions>
-      <v-btn icon @click="snackbar.show = false">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </template>
-  </v-snackbar> -->
 </template>

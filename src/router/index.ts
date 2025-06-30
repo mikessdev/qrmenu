@@ -8,6 +8,7 @@ import New from '@/pages/New/index.vue';
 import Landing from '@/pages/Landing/index.vue';
 import SingIn from '@/pages/SingIn/index.vue';
 import Home from '@/pages/Home/index.vue';
+import Edit from '@/pages/Edit/index.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,6 +57,12 @@ const router = createRouter({
       path: '/new',
       name: 'new',
       component: New,
+      beforeEnter: async (to) => await authMiddleware(to)
+    },
+    {
+      path: '/edit',
+      name: 'edit',
+      component: Edit,
       beforeEnter: async (to) => await authMiddleware(to)
     }
   ]
