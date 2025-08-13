@@ -10,6 +10,10 @@ import { useRouter } from 'vue-router';
 import InformationStep from './InformationStep/index.vue';
 import ColorStep from './ColorStep/index.vue';
 import URLStep from './URLStep/index.vue';
+import BannerStep from './BannerStep/index.vue';
+import { checkImageSize } from '@/validators/imageLimit';
+
+const MAX_IMAGE_SIZE_BYTES = 5000000; // 5MB
 
 const menuStore = useMenuStore();
 const userStore = useUserStore();
@@ -57,6 +61,13 @@ const menuState = reactive({
     error: '',
     validator: () => {
       menuState.instagram.error = validateEmptyText(menuState.instagram.value);
+    }
+  },
+  banner: {
+    value: {} as File,
+    error: '',
+    validator: () => {
+      menuState.banner.error = checkImageSize(menuState.banner.value.size, MAX_IMAGE_SIZE_BYTES);
     }
   }
 });
@@ -153,6 +164,15 @@ const sections = [
     checkValidation: urlIsInvalid,
     model: {
       url: menuState.url
+    }
+  },
+  {
+    title: 'Banner',
+    subTitle: 'Escolha uma imagem para o banner do seu cardápio',
+    Component: BannerStep,
+    checkValidation: () => false,
+    model: {
+      banner: menuState.banner
     }
   }
 ];

@@ -77,10 +77,13 @@ const colorMapper = {
         v-for="({ title, subTitle, Component, model }, index) in sections"
         :key="index"
         :value="index + 1"
+        class="flex min-h-[600px] w-full flex-col justify-between"
       >
-        <p class="text-h4 mt-[40px] text-center">{{ title }}</p>
-        <p class="text-subtitle-2 mb-[30px] mt-[20px] text-center">{{ subTitle }}</p>
-        <component :is="Component" v-bind="model"></component>
+        <div class="flex flex-col items-center">
+          <p class="text-h4 mt-[40px] text-center">{{ title }}</p>
+          <p class="text-subtitle-2 mb-[30px] mt-[20px] text-center">{{ subTitle }}</p>
+          <component :is="Component" v-bind="model" class="w-full"></component>
+        </div>
 
         <v-card-actions class="justify-space-between mt-6">
           <v-btn v-if="step > 1" variant="outlined" @click="step--"> Voltar </v-btn>
