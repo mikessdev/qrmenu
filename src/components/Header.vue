@@ -21,6 +21,7 @@ interface HeaderItem {
   text: string;
   action: Function;
   show: boolean;
+  dataCy: string;
 }
 </script>
 
@@ -41,6 +42,7 @@ interface HeaderItem {
             v-if="item.show"
             @click="item.action"
             class="cursor-pointer hover:text-qr-medium-gray"
+            :data-cy="item.dataCy"
             >{{ item.text }}</a
           >
         </li>
@@ -48,9 +50,3 @@ interface HeaderItem {
     </div>
   </header>
 </template>
-
-<script lang="ts">
-export default {
-  name: 'HeaderItem'
-};
-</script>

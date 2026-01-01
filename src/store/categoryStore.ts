@@ -8,7 +8,7 @@ import type { Result } from '@/utils/interfaces/Result';
 export const useCategoryStore = defineStore('categoryManagement', () => {
   const categories = ref<Category[]>([] as Category[]);
 
-  const getCategories = async (menuId: string): Promise<void> => {
+  const getCategories = async (menuId: number): Promise<void> => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
     try {
       const response = await fetch(url + '?menuId=' + menuId);
@@ -40,7 +40,7 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
     }
   };
 
-  const deleteCategoryById = async (id: string, accessToken: string): Promise<void> => {
+  const deleteCategoryById = async (id: number, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
     try {
       await fetch(url + '/' + id, {
@@ -58,7 +58,6 @@ export const useCategoryStore = defineStore('categoryManagement', () => {
 
   const createCategory = async (newCategory: Category, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_CATEGORY_URL;
-    newCategory.id = uuidv4();
     try {
       await fetch(url, {
         method: 'POST',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type PropType } from 'vue';
+import { ref } from 'vue';
 
 const preview = ref<any>('');
 
@@ -48,20 +48,20 @@ const handleInput = (e: any): void => {
         v-if="preview"
         class="h-30 w-30 rounded-lg object-cover"
         :src="preview"
-        alt="Current product photo"
+        alt="Current photo"
       />
       <img
         v-else-if="previewByURL"
         class="h-30 w-30 rounded-lg object-cover"
         :src="previewByURL"
-        alt="Current product photo"
+        alt="Current photo"
       />
-      <img
+      <!-- <img
         v-else
         class="h-30 w-30 rounded-lg object-cover"
         src="@/assets/img/withoutProfile.png"
         alt="Banner image"
-      />
+      /> -->
     </div>
     <label class="mb-[20px] block">
       <span class="sr-only">Choose profile photo</span>

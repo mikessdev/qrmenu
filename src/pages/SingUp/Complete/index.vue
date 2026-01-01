@@ -17,7 +17,6 @@ const emailSent = ref<boolean>(false);
 const submit = async (e: Event) => {
   loading.value = true;
   e.preventDefault();
-  console.log('user: ', authStore.userCredential.user);
   const user: User = authStore?.userCredential?.user;
   try {
     if (!user) throw new Error('User not authenticated');
@@ -34,6 +33,7 @@ const submit = async (e: Event) => {
 };
 
 const redirect = () => {
+  authStore.signOutWithFirebase();
   return router.push('/login');
 };
 </script>

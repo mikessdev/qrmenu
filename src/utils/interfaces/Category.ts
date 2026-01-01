@@ -1,9 +1,9 @@
 import type { Product } from './Product';
 
 export interface Category {
-  id: string;
+  id: number;
   title: string;
-  menuId: string;
+  menuId: number;
   products: Product[];
   createdAt?: Date | undefined;
   updatedAt?: Date | undefined;

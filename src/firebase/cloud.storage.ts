@@ -8,9 +8,9 @@ import {
 import { StorageFolder } from '@/utils/enuns/firebase';
 
 export interface DownloadRef {
-  userId: string;
-  menuId: string;
-  categorId: string;
+  userId: number;
+  menuId: number;
+  categoryId: number;
   fileName: string;
   folder: string;
 }
@@ -20,7 +20,7 @@ export interface UploadData extends DownloadRef {
 }
 
 export const uploadImage = async (uploadData: UploadData) => {
-  const { userId, menuId, categorId, fileName, file, folder } = uploadData;
+  const { userId, menuId, categoryId, fileName, file, folder } = uploadData;
   let URL: string = '';
 
   if (folder === StorageFolder.Banner || folder === StorageFolder.Profile) {
@@ -28,7 +28,7 @@ export const uploadImage = async (uploadData: UploadData) => {
   }
 
   if (folder === StorageFolder.Products) {
-    URL = `${userId}/${menuId}/${categorId}/${folder}/${fileName}.jpg`;
+    URL = `${userId}/${menuId}/${categoryId}/${folder}/${fileName}.jpg`;
   }
 
   const storage = getStorage();
@@ -37,7 +37,7 @@ export const uploadImage = async (uploadData: UploadData) => {
 };
 
 export const donwloadImage = async (downloadRef: DownloadRef) => {
-  const { userId, menuId, categorId, fileName, folder } = downloadRef;
+  const { userId, menuId, categoryId, fileName, folder } = downloadRef;
   let URL: string = '';
 
   if (folder === StorageFolder.Banner || folder === StorageFolder.Profile) {
@@ -45,7 +45,7 @@ export const donwloadImage = async (downloadRef: DownloadRef) => {
   }
 
   if (folder === StorageFolder.Products) {
-    URL = `${userId}/${menuId}/${categorId}/${folder}/${fileName}.jpg`;
+    URL = `${userId}/${menuId}/${categoryId}/${folder}/${fileName}.jpg`;
   }
 
   const storage = getStorage();

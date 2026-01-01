@@ -6,6 +6,7 @@ import { ref } from 'vue';
 
 export const useUserStore = defineStore('userProfile', () => {
   const user = ref<User>({} as User);
+  const userBusy = ref<Boolean>(false);
 
   const createUser = async (userData: User, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_USER_URL;
@@ -23,7 +24,6 @@ export const useUserStore = defineStore('userProfile', () => {
       const success = result.status === Status.SUCCESS;
       if (success) {
         user.value = result.message;
-        console.log(result);
       }
     } catch (error) {
       console.error(error);
@@ -46,11 +46,32 @@ export const useUserStore = defineStore('userProfile', () => {
     }
   };
 
+  const getUserByFirebaseId = async (firebaseId: string, accessToken: string): Promise<void> => {
+    userBusy.value = true;
+    const url: string = import.meta.env.VITE_USER_URL;
+    try {
+      const response = await fetch(`${url}?firebaseId=${firebaseId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          // prettier-ignore
+          "Authorization": 'Bearer ' + accessToken
+        }
+      });
+
+      user.value = await response.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      userBusy.value = false;
+    }
+  };
+
   const updateUser = async (userData: User, accessToken: string): Promise<void> => {
     const url: string = import.meta.env.VITE_USER_URL;
     const { id } = userData;
     try {
-      await fetch(`${url}/${id}`, {
+      const response = await fetch(`${url}/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -59,6 +80,13 @@ export const useUserStore = defineStore('userProfile', () => {
         },
         body: JSON.stringify(userData)
       });
+
+      const result: Result = await response.json();
+      const success = result.status === Status.SUCCESS;
+
+      if (success) {
+        user.value = result.message;
+      }
     } catch (error) {
       console.error(error);
       throw error;
@@ -83,8 +111,10 @@ export const useUserStore = defineStore('userProfile', () => {
   };
   return {
     user,
+    userBusy,
     createUser,
     getUser,
+    getUserByFirebaseId,
     updateUser,
     deleteUserById
   };

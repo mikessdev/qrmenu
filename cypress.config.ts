@@ -1,14 +1,15 @@
 import { defineConfig } from 'cypress';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 export default defineConfig({
   env: {
-    email: 'mike100.boy@gmail.com',
-    password: 'ddDD@22'
+    email: process.env.VITE_TEST_EMAIL,
+    password: process.env.VITE_TEST_PASSWORD
   },
 
   e2e: {
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
-    }
+    baseUrl: 'http://localhost:5173'
   }
 });

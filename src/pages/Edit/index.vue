@@ -1,12 +1,28 @@
 <script setup lang="ts">
 import { useAuthComposable } from '@/composables/useAuthComposable';
-import { computed, reactive } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import Header from '@/components/Header.vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import Stepper from '../Stepper/index.vue';
+import { useMenuStore } from '@/store/menuStore';
 
 const router = useRouter();
+const route = useRoute();
+const menuStore = useMenuStore();
 const { isAuthenticated } = useAuthComposable();
+
+const isLoading = ref<boolean>(false);
+
+onMounted(async () => {
+  isLoading.value = true;
+  const url: string = route.fullPath.slice(1);
+  await loadData(url);
+  isLoading.value = false;
+});
+
+const loadData = async (url: string) => {
+  await menuStore.getMenuByURL(url);
+};
 
 const snackbar = reactive({
   show: false,
@@ -47,19 +63,4 @@ const headerItens = computed(() => {
       </div>
     </div>
   </div>
-
-  <!-- <v-snackbar
-    v-model="snackbar.show"
-    :color="snackbar.type"
-    :timeout="1000"
-    location="top"
-    class="snackbar-top"
-  >
-    {{ snackbar.message }}
-    <template #actions>
-      <v-btn icon @click="snackbar.show = false">
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </template>
-  </v-snackbar> -->
 </template>
